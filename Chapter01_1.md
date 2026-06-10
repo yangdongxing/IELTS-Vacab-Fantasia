@@ -35,7 +35,3 @@
 
 这场跨越大洲与海洋的探险，让我们彻底见识了地球脉动的惊人力量。
 
----
-
-**学习建议：**
-地理和气象类的雅思听力/阅读题非常高频。建议在复习时，把这些词汇按 **“水循环”** (ocean -> current -> tide -> tsunami)、**“极端天气阶梯”** (breeze -> gust -> gale -> tornado -> hurricane) 以及 **“地球构造”** (core -> mantle -> crust -> atmosphere) 进行画面联想，这样背起来会有奇效！
