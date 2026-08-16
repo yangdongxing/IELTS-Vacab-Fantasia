@@ -2,5 +2,3 @@
 __pycache__/
 *.py[cod]
 /audio/
-/assets/images/
-/dist/
