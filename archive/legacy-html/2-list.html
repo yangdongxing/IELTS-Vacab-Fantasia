@@ -1,0 +1,1507 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IELTS 核心词伙拼写列表</title>
+  <style>
+    :root {
+      --bg: #f6f7fb;
+      --panel: #ffffff;
+      --line: #e5e7eb;
+      --text: #172033;
+      --muted: #697386;
+      --blue: #2563eb;
+      --blue-soft: #eff6ff;
+      --green: #059669;
+      --green-soft: #ecfdf5;
+      --red: #dc2626;
+      --red-soft: #fef2f2;
+      --amber: #d97706;
+      --amber-soft: #fffbeb;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC", Arial, sans-serif;
+    }
+
+    .shell {
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 28px 0 56px;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      margin: 0 -16px 20px;
+      padding: 16px;
+      background: rgba(246, 247, 251, 0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(229, 231, 235, 0.8);
+    }
+
+    .topbar-inner {
+      width: min(1180px, 100%);
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 16px;
+      align-items: center;
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: 28px;
+      line-height: 1.2;
+      letter-spacing: 0;
+    }
+
+    .subtitle {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .stats {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .stat {
+      min-width: 92px;
+      padding: 10px 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+      text-align: center;
+      box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+    }
+
+    .stat strong {
+      display: block;
+      font-size: 20px;
+      line-height: 1.1;
+    }
+
+    .stat span {
+      display: block;
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .filters {
+      width: min(1180px, 100%);
+      margin: 14px auto 0;
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      padding-bottom: 2px;
+    }
+
+    .filter-btn {
+      border: 1px solid var(--line);
+      background: var(--panel);
+      color: var(--muted);
+      border-radius: 8px;
+      padding: 8px 12px;
+      font-weight: 700;
+      white-space: nowrap;
+      cursor: pointer;
+    }
+
+    .filter-btn.active {
+      border-color: var(--blue);
+      background: var(--blue-soft);
+      color: var(--blue);
+    }
+
+    .category-section {
+      margin-bottom: 28px;
+      scroll-margin-top: 150px;
+    }
+
+    .category-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 0 0 12px;
+      font-size: 18px;
+    }
+
+    .category-count {
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .phrase-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .phrase-row {
+      display: grid;
+      grid-template-columns: minmax(180px, 0.85fr) minmax(240px, 1.15fr) auto auto;
+      gap: 12px;
+      align-items: center;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+      box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+    }
+
+    .phrase-row.correct {
+      border-color: rgba(5, 150, 105, 0.35);
+      background: var(--green-soft);
+    }
+
+    .phrase-row.error {
+      border-color: rgba(220, 38, 38, 0.35);
+      background: var(--red-soft);
+    }
+
+    .zh {
+      font-size: 16px;
+      font-weight: 700;
+      line-height: 1.4;
+    }
+
+    input {
+      width: 100%;
+      min-height: 42px;
+      border: 2px solid var(--line);
+      border-radius: 8px;
+      padding: 8px 11px;
+      font: 600 16px/1.3 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      color: var(--text);
+      outline: none;
+      background: #fff;
+    }
+
+    input:focus {
+      border-color: var(--blue);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+    }
+
+    .phrase-row.correct input {
+      border-color: var(--green);
+      color: var(--green);
+      background: #fff;
+    }
+
+    .phrase-row.error input {
+      border-color: var(--red);
+      color: var(--red);
+      background: #fff;
+    }
+
+    .play-btn {
+      width: 42px;
+      height: 42px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      color: var(--blue);
+      font-size: 16px;
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    .play-btn:hover {
+      border-color: var(--blue);
+      background: var(--blue-soft);
+    }
+
+    .status {
+      width: 92px;
+      min-height: 34px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 8px;
+      color: var(--muted);
+      background: #f8fafc;
+      font-size: 13px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .phrase-row.correct .status {
+      color: var(--green);
+      background: rgba(5, 150, 105, 0.1);
+    }
+
+    .phrase-row.error .status {
+      color: var(--red);
+      background: rgba(220, 38, 38, 0.1);
+    }
+
+    .answer {
+      display: none;
+      grid-column: 2 / 5;
+      margin-top: -4px;
+      padding: 8px 10px;
+      border-radius: 8px;
+      background: var(--amber-soft);
+      color: var(--amber);
+      font: 700 14px/1.4 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+    }
+
+    .phrase-row.show-answer .answer {
+      display: block;
+    }
+
+    .tools {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin: 18px 0 22px;
+    }
+
+    .tool-btn {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+      color: var(--text);
+      padding: 9px 12px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .tool-btn.primary {
+      border-color: var(--blue);
+      background: var(--blue);
+      color: white;
+    }
+
+    .hidden { display: none; }
+
+    @media (max-width: 760px) {
+      .topbar-inner { grid-template-columns: 1fr; }
+      .stats { justify-content: stretch; }
+      .stat { flex: 1; }
+      .phrase-row { grid-template-columns: 1fr; }
+      .play-btn { width: 100%; }
+      .status { width: 100%; }
+      .answer { grid-column: auto; }
+    }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="topbar-inner">
+      <div>
+        <h1>IELTS 核心词伙拼写列表</h1>
+        <p class="subtitle">显示中文，输入英文。实时校验会忽略大小写、空格和标点。</p>
+      </div>
+      <div class="stats">
+        <div class="stat"><strong id="totalCount">0</strong><span>总数</span></div>
+        <div class="stat"><strong id="correctCount">0</strong><span>正确</span></div>
+        <div class="stat"><strong id="errorCount">0</strong><span>需修正</span></div>
+      </div>
+    </div>
+    <div class="filters" id="filters"></div>
+  </div>
+
+  <main class="shell">
+    <div class="tools">
+      <button class="tool-btn primary" id="focusFirst">从第一个开始</button>
+      <button class="tool-btn" id="showAnswers">显示答案</button>
+      <button class="tool-btn" id="hideAnswers">隐藏答案</button>
+      <button class="tool-btn" id="showOnlyErrors">只看需修正</button>
+      <button class="tool-btn" id="showAll">显示全部</button>
+    </div>
+    <div id="app"></div>
+  </main>
+
+  <script>
+    const vocab = [
+      {
+            "category": "生活类",
+            "en": "psychological well-being",
+            "zh": "心理健康"
+      },
+      {
+            "category": "生活类",
+            "en": "work accumulation and delay",
+            "zh": "工作堆积和拖延"
+      },
+      {
+            "category": "生活类",
+            "en": "consume time and energy",
+            "zh": "耗费时间和精力"
+      },
+      {
+            "category": "生活类",
+            "en": "immense burden",
+            "zh": "巨大的负担"
+      },
+      {
+            "category": "生活类",
+            "en": "determine basic talents",
+            "zh": "决定基础天赋"
+      },
+      {
+            "category": "生活类",
+            "en": "local farmers",
+            "zh": "本地农民"
+      },
+      {
+            "category": "生活类",
+            "en": "carbon emissions",
+            "zh": "碳排放"
+      },
+      {
+            "category": "生活类",
+            "en": "conservative individuals",
+            "zh": "保守的人"
+      },
+      {
+            "category": "生活类",
+            "en": "the healthcare system",
+            "zh": "医疗系统"
+      },
+      {
+            "category": "生活类",
+            "en": "silver economy",
+            "zh": "银发经济/养老产业"
+      },
+      {
+            "category": "生活类",
+            "en": "local environments",
+            "zh": "当地环境"
+      },
+      {
+            "category": "生活类",
+            "en": "pursue a sense of belonging",
+            "zh": "追求归属感"
+      },
+      {
+            "category": "生活类",
+            "en": "desire for more private space",
+            "zh": "渴望更多私人空间"
+      },
+      {
+            "category": "生活类",
+            "en": "focus on personal freedom",
+            "zh": "专注于个人自由"
+      },
+      {
+            "category": "生活类",
+            "en": "loneliness and depression",
+            "zh": "孤独和抑郁"
+      },
+      {
+            "category": "生活类",
+            "en": "search for identity",
+            "zh": "寻找身份认同"
+      },
+      {
+            "category": "生活类",
+            "en": "DNA testing",
+            "zh": "基因检测技术"
+      },
+      {
+            "category": "生活类",
+            "en": "sedentary lifestyle",
+            "zh": "久坐不动的生活方式"
+      },
+      {
+            "category": "生活类",
+            "en": "junk food",
+            "zh": "垃圾食品"
+      },
+      {
+            "category": "生活类",
+            "en": "generous salary",
+            "zh": "丰厚的薪水"
+      },
+      {
+            "category": "生活类",
+            "en": "better education and healthcare",
+            "zh": "更好的教育和医疗"
+      },
+      {
+            "category": "生活类",
+            "en": "traffic congestion and housing shortage",
+            "zh": "交通拥堵和住房短缺"
+      },
+      {
+            "category": "生活类",
+            "en": "maintain physical fitness",
+            "zh": "保持身体健康"
+      },
+      {
+            "category": "生活类",
+            "en": "relieve working pressure",
+            "zh": "缓解工作压力"
+      },
+      {
+            "category": "生活类",
+            "en": "the company system would face a rapid collapse",
+            "zh": "企业系统将面临迅速崩溃"
+      },
+      {
+            "category": "生活类",
+            "en": "free from a messy environment",
+            "zh": "摆脱混乱的环境"
+      },
+      {
+            "category": "生活类",
+            "en": "serves as a powerful engine for",
+            "zh": "成为了...的强大引擎"
+      },
+      {
+            "category": "生活类",
+            "en": "free from innate limitations",
+            "zh": "摆脱先天限制"
+      },
+      {
+            "category": "生活类",
+            "en": "would face a rapid collapse",
+            "zh": "面临迅速崩溃"
+      },
+      {
+            "category": "生活类",
+            "en": "free from seasonal restrictions",
+            "zh": "摆脱季节限制"
+      },
+      {
+            "category": "生活类",
+            "en": "free from geographical barriers",
+            "zh": "摆脱地理障碍"
+      },
+      {
+            "category": "生活类",
+            "en": "creates a multitude of opportunities",
+            "zh": "创造大量机会"
+      },
+      {
+            "category": "生活类",
+            "en": "free from the comfort zone",
+            "zh": "摆脱舒适区"
+      },
+      {
+            "category": "生活类",
+            "en": "free from lack of experience",
+            "zh": "摆脱经验不足"
+      },
+      {
+            "category": "生活类",
+            "en": "free from heavy pollution",
+            "zh": "摆脱严重污染"
+      },
+      {
+            "category": "生活类",
+            "en": "ensures better educational resources",
+            "zh": "确保更好的教育资源"
+      },
+      {
+            "category": "生活类",
+            "en": "free from constant anxiety",
+            "zh": "摆脱持续的焦虑"
+      },
+      {
+            "category": "生活类",
+            "en": "ensures personal progress",
+            "zh": "确保个人进步"
+      },
+      {
+            "category": "生活类",
+            "en": "free from a boring routine",
+            "zh": "摆脱枯燥的日常"
+      },
+      {
+            "category": "生活类",
+            "en": "ensures loyalty and deep expertise",
+            "zh": "确保忠诚和深厚专业知识"
+      },
+      {
+            "category": "生活类",
+            "en": "free from mental fatigue",
+            "zh": "摆脱精神疲劳"
+      },
+      {
+            "category": "生活类",
+            "en": "prevents cognitive decline",
+            "zh": "防止认知衰退"
+      },
+      {
+            "category": "生活类",
+            "en": "free from peer pressure",
+            "zh": "摆脱攀比压力"
+      },
+      {
+            "category": "生活类",
+            "en": "ensures family cohesion",
+            "zh": "确保家庭凝聚力"
+      },
+      {
+            "category": "生活类",
+            "en": "free from cultural constraints",
+            "zh": "摆脱文化束缚"
+      },
+      {
+            "category": "生活类",
+            "en": "prevents offensive misunderstandings",
+            "zh": "防止冒犯性的误解"
+      },
+      {
+            "category": "经济类",
+            "en": "low-income groups",
+            "zh": "低收入群体"
+      },
+      {
+            "category": "经济类",
+            "en": "basic living expenses",
+            "zh": "基本生活开销"
+      },
+      {
+            "category": "经济类",
+            "en": "sudden emergencies",
+            "zh": "突发紧急情况"
+      },
+      {
+            "category": "经济类",
+            "en": "reliable investment vehicle",
+            "zh": "可靠的投资工具/资金池"
+      },
+      {
+            "category": "经济类",
+            "en": "manufacturers",
+            "zh": "制造商"
+      },
+      {
+            "category": "经济类",
+            "en": "profit margin",
+            "zh": "利润空间"
+      },
+      {
+            "category": "经济类",
+            "en": "natural resources",
+            "zh": "自然资源"
+      },
+      {
+            "category": "经济类",
+            "en": "crucial social workers",
+            "zh": "关键社会工作者"
+      },
+      {
+            "category": "经济类",
+            "en": "commercial value",
+            "zh": "商业价值"
+      },
+      {
+            "category": "经济类",
+            "en": "risk of severe injuries",
+            "zh": "严重受伤风险"
+      },
+      {
+            "category": "经济类",
+            "en": "social comparison and vanity",
+            "zh": "社会攀比和虚荣心"
+      },
+      {
+            "category": "经济类",
+            "en": "rational consumption habits",
+            "zh": "理性的消费习惯"
+      },
+      {
+            "category": "经济类",
+            "en": "strict financial discipline",
+            "zh": "严格的财务纪律"
+      },
+      {
+            "category": "经济类",
+            "en": "financial anxiety",
+            "zh": "财务焦虑"
+      },
+      {
+            "category": "经济类",
+            "en": "would trigger a catastrophic",
+            "zh": "会引发灾难性的"
+      },
+      {
+            "category": "经济类",
+            "en": "requires enormous",
+            "zh": "需要巨大的"
+      },
+      {
+            "category": "经济类",
+            "en": "free from extreme inequality",
+            "zh": "摆脱极度的不平等"
+      },
+      {
+            "category": "经济类",
+            "en": "paves the way for",
+            "zh": "为...铺平道路"
+      },
+      {
+            "category": "经济类",
+            "en": "significantly alleviates the immense burden on",
+            "zh": "极大地缓解了...的巨大负担"
+      },
+      {
+            "category": "经济类",
+            "en": "rather than being damaged by",
+            "zh": "而不是被...摧毁"
+      },
+      {
+            "category": "经济类",
+            "en": "instead of being weak or resistant to",
+            "zh": "与其对...感到软弱或抗拒"
+      },
+      {
+            "category": "经济类",
+            "en": "accumulate wealth",
+            "zh": "积累财富"
+      },
+      {
+            "category": "经济类",
+            "en": "combat inflation",
+            "zh": "对抗通胀"
+      },
+      {
+            "category": "经济类",
+            "en": "stimulate the economy",
+            "zh": "刺激经济"
+      },
+      {
+            "category": "政府类",
+            "en": "pressing social issues",
+            "zh": "紧迫的社会问题"
+      },
+      {
+            "category": "政府类",
+            "en": "emotional needs",
+            "zh": "精神需求"
+      },
+      {
+            "category": "政府类",
+            "en": "cultural heritage",
+            "zh": "文化遗产"
+      },
+      {
+            "category": "政府类",
+            "en": "mass transit",
+            "zh": "大众运输"
+      },
+      {
+            "category": "政府类",
+            "en": "door-to-door convenience",
+            "zh": "门到门的便利"
+      },
+      {
+            "category": "政府类",
+            "en": "logistics and delivery",
+            "zh": "物流与配送"
+      },
+      {
+            "category": "政府类",
+            "en": "local governments",
+            "zh": "地方政府"
+      },
+      {
+            "category": "政府类",
+            "en": "judicial efficiency",
+            "zh": "司法效率"
+      },
+      {
+            "category": "政府类",
+            "en": "transnational crimes",
+            "zh": "跨国犯罪"
+      },
+      {
+            "category": "政府类",
+            "en": "prejudice and discrimination",
+            "zh": "偏见和歧视"
+      },
+      {
+            "category": "政府类",
+            "en": "vocational training",
+            "zh": "职业培训"
+      },
+      {
+            "category": "政府类",
+            "en": "employment quotas",
+            "zh": "雇佣配额"
+      },
+      {
+            "category": "政府类",
+            "en": "low-income commuters",
+            "zh": "低收入通勤者"
+      },
+      {
+            "category": "政府类",
+            "en": "public transport systems",
+            "zh": "公共交通系统"
+      },
+      {
+            "category": "政府类",
+            "en": "financial sustainability",
+            "zh": "财政可持续性"
+      },
+      {
+            "category": "政府类",
+            "en": "public health crises",
+            "zh": "公共健康危机"
+      },
+      {
+            "category": "政府类",
+            "en": "social justice",
+            "zh": "社会正义"
+      },
+      {
+            "category": "政府类",
+            "en": "free from traffic congestion",
+            "zh": "摆脱交通拥堵"
+      },
+      {
+            "category": "政府类",
+            "en": "free from long travel hours",
+            "zh": "摆脱漫长的旅行时间"
+      },
+      {
+            "category": "政府类",
+            "en": "ensures universal benefits",
+            "zh": "确保普惠大众"
+      },
+      {
+            "category": "政府类",
+            "en": "free from rigid restrictions",
+            "zh": "摆脱死板的限制"
+      },
+      {
+            "category": "政府类",
+            "en": "prevents severe public health crises",
+            "zh": "防止严重的公共健康危机"
+      },
+      {
+            "category": "政府类",
+            "en": "free from sedentary lifestyles",
+            "zh": "摆脱久坐的生活方式"
+      },
+      {
+            "category": "政府类",
+            "en": "ensures comprehensive well-being",
+            "zh": "确保全面的健康"
+      },
+      {
+            "category": "政府类",
+            "en": "ensures true social justice",
+            "zh": "确保真正的社会正义"
+      },
+      {
+            "category": "政府类",
+            "en": "prevents cultural conflicts",
+            "zh": "防止文化冲突"
+      },
+      {
+            "category": "政府类",
+            "en": "free from social stigma",
+            "zh": "摆脱社会耻辱感"
+      },
+      {
+            "category": "政府类",
+            "en": "allocate funds to",
+            "zh": "拨款给..."
+      },
+      {
+            "category": "政府类",
+            "en": "implement strict policies",
+            "zh": "实施严格政策"
+      },
+      {
+            "category": "政府类",
+            "en": "improve public infrastructure",
+            "zh": "改善公共基建"
+      },
+      {
+            "category": "教育类",
+            "en": "gender equality",
+            "zh": "性别平等"
+      },
+      {
+            "category": "教育类",
+            "en": "educational rights",
+            "zh": "教育权利"
+      },
+      {
+            "category": "教育类",
+            "en": "waste of personal talents",
+            "zh": "个人天赋浪费/浪费个人天赋"
+      },
+      {
+            "category": "教育类",
+            "en": "social responsibility",
+            "zh": "社会责任感"
+      },
+      {
+            "category": "教育类",
+            "en": "negative/hostile emotions",
+            "zh": "负面/敌对情绪"
+      },
+      {
+            "category": "教育类",
+            "en": "lack of self-discipline",
+            "zh": "缺乏自律"
+      },
+      {
+            "category": "教育类",
+            "en": "practical skill development",
+            "zh": "实用技能发展"
+      },
+      {
+            "category": "教育类",
+            "en": "career planning",
+            "zh": "职业规划"
+      },
+      {
+            "category": "教育类",
+            "en": "decent and high-paying jobs",
+            "zh": "体面高薪工作"
+      },
+      {
+            "category": "教育类",
+            "en": "problem-solving abilities",
+            "zh": "解决问题的能力"
+      },
+      {
+            "category": "教育类",
+            "en": "technical professionals",
+            "zh": "技术专业人才"
+      },
+      {
+            "category": "教育类",
+            "en": "comprehensive cultural development",
+            "zh": "全面的文化发展"
+      },
+      {
+            "category": "教育类",
+            "en": "moral education",
+            "zh": "道德教育/品德教育"
+      },
+      {
+            "category": "教育类",
+            "en": "personalized guidance",
+            "zh": "个性化指导"
+      },
+      {
+            "category": "教育类",
+            "en": "physical or artistic limits",
+            "zh": "身体或艺术上限"
+      },
+      {
+            "category": "教育类",
+            "en": "continuous supply of talents",
+            "zh": "人才的持续供应"
+      },
+      {
+            "category": "教育类",
+            "en": "time-out or restricted privileges",
+            "zh": "禁闭或限制特权"
+      },
+      {
+            "category": "教育类",
+            "en": "comprehensive development",
+            "zh": "全面发展"
+      },
+      {
+            "category": "教育类",
+            "en": "academic pressure",
+            "zh": "学业压力"
+      },
+      {
+            "category": "教育类",
+            "en": "free from a lack of knowledge",
+            "zh": "摆脱知识的匮乏"
+      },
+      {
+            "category": "语言类",
+            "en": "better career opportunities",
+            "zh": "更好的职业机会"
+      },
+      {
+            "category": "语言类",
+            "en": "daily communication barriers",
+            "zh": "日常交流障碍"
+      },
+      {
+            "category": "语言类",
+            "en": "cultural integration",
+            "zh": "文化融入/整合"
+      },
+      {
+            "category": "语言类",
+            "en": "communication costs",
+            "zh": "沟通成本"
+      },
+      {
+            "category": "语言类",
+            "en": "cultural identity",
+            "zh": "文化认同"
+      },
+      {
+            "category": "语言类",
+            "en": "global cultural diversity",
+            "zh": "全球文化多样性"
+      },
+      {
+            "category": "语言类",
+            "en": "young children",
+            "zh": "年幼的孩子"
+      },
+      {
+            "category": "语言类",
+            "en": "pronunciation",
+            "zh": "发音"
+      },
+      {
+            "category": "语言类",
+            "en": "globalized talents",
+            "zh": "全球化人才"
+      },
+      {
+            "category": "语言类",
+            "en": "independent learning skills",
+            "zh": "自主学习能力"
+      },
+      {
+            "category": "语言类",
+            "en": "an immersive language environment",
+            "zh": "沉浸式语言环境"
+      },
+      {
+            "category": "语言类",
+            "en": "dumb English",
+            "zh": "哑巴英语"
+      },
+      {
+            "category": "语言类",
+            "en": "communication barriers",
+            "zh": "沟通障碍"
+      },
+      {
+            "category": "语言类",
+            "en": "loss of cultural identity",
+            "zh": "失去文化认同"
+      },
+      {
+            "category": "语言类",
+            "en": "cultural diversity",
+            "zh": "文化多样性"
+      },
+      {
+            "category": "语言类",
+            "en": "high financial costs",
+            "zh": "高昂的财务成本"
+      },
+      {
+            "category": "语言类",
+            "en": "free from the fear of making mistakes",
+            "zh": "摆脱害怕犯错的恐惧"
+      },
+      {
+            "category": "语言类",
+            "en": "free from high financial costs",
+            "zh": "摆脱高昂的财务成本/留学费用"
+      },
+      {
+            "category": "语言类",
+            "en": "ensures an immersive language environment",
+            "zh": "确保了沉浸式的语言环境"
+      },
+      {
+            "category": "语言类",
+            "en": "free from language barriers",
+            "zh": "摆脱语言障碍"
+      },
+      {
+            "category": "语言类",
+            "en": "ensures cultural diversity",
+            "zh": "确保了文化多样性"
+      },
+      {
+            "category": "媒体类",
+            "en": "free online resources",
+            "zh": "免费在线资源"
+      },
+      {
+            "category": "媒体类",
+            "en": "low-income readers",
+            "zh": "低收入读者"
+      },
+      {
+            "category": "媒体类",
+            "en": "tactile reading experience",
+            "zh": "触觉阅读体验"
+      },
+      {
+            "category": "媒体类",
+            "en": "digital fatigue/distraction",
+            "zh": "数字疲劳/分心"
+      },
+      {
+            "category": "媒体类",
+            "en": "collectible value",
+            "zh": "收藏价值"
+      },
+      {
+            "category": "媒体类",
+            "en": "generational gaps",
+            "zh": "代沟"
+      },
+      {
+            "category": "媒体类",
+            "en": "elderly people",
+            "zh": "老年人"
+      },
+      {
+            "category": "媒体类",
+            "en": "universal language",
+            "zh": "世界通用语言"
+      },
+      {
+            "category": "媒体类",
+            "en": "misunderstandings",
+            "zh": "误解"
+      },
+      {
+            "category": "媒体类",
+            "en": "cross-cultural exchange",
+            "zh": "跨文化交流"
+      },
+      {
+            "category": "媒体类",
+            "en": "national identity",
+            "zh": "民族认同感/民族认同"
+      },
+      {
+            "category": "媒体类",
+            "en": "local artists",
+            "zh": "本土艺术家"
+      },
+      {
+            "category": "媒体类",
+            "en": "aesthetic standards",
+            "zh": "审美/审美标准"
+      },
+      {
+            "category": "媒体类",
+            "en": "diversity",
+            "zh": "多样性"
+      },
+      {
+            "category": "媒体类",
+            "en": "subtle marketing strategies",
+            "zh": "隐蔽的营销策略"
+      },
+      {
+            "category": "媒体类",
+            "en": "material desires",
+            "zh": "物质欲望"
+      },
+      {
+            "category": "媒体类",
+            "en": "free from geographical limitations",
+            "zh": "摆脱地理限制"
+      },
+      {
+            "category": "媒体类",
+            "en": "free from endless commercial interruptions",
+            "zh": "摆脱无休止的商业打扰"
+      },
+      {
+            "category": "媒体类",
+            "en": "trigger catastrophic material desires",
+            "zh": "引发灾难性的物欲"
+      },
+      {
+            "category": "科技类",
+            "en": "spelling and grammatical errors",
+            "zh": "拼写和语法错误"
+      },
+      {
+            "category": "科技类",
+            "en": "young students",
+            "zh": "年轻学生"
+      },
+      {
+            "category": "科技类",
+            "en": "autocorrect",
+            "zh": "自动纠错功能"
+      },
+      {
+            "category": "科技类",
+            "en": "digital literacy",
+            "zh": "数字读写能力"
+      },
+      {
+            "category": "科技类",
+            "en": "traditional drivers",
+            "zh": "传统司机"
+      },
+      {
+            "category": "科技类",
+            "en": "massive unemployment",
+            "zh": "大规模失业"
+      },
+      {
+            "category": "科技类",
+            "en": "road safety",
+            "zh": "道路安全"
+      },
+      {
+            "category": "科技类",
+            "en": "smart transportation system",
+            "zh": "智能交通系统"
+      },
+      {
+            "category": "科技类",
+            "en": "information explosion",
+            "zh": "信息爆炸"
+      },
+      {
+            "category": "科技类",
+            "en": "digital fatigue",
+            "zh": "数字疲劳"
+      },
+      {
+            "category": "科技类",
+            "en": "high productivity",
+            "zh": "高生产力"
+      },
+      {
+            "category": "科技类",
+            "en": "deep emotional connection",
+            "zh": "深度的情感连接"
+      },
+      {
+            "category": "科技类",
+            "en": "instant communication",
+            "zh": "即时通讯"
+      },
+      {
+            "category": "科技类",
+            "en": "loss of traditional skills",
+            "zh": "传统技能的丧失"
+      },
+      {
+            "category": "科技类",
+            "en": "traditional workers",
+            "zh": "传统工人"
+      },
+      {
+            "category": "科技类",
+            "en": "taxi drivers",
+            "zh": "出租车司机"
+      },
+      {
+            "category": "科技类",
+            "en": "free from human errors and fatigue",
+            "zh": "摆脱人为错误和疲劳驾驶"
+      },
+      {
+            "category": "科技类",
+            "en": "ensures high productivity",
+            "zh": "确保了高生产力"
+      },
+      {
+            "category": "科技类",
+            "en": "free from repetitive manual labor",
+            "zh": "摆脱重复的体力劳动"
+      },
+      {
+            "category": "科技类",
+            "en": "free from cold screens",
+            "zh": "摆脱冰冷的屏幕"
+      },
+      {
+            "category": "科技类",
+            "en": "ensures instant communication",
+            "zh": "确保了即时通讯"
+      },
+      {
+            "category": "科技类",
+            "en": "serves as a powerful engine for global economy",
+            "zh": "成为全球经济的强大引擎"
+      },
+      {
+            "category": "科技类",
+            "en": "trigger a catastrophic massive unemployment",
+            "zh": "引发灾难性的大规模失业"
+      },
+      {
+            "category": "环境类",
+            "en": "loss of biodiversity",
+            "zh": "生物多样性丧失"
+      },
+      {
+            "category": "环境类",
+            "en": "global warming",
+            "zh": "全球变暖"
+      },
+      {
+            "category": "环境类",
+            "en": "carbon emissions",
+            "zh": "碳排放"
+      },
+      {
+            "category": "环境类",
+            "en": "vulnerable populations",
+            "zh": "脆弱人群/灾民"
+      },
+      {
+            "category": "环境类",
+            "en": "extreme weather conditions",
+            "zh": "极端天气"
+      },
+      {
+            "category": "环境类",
+            "en": "unequal food distribution",
+            "zh": "食物分配不均"
+      },
+      {
+            "category": "环境类",
+            "en": "recycling facilities",
+            "zh": "回收设施"
+      },
+      {
+            "category": "环境类",
+            "en": "disposable packaging",
+            "zh": "一次性包装"
+      },
+      {
+            "category": "环境类",
+            "en": "disposable products/packaging",
+            "zh": "一次性产品/包装"
+      },
+      {
+            "category": "环境类",
+            "en": "consumerism",
+            "zh": "消费主义"
+      },
+      {
+            "category": "环境类",
+            "en": "comprehensive recycling programs",
+            "zh": "全面的回收项目"
+      },
+      {
+            "category": "环境类",
+            "en": "landfills",
+            "zh": "垃圾填埋场"
+      },
+      {
+            "category": "环境类",
+            "en": "biodegradable materials",
+            "zh": "可降解材料"
+      },
+      {
+            "category": "环境类",
+            "en": "sustainable development",
+            "zh": "可持续发展"
+      },
+      {
+            "category": "环境类",
+            "en": "free from the loss of biodiversity",
+            "zh": "摆脱生物多样性的丧失"
+      },
+      {
+            "category": "环境类",
+            "en": "rely heavily on",
+            "zh": "严重依赖"
+      },
+      {
+            "category": "环境类",
+            "en": "individual efforts are too small",
+            "zh": "个人的努力太渺小"
+      },
+      {
+            "category": "环境类",
+            "en": "impose strict regulations and heavy fines",
+            "zh": "实施严格法规和重罚"
+      },
+      {
+            "category": "环境类",
+            "en": "provide comprehensive recycling facilities",
+            "zh": "提供全面的回收设施"
+      }
+];
+
+    const app = document.getElementById('app');
+    const filters = document.getElementById('filters');
+    const totalCount = document.getElementById('totalCount');
+    const correctCount = document.getElementById('correctCount');
+    const errorCount = document.getElementById('errorCount');
+    let activeCategory = '全部';
+    let onlyErrors = false;
+
+    const clean = value => value.toLowerCase().replace(/[^a-z0-9]/g, '');
+
+    function getState(row) {
+      const input = row.querySelector('input');
+      const user = clean(input.value);
+      const answer = clean(input.dataset.answer);
+      if (!user) return 'empty';
+      if (user === answer) return 'correct';
+      if (answer.startsWith(user)) return 'partial';
+      return 'error';
+    }
+
+    function updateRow(row) {
+      const state = getState(row);
+      const status = row.querySelector('.status');
+      row.classList.toggle('correct', state === 'correct');
+      row.classList.toggle('error', state === 'error');
+      status.textContent = state === 'correct' ? '正确' : state === 'error' ? '错误' : state === 'partial' ? '继续' : '待输入';
+      updateStats();
+    }
+
+    function updateStats() {
+      const rows = [...document.querySelectorAll('.phrase-row')];
+      totalCount.textContent = rows.length;
+      correctCount.textContent = rows.filter(row => getState(row) === 'correct').length;
+      errorCount.textContent = rows.filter(row => getState(row) === 'error').length;
+    }
+
+    function speakPhrase(text) {
+      if (!('speechSynthesis' in window)) return;
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = 'en-US';
+      utterance.rate = 0.9;
+      window.speechSynthesis.speak(utterance);
+    }
+
+    function focusNextInput(currentInput) {
+      const inputs = [...document.querySelectorAll('.phrase-row:not(.hidden) input')];
+      const currentIndex = inputs.indexOf(currentInput);
+      const nextInput = inputs[currentIndex + 1];
+      if (nextInput) {
+        nextInput.focus();
+        nextInput.scrollIntoView({ block: 'center', behavior: 'smooth' });
+      }
+    }
+
+    function applyVisibility() {
+      document.querySelectorAll('.category-section').forEach(section => {
+        const cat = section.dataset.category;
+        const rows = [...section.querySelectorAll('.phrase-row')];
+        let visibleRows = 0;
+        rows.forEach(row => {
+          const categoryMatch = activeCategory === '全部' || cat === activeCategory;
+          const errorMatch = !onlyErrors || getState(row) === 'error';
+          const visible = categoryMatch && errorMatch;
+          row.classList.toggle('hidden', !visible);
+          if (visible) visibleRows += 1;
+        });
+        section.classList.toggle('hidden', visibleRows === 0);
+      });
+    }
+
+    function renderFilters() {
+      const categories = ['全部', ...new Set(vocab.map(item => item.category))];
+      filters.innerHTML = categories.map(cat => '<button class="filter-btn" data-category="' + cat + '">' + cat + '</button>').join('');
+      filters.addEventListener('click', event => {
+        const btn = event.target.closest('.filter-btn');
+        if (!btn) return;
+        activeCategory = btn.dataset.category;
+        document.querySelectorAll('.filter-btn').forEach(item => item.classList.toggle('active', item === btn));
+        applyVisibility();
+      });
+      filters.querySelector('.filter-btn').classList.add('active');
+    }
+
+    function renderList() {
+      const grouped = new Map();
+      vocab.forEach(item => {
+        if (!grouped.has(item.category)) grouped.set(item.category, []);
+        grouped.get(item.category).push(item);
+      });
+
+      app.innerHTML = [...grouped.entries()].map(([category, items]) => {
+        const rows = items.map((item, index) => {
+          const id = category + '-' + index;
+          return '<div class="phrase-row" data-category="' + item.category + '">' +
+            '<div class="zh">' + escapeHTML(item.zh) + '</div>' +
+            '<input id="' + id + '" type="text" autocomplete="off" spellcheck="false" data-answer="' + escapeAttr(item.en) + '" placeholder="Type English phrase">' +
+            '<button class="play-btn" type="button" data-phrase="' + escapeAttr(item.en) + '" title="播放英文短语" aria-label="播放英文短语">▶</button>' +
+            '<div class="status">待输入</div>' +
+            '<div class="answer">' + escapeHTML(item.en) + '</div>' +
+          '</div>';
+        }).join('');
+        return '<section class="category-section" data-category="' + category + '">' +
+          '<h2 class="category-title">' + category + '<span class="category-count">' + items.length + ' 个</span></h2>' +
+          '<div class="phrase-list">' + rows + '</div>' +
+        '</section>';
+      }).join('');
+
+      document.querySelectorAll('input').forEach(input => {
+        input.addEventListener('input', () => {
+          updateRow(input.closest('.phrase-row'));
+          if (onlyErrors) applyVisibility();
+        });
+        input.addEventListener('keydown', event => {
+          if (event.key === 'Enter') {
+            event.preventDefault();
+            focusNextInput(input);
+          } else if (event.key === 'Escape') {
+            event.preventDefault();
+            speakPhrase(input.dataset.answer);
+          }
+        });
+      });
+      document.querySelectorAll('.play-btn').forEach(button => {
+        button.addEventListener('click', () => speakPhrase(button.dataset.phrase));
+      });
+      updateStats();
+    }
+
+    function escapeHTML(value) {
+      return value.replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]));
+    }
+
+    function escapeAttr(value) {
+      return escapeHTML(value);
+    }
+
+    document.getElementById('focusFirst').addEventListener('click', () => {
+      const first = document.querySelector('.phrase-row:not(.hidden) input');
+      if (first) first.focus();
+    });
+
+    document.getElementById('showAnswers').addEventListener('click', () => {
+      document.querySelectorAll('.phrase-row').forEach(row => row.classList.add('show-answer'));
+    });
+
+    document.getElementById('hideAnswers').addEventListener('click', () => {
+      document.querySelectorAll('.phrase-row').forEach(row => row.classList.remove('show-answer'));
+    });
+
+    document.getElementById('showOnlyErrors').addEventListener('click', () => {
+      onlyErrors = true;
+      applyVisibility();
+    });
+
+    document.getElementById('showAll').addEventListener('click', () => {
+      onlyErrors = false;
+      applyVisibility();
+    });
+
+    renderFilters();
+    renderList();
+  </script>
+</body>
+</html>

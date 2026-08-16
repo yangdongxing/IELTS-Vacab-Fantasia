@@ -1,0 +1,1464 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IELTS Framework Trainer</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body { background-color: #F9FAFB; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+    /* Hide scrollbar for clean UI */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+    .animate-shake { animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both; }
+    @keyframes shake {
+      10%, 90% { transform: translate3d(-1px, 0, 0); }
+      20%, 80% { transform: translate3d(2px, 0, 0); }
+      30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+      40%, 60% { transform: translate3d(4px, 0, 0); }
+    }
+  </style>
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState, useEffect, useRef } = React;
+
+    // Full Application Data
+    const APP_DATA = [
+      {
+        id: "module-1",
+        title: "辩论/评价类二合一",
+        subtypes: [
+          {
+            id: "agree_disagree",
+            name: "是否同意类 (Agree/Disagree)",
+            sentences: [
+              // P1
+              {
+                id: "m1_ad_s1",
+                chinese: "普遍认为，[背景描述] 是 [公认权利/属性]。",
+                parts: [
+                  { type: "input", answer: "It is widely acknowledged that" },
+                  { type: "placeholder", text: "[背景描述]" },
+                  { type: "input", answer: "is" },
+                  { type: "placeholder", text: "[公认权利/属性]" },
+                  { type: "text", text: "." }
+                ]
+              },
+              {
+                id: "m1_ad_s2",
+                chinese: "因此，存在一种争议，主张 [题目极端建议]。",
+                parts: [
+                  { type: "input", answer: "Consequently, there is a controversy advocating for" },
+                  { type: "placeholder", text: "[题目极端建议]" },
+                  { type: "text", text: "." }
+                ]
+              },
+              {
+                id: "m1_ad_s3",
+                chinese: "虽然我承认 [承认合理部分] 是必要的，但我坚决不同意 [重复做法] 的提议，因为这不可避免地会导致严重的负面后果。",
+                parts: [
+                  { type: "input", answer: "While I admit that" },
+                  { type: "placeholder", text: "[承认合理部分]" },
+                  { type: "input", answer: "is necessity, I firmly disagree with the proposal of" },
+                  { type: "placeholder", text: "[重复做法]" },
+                  { type: "text", text: ", " },
+                  { type: "input", answer: "as it would inevitably lead to severe negative consequences." }
+                ]
+              },
+              // P2
+              {
+                id: "m1_ad_s4",
+                chinese: "诚然，支持/反对 [题目中的做法/趋势] 的论点源于一个合理的视角。",
+                parts: [
+                  { type: "input", answer: "Admittedly, the argument for or against" },
+                  { type: "placeholder", text: "[题目中的做法/趋势]" },
+                  { type: "input", answer: "stems from a reasonable perspective." }
+                ]
+              },
+              {
+                id: "m1_ad_s5",
+                chinese: "对于 [特定受众/弱势群体] 来说，[面临的困难/挑战] 可能是一个巨大的负担。",
+                parts: [
+                  { type: "input", answer: "For" },
+                  { type: "placeholder", text: "[特定受众/弱势群体]" },
+                  { type: "text", text: ", " },
+                  { type: "placeholder", text: "[面临的困难/挑战]" },
+                  { type: "input", answer: "can be an immense burden." }
+                ]
+              },
+              {
+                id: "m1_ad_s6",
+                chinese: "摆脱了这种 [负面状态/压力]，[受影响人群] 可以缓解他们的困境，这有效地保障了他们基本的 [福祉/权利]。",
+                parts: [
+                  { type: "input", answer: "Free from this" },
+                  { type: "placeholder", text: "[负面状态/压力]" },
+                  { type: "text", text: ", " },
+                  { type: "placeholder", text: "[受影响人群]" },
+                  { type: "input", answer: "could alleviate their plight, which effectively ensures their basic" },
+                  { type: "placeholder", text: "[福祉/权利]" },
+                  { type: "text", text: "." }
+                ]
+              },
+              // P3
+              {
+                id: "m1_ad_s7",
+                chinese: "尽管这些考量可能有道理，但实施 [题目做法] 是一个极不切实际的策略。",
+                parts: [
+                  { type: "input", answer: "valid as these considerations may be, implementing" },
+                  { type: "placeholder", text: "[题目做法]" },
+                  { type: "input", answer: "is a highly impractical strategy." }
+                ]
+              },
+              {
+                id: "m1_ad_s8",
+                chinese: "其不利后果体现在两个主要维度。",
+                parts: [
+                  { type: "input", answer: "There are two main dimensions to its adverse consequences." }
+                ]
+              },
+              {
+                id: "m1_ad_s9",
+                chinese: "在个人/心理层面上，[微观考量核心句]。",
+                parts: [
+                  { type: "input", answer: "On an individual or psychological level," },
+                  { type: "placeholder", text: "[微观考量核心句]" },
+                  { type: "text", text: "." }
+                ]
+              },
+              {
+                id: "m1_ad_s10",
+                chinese: "不同于鼓励 [正面行为] 的 [对比项]，这会引发灾难性的 [负面结果]。",
+                parts: [
+                  { type: "input", answer: "Unlike a" },
+                  { type: "placeholder", text: "[对比项]" },
+                  { type: "input", answer: ", which encourages" },
+                  { type: "placeholder", text: "[正面行为]" },
+                  { type: "input", answer: ", this would trigger a catastrophic" },
+                  { type: "placeholder", text: "[负面结果]" },
+                  { type: "text", text: "." }
+                ]
+              },
+              {
+                id: "m1_ad_s11",
+                chinese: "从更宏观的视角来看，[宏观考量核心句]。",
+                parts: [
+                  { type: "input", answer: "From a broader perspective," },
+                  { type: "placeholder", text: "[宏观考量核心句]" },
+                  { type: "text", text: "." }
+                ]
+              },
+              {
+                id: "m1_ad_s12",
+                chinese: "这需要巨大的 [资源/资金] 来用于 [维持运作的环节]。如果没有 [必要的支撑/收入]，整个系统将面临迅速崩溃，最终剥夺所有人的 [核心利益]。",
+                parts: [
+                  { type: "input", answer: "It requires enormous" },
+                  { type: "placeholder", text: "[资源/资金]" },
+                  { type: "input", answer: "for" },
+                  { type: "placeholder", text: "[维持运作的环节]" },
+                  { type: "text", text: ". " },
+                  { type: "input", answer: "Without the" },
+                  { type: "placeholder", text: "[必要的支撑/收入]" },
+                  { type: "input", answer: ", the entire system would face a rapid collapse, ultimately depriving everyone of" },
+                  { type: "placeholder", text: "[核心利益]" },
+                  { type: "text", text: "." }
+                ]
+              },
+              // P4
+              {
+                id: "m1_ad_s13",
+                chinese: "总而言之，关于 [核心话题] 的两难困境，源于对 [追求1] 和 [追求2] 的双重追求。",
+                parts: [
+                  { type: "input", answer: "In conclusion, the dilemma regarding" },
+                  { type: "placeholder", text: "[核心话题]" },
+                  { type: "input", answer: "stems from the dual pursuit of" },
+                  { type: "placeholder", text: "[追求1]" },
+                  { type: "input", answer: "and" },
+                  { type: "placeholder", text: "[追求2]" },
+                  { type: "text", text: "." }
+                ]
+              },
+              {
+                id: "m1_ad_s14",
+                chinese: "最理性的做法是建立一个 [建议的折中方案]。这种折中方案将 [追求1] 与 [追求2] 达到了最佳平衡。",
+                parts: [
+                  { type: "input", answer: "The most rational approach is to establish a" },
+                  { type: "placeholder", text: "[建议的折中方案]" },
+                  { type: "text", text: ". " },
+                  { type: "input", answer: "This compromise optimally balances" },
+                  { type: "placeholder", text: "[追求1]" },
+                  { type: "input", answer: "with" },
+                  { type: "placeholder", text: "[追求2]" },
+                  { type: "text", text: "." }
+                ]
+              }
+            ]
+          },
+          {
+            id: "pos_neg",
+            name: "利弊分析类 (Pos/Neg)",
+            sentences: [
+              // P1
+              {
+                id: "m1_pn_s1",
+                chinese: "在许多国家，[题目核心现象] 已成为一个显著的趋势。",
+                parts: [
+                  { type: "input", answer: "In many nations," },
+                  { type: "placeholder", text: "[题目核心现象]" },
+                  { type: "input", answer: "has become a prominent trend." }
+                ]
+              },
+              {
+                id: "m1_pn_s2",
+                chinese: "虽然这一现象引发了关于 [核心弊端] 的担忧，但我坚信这对个人和更广泛的社会来说都是一个极其积极的发展。",
+                parts: [
+                  { type: "input", answer: "While this phenomenon raises certain concerns regarding" },
+                  { type: "placeholder", text: "[核心弊端]" },
+                  { type: "input", answer: ", I firmly believe it is a highly positive development for both individuals and the broader society." }
+                ]
+              },
+              // P2
+              {
+                id: "m1_pn_s3",
+                chinese: "诚然，支持/反对 [题目中的做法/趋势] 的论点源于一个合理的视角。",
+                parts: [
+                  { type: "input", answer: "Admittedly, the argument for or against" },
+                  { type: "placeholder", text: "[题目中的做法/趋势]" },
+                  { type: "input", answer: "stems from a reasonable perspective." }
+                ]
+              },
+              {
+                id: "m1_pn_s4",
+                chinese: "对于 [特定受众/弱势群体] 来说，[面临的困难/挑战] 可能是一个巨大的负担。",
+                parts: [
+                  { type: "input", answer: "For" },
+                  { type: "placeholder", text: "[特定受众/弱势群体]" },
+                  { type: "text", text: ", " },
+                  { type: "placeholder", text: "[面临的困难/挑战]" },
+                  { type: "input", answer: "can be an immense burden." }
+                ]
+              },
+              {
+                id: "m1_pn_s5",
+                chinese: "不同于通常能确保 [原有好处] 的平衡状态，这一发展会引发灾难性的 [某种负面结果]。",
+                parts: [
+                  { type: "input", answer: "Unlike a balanced situation, which often ensures" },
+                  { type: "placeholder", text: "[原有好处]" },
+                  { type: "input", answer: ", this development would trigger a catastrophic" },
+                  { type: "placeholder", text: "[某种负面结果]" },
+                  { type: "text", text: "." }
+                ]
+              },
+              {
+                id: "m1_pn_s6",
+                chinese: "如果没有 [必要的支撑/收入]，他们将面临迅速崩溃，最终剥夺所有人的 [核心利益]。",
+                parts: [
+                  { type: "input", answer: "Without the" },
+                  { type: "placeholder", text: "[必要的支撑/收入]" },
+                  { type: "input", answer: ", they would face a rapid collapse, ultimately depriving everyone of" },
+                  { type: "placeholder", text: "[核心利益]" },
+                  { type: "text", text: "." }
+                ]
+              },
+              // P3
+              {
+                id: "m1_pn_s7",
+                chinese: "然而，我坚信这一趋势会产生实质性的积极成果。其益处体现在两个主要维度。",
+                parts: [
+                  { type: "input", answer: "However, I firmly believe this trend yields substantial positive outcomes. There are two main dimensions to its benefits." }
+                ]
+              },
+              {
+                id: "m1_pn_s8",
+                chinese: "在个人/心理层面上，[微观考量核心句]。",
+                parts: [
+                  { type: "input", answer: "On an individual or psychological level," },
+                  { type: "placeholder", text: "[微观考量核心句]" },
+                  { type: "text", text: "." }
+                ]
+              },
+              {
+                id: "m1_pn_s9",
+                chinese: "摆脱了 [某种束缚/负面状态]，个人可以将精力投入到 [具体领域]，最终提升他们的整体福祉。",
+                parts: [
+                  { type: "input", answer: "Free from" },
+                  { type: "placeholder", text: "[某种束缚/负面状态]" },
+                  { type: "input", answer: ", individuals can channel their energy into" },
+                  { type: "placeholder", text: "[具体领域]" },
+                  { type: "input", answer: ", ultimately enhancing their overall well-being." }
+                ]
+              },
+              {
+                id: "m1_pn_s10",
+                chinese: "从更宏观的视角来看，[宏观考量核心句]。",
+                parts: [
+                  { type: "input", answer: "From a broader perspective," },
+                  { type: "placeholder", text: "[宏观考量核心句]" },
+                  { type: "text", text: "." }
+                ]
+              },
+              {
+                id: "m1_pn_s11",
+                chinese: "这个蓬勃发展的 [相关领域/供应链] 创造了大量机会，并成为 [宏观经济/社会目标] 的强大引擎。",
+                parts: [
+                  { type: "input", answer: "This booming" },
+                  { type: "placeholder", text: "[相关领域/供应链]" },
+                  { type: "input", answer: "creates a multitude of opportunities and serves as a powerful engine for" },
+                  { type: "placeholder", text: "[宏观经济/社会目标]" },
+                  { type: "text", text: "." }
+                ]
+              },
+              // P4
+              {
+                id: "m1_pn_s12",
+                chinese: "总而言之，关于 [核心话题] 的两难困境，源于对 [追求1] 和 [追求2] 的双重追求。",
+                parts: [
+                  { type: "input", answer: "In conclusion, the dilemma regarding" },
+                  { type: "placeholder", text: "[核心话题]" },
+                  { type: "input", answer: "stems from the dual pursuit of" },
+                  { type: "placeholder", text: "[追求1]" },
+                  { type: "input", answer: "and" },
+                  { type: "placeholder", text: "[追求2]" },
+                  { type: "text", text: "." }
+                ]
+              },
+              {
+                id: "m1_pn_s13",
+                chinese: "我认为这种现象是完全积极的，因为它不仅提升了个人幸福感和自我表达，还为全球经济注入了活力。",
+                parts: [
+                  { type: "input", answer: "I believe this phenomenon is entirely positive, as it not only enhances personal happiness and self-expression but also injects vitality into the global economy." }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        id: "module-2",
+        title: "双边讨论类",
+        subtypes: [],
+        sentences: [
+          // Paragraph 1
+          {
+            id: "m2_s1",
+            chinese: "在许多国家，[客观现象描述] 已成为一个显著的趋势/由来已久的传统。",
+            parts: [
+              { type: "input", answer: "In many nations," },
+              { type: "placeholder", text: "[客观现象描述]" },
+              { type: "input", answer: "has become a prominent trend or long-standing tradition." }
+            ]
+          },
+          {
+            id: "m2_s2",
+            chinese: "本文将探讨 [观点A-较少偏向的一方] 的深远意义，同时也会分析主张 [观点B-主导/偏向的一方] 的论点。",
+            parts: [
+              { type: "input", answer: "This essay will explore the profound significance of" },
+              { type: "placeholder", text: "[观点A]" },
+              { type: "input", answer: ", while also analyzing the contention advocating for" },
+              { type: "placeholder", text: "[观点B]" },
+              { type: "text", text: "." }
+            ]
+          },
+          // Paragraph 2
+          {
+            id: "m2_s3",
+            chinese: "[观点A] 的益处主要体现在两个维度。",
+            parts: [
+              { type: "input", answer: "There are two main dimensions to the benefits of" },
+              { type: "placeholder", text: "[观点A]" },
+              { type: "text", text: "." }
+            ]
+          },
+          {
+            id: "m2_s4",
+            chinese: "在个人/实际层面上，[观点A的第一个好处/论点中心句]。",
+            parts: [
+              { type: "input", answer: "On an individual or practical level," },
+              { type: "placeholder", text: "[观点A的第一个好处]" },
+              { type: "text", text: "." }
+            ]
+          },
+          {
+            id: "m2_s5",
+            chinese: "摆脱了 [摆脱某种负面状态]，人们/个人可以 [具体解释好处1]。",
+            parts: [
+              { type: "input", answer: "Free from" },
+              { type: "placeholder", text: "[负面状态]" },
+              { type: "input", answer: ", individuals can" },
+              { type: "placeholder", text: "[具体解释好处1]" },
+              { type: "text", text: "." }
+            ]
+          },
+          {
+            id: "m2_s6",
+            chinese: "从更宏观/社会的视角来看，这种方法/趋势为 [观点A的第二个好处] 铺平了道路。",
+            parts: [
+              { type: "input", answer: "From a broader or societal perspective, this approach paves the way for" },
+              { type: "placeholder", text: "[观点A的第二个好处]" },
+              { type: "text", text: "." }
+            ]
+          },
+          {
+            id: "m2_s7",
+            chinese: "这些丰富充实的努力/活动不仅能促进 [进一步解释2a]，还能显著拓宽/提升 [进一步解释2b]。",
+            parts: [
+              { type: "input", answer: "Such enriching endeavors not only promote" },
+              { type: "placeholder", text: "[进一步解释2a]" },
+              { type: "input", answer: "but also significantly enhance" },
+              { type: "placeholder", text: "[进一步解释2b]" },
+              { type: "text", text: "." }
+            ]
+          },
+          // Paragraph 3
+          {
+            id: "m2_s8",
+            chinese: "然而，尽管有这些不可否认的益处，呼吁另一种观点同样是出于合理的务实考量。",
+            parts: [
+              { type: "input", answer: "However, valid as these undeniable benefits may be, the call for the alternative perspective is driven by equally valid practical concerns." }
+            ]
+          },
+          {
+            id: "m2_s9",
+            chinese: "从经济/教育/环境的立场来看，[观点B的第一个好处/论点中心句]。",
+            parts: [
+              { type: "input", answer: "From an economic, educational or environmental standpoint," },
+              { type: "placeholder", text: "[观点B的第一个好处]" },
+              { type: "text", text: "." }
+            ]
+          },
+          {
+            id: "m2_s10",
+            chinese: "不同于往往导致 [A带来的坏处] 的 [对比观点A的劣势]，[观点B] 防止/确保了 [具体解释观点B的优势]。",
+            parts: [
+              { type: "input", answer: "Unlike" },
+              { type: "placeholder", text: "[对比观点A的劣势]" },
+              { type: "input", answer: ", which often leads to" },
+              { type: "placeholder", text: "[A带来的坏处]" },
+              { type: "text", text: ", " },
+              { type: "placeholder", text: "[观点B]" },
+              { type: "input", answer: "ensures" },
+              { type: "placeholder", text: "[具体解释观点B的优势]" },
+              { type: "text", text: "." }
+            ]
+          },
+          {
+            id: "m2_s11",
+            chinese: "在家庭/社会层面上，[观点B的第二个好处]。",
+            parts: [
+              { type: "input", answer: "On a family or social level," },
+              { type: "placeholder", text: "[观点B的第二个好处]" },
+              { type: "text", text: "." }
+            ]
+          },
+          {
+            id: "m2_s12",
+            chinese: "这极大地缓解了那些总是挣扎于 [解决某个痛点] 的 [特定受众] 的巨大负担。",
+            parts: [
+              { type: "input", answer: "This significantly alleviates the immense burden on" },
+              { type: "placeholder", text: "[特定受众]" },
+              { type: "input", answer: "who constantly struggle to" },
+              { type: "placeholder", text: "[解决某个痛点]" },
+              { type: "text", text: "." }
+            ]
+          },
+          // Paragraph 4
+          {
+            id: "m2_s13",
+            chinese: "总而言之，关于 [题目核心冲突的话题] 的两难困境，源于对 [深层追求1] 和 [深层追求2] 的双重追求。",
+            parts: [
+              { type: "input", answer: "In conclusion, the dilemma regarding" },
+              { type: "placeholder", text: "[题目核心冲突的话题]" },
+              { type: "input", answer: "stems from the dual pursuit of" },
+              { type: "placeholder", text: "[深层追求1]" },
+              { type: "input", answer: "and" },
+              { type: "placeholder", text: "[深层追求2]" },
+              { type: "text", text: "." }
+            ]
+          },
+          {
+            id: "m2_s14",
+            chinese: "虽然 [观点A] 在 [总结A的好处] 中扮演着不可或缺的角色，但 [观点B] 有效地维持了 [总结B的好处]。",
+            parts: [
+              { type: "input", answer: "While" },
+              { type: "placeholder", text: "[观点A]" },
+              { type: "input", answer: "plays an indispensable role in" },
+              { type: "placeholder", text: "[总结A的好处]" },
+              { type: "text", answer: ", " },
+              { type: "placeholder", text: "[观点B]" },
+              { type: "input", answer: "effectively maintains" },
+              { type: "placeholder", text: "[总结B的好处]" },
+              { type: "text", text: "." }
+            ]
+          },
+          {
+            id: "m2_s15",
+            chinese: "最终，当局/个人必须在这两种方法之间取得微妙的平衡。",
+            parts: [
+              { type: "input", answer: "Ultimately, authorities or individuals must strike a delicate balance between these two approaches." }
+            ]
+          }
+        ]
+      },
+      {
+        id: "module-3",
+        title: "报告类",
+        subtypes: [],
+        sentences: [
+          // Paragraph 1
+          {
+            id: "m3_s1",
+            chinese: "鉴于 [宏观背景] 的快节奏，[受影响的人群/主体] 再也无法 [原有的理想状态]。",
+            parts: [
+              { type: "input", answer: "Given the fast pace of" },
+              { type: "placeholder", text: "[宏观背景]" },
+              { type: "text", text: ", " },
+              { type: "placeholder", text: "[受影响的人群/主体]" },
+              { type: "input", answer: "are no longer able to" },
+              { type: "placeholder", text: "[原有的理想状态]" }
+            ]
+          },
+          {
+            id: "m3_s2",
+            chinese: "本文将探讨推动这一趋势的主要因素，如 [原因1] 和 [原因2]，并为 [应对的主体] 提供切实的建议，以准备好迎接这些不可避免的变化/挑战。",
+            parts: [
+              { type: "input", answer: "This essay will explore the primary factors driving this trend, such as" },
+              { type: "placeholder", text: "[原因1]" },
+              { type: "input", answer: "and" },
+              { type: "placeholder", text: "[原因2]" },
+              { type: "input", answer: ", and suggest practical strategies for" },
+              { type: "placeholder", text: "[应对的主体]" },
+              { type: "input", answer: "to be ready to embrace these inevitable challenges." }
+            ]
+          },
+          // Paragraph 2
+          {
+            id: "m3_s3",
+            chinese: "导致 [相关领域] 这一巨大变化/问题的原因体现在两个主要维度。",
+            parts: [
+              { type: "input", answer: "There are two main dimensions to the causes of this huge change/problem in" },
+              { type: "placeholder", text: "[相关领域]" },
+              { type: "text", text: "." }
+            ]
+          },
+          {
+            id: "m3_s4",
+            chinese: "在经济层面上，快速发展的[具体现象A] 的快速发展已经 [产生的不良影响]。",
+            parts: [
+              { type: "input", answer: "On an economic level, the rapid development of" },
+              { type: "placeholder", text: "[具体现象A]" },
+              { type: "input", answer: "has" },
+              { type: "placeholder", text: "[产生的不良影响]" },
+              { type: "text", text: "." }
+            ]
+          },
+          {
+            id: "m3_s5",
+            chinese: "例如，[简单举例说明]，导致了 [导致的不良结果]。",
+            parts: [
+              { type: "input", answer: "For instance," },
+              { type: "placeholder", text: "[简单举例说明]" },
+              { type: "input", answer: ", leading to" },
+              { type: "placeholder", text: "[导致的不良结果]" },
+              { type: "text", text: "." }
+            ]
+          },
+          {
+            id: "m3_s7",
+            chinese: "从更宏观的视角来看，[维度B - 如全球经济] 扮演了关键角色。",
+            parts: [
+              { type: "input", answer: "From a broader perspective," },
+              { type: "placeholder", text: "[维度B]" },
+              { type: "input", answer: "plays a key role." }
+            ]
+          },
+          {
+            id: "m3_s8",
+            chinese: "如果没有 [必要条件]，[主体/系统] 将面临严重的中断，最终使 [理想目标] 几乎成为不可能。",
+            parts: [
+              { type: "input", answer: "Without" },
+              { type: "placeholder", text: "[必要条件]" },
+              { type: "text", text: ", " },
+              { type: "placeholder", text: "[主体/系统]" },
+              { type: "input", answer: "would face serious disruption, ultimately making" },
+              { type: "placeholder", text: "[理想目标]" },
+              { type: "input", answer: "almost impossible." }
+            ]
+          },
+          // Paragraph 3
+          {
+            id: "m3_s9",
+            chinese: "为了成功应对这些不确定的情况，[应对的主体] 必须采取积极的措施。",
+            parts: [
+              { type: "input", answer: "In order to successfully cope with these uncertain situations," },
+              { type: "placeholder", text: "[应对的主体]" },
+              { type: "input", answer: "must adopt positive measures." }
+            ]
+          },
+          {
+            id: "m3_s10",
+            chinese: "在实际操作政策层面上，发展 [建议1的核心举措] 是至关重要的。",
+            parts: [
+              { type: "input", answer: "On a practical policy level, it is crucial to develop" },
+              { type: "placeholder", text: "[建议1的核心举措]" },
+              { type: "text", text: "." }
+            ]
+          },
+          {
+            id: "m3_s11",
+            chinese: "通过不断地 [具体做法A] 和 [具体做法B]，[主体] 可以抓住新机遇/解决问题，而不是被 [施加压力的事物] 抛弃/摧毁。",
+            parts: [
+              { type: "input", answer: "By constantly" },
+              { type: "placeholder", text: "[具体做法A]" },
+              { type: "input", answer: "and" },
+              { type: "placeholder", text: "[具体做法B]" },
+              { type: "text", text: ", " },
+              { type: "placeholder", text: "[主体]" },
+              { type: "input", answer: "can seize new opportunities rather than being left behind by" },
+              { type: "placeholder", text: "[施加压力的事物]" },
+              { type: "text", text: "." }
+            ]
+          },
+          {
+            id: "m3_s12",
+            chinese: "在社会与道德层面上，人们必须发展对全球不平等现象的强烈社会责任感。",
+            parts: [
+              { type: "input", answer: "On a social and moral level, people must develop a strong sense of social responsibility toward global inequality." },
+              { type: "text", text: "." }
+            ]
+          },
+          {
+            id: "m3_s13",
+            chinese: "与其对 [某种困难] 感到消极或抗拒，他们更应该 [正确的积极做法]。",
+            parts: [
+              { type: "input", answer: "Instead of being negative or resistant to" },
+              { type: "placeholder", text: "[某种困难]" },
+              { type: "input", answer: ", they should" },
+              { type: "placeholder", text: "[正确的积极做法]" },
+              { type: "text", text: "." }
+            ]
+          },
+          {
+            id: "m3_s14",
+            chinese: "保持这种方法/态度是生存和成功的有效策略，最终确保全面福祉。",
+            parts: [
+              { type: "input", answer: "Maintaining this approach is an effective strategy for survival and success, which ultimately ensures comprehensive well-being." }
+            ]
+          },
+          // Paragraph 4
+          {
+            id: "m3_s15",
+            chinese: "总而言之，[相关领域] 中的频繁变化/严重问题是由 [原因1的名词化总结] 和 [原因2的名词化总结] 引起的。",
+            parts: [
+              { type: "input", answer: "In conclusion, the frequent changes or serious problems in" },
+              { type: "placeholder", text: "[相关领域]" },
+              { type: "input", answer: "are caused by" },
+              { type: "placeholder", text: "[原因1的名词化总结]" },
+              { type: "input", answer: "and" },
+              { type: "placeholder", text: "[原因2的名词化总结]" },
+              { type: "text", text: "." }
+            ]
+          },
+          {
+            id: "m3_s16",
+            chinese: "然而，通过 [建议1的动名词总结] 和 [建议2的动名词总结]，[应对的主体] 可以成功适应这个快节奏的社会/挑战并保护他们的未来。",
+            parts: [
+              { type: "input", answer: "However, by" },
+              { type: "placeholder", text: "[建议1的动名词总结]" },
+              { type: "input", answer: "and" },
+              { type: "placeholder", text: "[建议2的动名词总结]" },
+              { type: "text", text: ", " },
+              { type: "placeholder", text: "[应对的主体]" },
+              { type: "input", answer: "can successfully adapt to this fast-paced challenge and protect their future." }
+            ]
+          }
+        ]
+      }
+    ];
+
+    const TRAINING_MODULES = APP_DATA.flatMap(module => {
+      if (module.subtypes && module.subtypes.length > 0) {
+        return module.subtypes.map(subtype => ({
+          id: subtype.id,
+          title: subtype.name,
+          subtypes: [],
+          sentences: subtype.sentences
+        }));
+      }
+
+      return [module];
+    });
+
+    // Helper to clean textual input for comparison
+    const cleanText = (str) => {
+      // lower case, remove spaces and non-word characters for extremely forgiving validation
+      return str.toLowerCase().replace(/[^a-z0-9]/g, '');
+    };
+
+    const REPORT_EXAMPLES = {
+      m1_ad_s1: {
+        chinese: "普遍认为，【维护当地环境】是一项【基本的社会责任】。",
+        english: "It is widely acknowledged that maintaining local environments is a fundamental social responsibility."
+      },
+      m1_ad_s2: {
+        chinese: "因此，出现了一种争议，主张【政府应将家庭垃圾回收作为一项法律要求】。",
+        english: "Consequently, there is a controversy advocating for governments should make household waste recycling a legal requirement."
+      },
+      m1_ad_s3: {
+        chinese: "虽然我承认【提高回收率】是必要的，但我坚决不同意【实施严格法规和高额罚款】的提议，因为这不可避免地会导致严重的负面后果。",
+        english: "While I admit that increasing recycling rates is necessary, I firmly disagree with the proposal of imposing strict regulations and heavy fines, as it would inevitably lead to severe negative consequences."
+      },
+      m1_ad_s4: {
+        chinese: "诚然，支持【这种立法手段】的论点源于一个合理的视角。",
+        english: "Admittedly, the arguments for this legislative approach stem from a reasonable perspective."
+      },
+      m1_ad_s5: {
+        chinese: "对于【环保倡导者】来说，【家庭垃圾的不断积累】可能是一个巨大的负担。",
+        english: "For environmental advocates, the continuous accumulation of domestic waste could be an immense burden."
+      },
+      m1_ad_s6: {
+        chinese: "摆脱了这种【严重的污染】，【当地环境】的困境就能得到缓解，这有效地确保了它们基本的【全面健康与福祉】。",
+        english: "Free from this heavy pollution, local environments can alleviate their plight, which effectively ensures their basic comprehensive well-being."
+      },
+      m1_ad_s7: {
+        chinese: "尽管这些【考量】有其合理性，但实施【强制回收法律】是一种极不切实际的策略。",
+        english: "Valid as these considerations may be, implementing compulsory recycling laws is a highly impractical strategy."
+      },
+      m1_ad_s8: {
+        chinese: "其不利后果主要体现在两个维度。",
+        english: "There are two main dimensions to its adverse consequences."
+      },
+      m1_ad_s9: {
+        chinese: "在个人/心理层面上，【迫使公民遵守死板的限制会破坏他们对个人自由的关注，并引发严重的财务焦虑】。",
+        english: "On a individual/psychological level, forcing citizens to conform to rigid restrictions undermines their focus on personal freedom and triggers severe financial anxiety."
+      },
+      m1_ad_s10: {
+        chinese: "不同于鼓励【自发环保习惯】的【自愿性社区项目】，这会引发【公众怒火的灾难性上升和自律性的缺乏】。",
+        english: "Unlike voluntary community programs that encourage spontaneous eco-friendly habits, this would trigger a catastrophic rise in public anger and a lack of self-discipline."
+      },
+      m1_ad_s11: {
+        chinese: "从更宏观的视角来看，【强制执行会耗尽公共资源并破坏市场繁荣】。",
+        english: "From a broader perspective, mandatory enforcement exhausts public resources and undermines market prosperity."
+      },
+      m1_ad_s12: {
+        chinese: "这需要巨额【资金】来【监督居民和强制执行规定】。如果没有【财政的可持续性】，整个系统将面临迅速崩溃，最终剥夺【每个人的心理健康】。",
+        english: "This requires enormous funds for supervising residents and enforcing regulations. Without financial sustainability, the entire system would face a rapid collapse, ultimately depriving everyone of their psychological well-being."
+      },
+      m1_ad_s13: {
+        chinese: "总而言之，关于【家庭垃圾管理】的两难困境，源于对【环境保护】和【个人自由】的双重追求。",
+        english: "In conclusion, the dilemma regarding household waste management stems from the dual pursuit of environmental preservation and individual liberty."
+      },
+      m1_ad_s14: {
+        chinese: "最理性的方法是建立一个【政府主导的激励计划】。这种折中方案在【生态目标】与【个人自由】之间取得了最佳平衡。",
+        english: "The most rational approach is to establish a government-led incentive scheme. This compromise optimally balances ecological goals with personal freedom."
+      },
+      m1_pn_s1: {
+        chinese: "在许多国家，【全球时尚现象对人们穿着方式的广泛影响】已成为一个突出的趋势。",
+        english: "In many nations, the widespread influence of global fashion phenomenon on the way people dress has become a prominent trend."
+      },
+      m1_pn_s2: {
+        chinese: "虽然这种现象引发了关于【丧失文化认同】的某些担忧，但我坚信这对个人和更广泛的社会来说都是一个极其积极的发展。",
+        english: "While this phenomenon raises certain concerns regarding the loss of cultural identity, I firmly believe that it is a highly positive development for both individuals and the broader society."
+      },
+      m1_pn_s3: {
+        chinese: "诚然，反对【全球时尚趋势主导地位】的论点源于一个合理的视角。",
+        english: "Admittedly, the arguments against the dominance of global fashion trends stem from a reasonable perspective."
+      },
+      m1_pn_s4: {
+        chinese: "对于【深植于传统文化的保守人士】来说，【当地服装遗产的受到侵蚀】可能是一个巨大的负担。",
+        english: "For conservative individuals deeply rooted in traditional cultures, the erosion of local clothing heritage can be an immense burden."
+      },
+      m1_pn_s5: {
+        chinese: "不同于通常能确保【文化遗产】的平衡状况，这一发展将引发【一种灾难性的局面，即传统工艺的产业系统将面临迅速崩溃】。",
+        english: "Unlike a balanced situation, which often ensures cultural heritage, this development would trigger a catastrophic situation where the company system of traditional craft would face a rapid collapse."
+      },
+      m1_pn_s6: {
+        chinese: "失去了【当地的传统工艺】，它们将面临迅速崩溃，最终剥夺【每个人的独特文化认同】。",
+        english: "Without the local traditional craftsmanship, they would face a rapid collapse, ultimately depriving everyone of unique cultural identity."
+      },
+      m1_pn_s7: {
+        chinese: "然而，我坚信这一趋势会产生重大的积极结果。其益处主要体现在两个维度。",
+        english: "However, I firmly believe this trend yields substantial positive outcomes. There are two main dimensions to its benefits."
+      },
+      m1_pn_s8: {
+        chinese: "在个人层面上，【时尚的全球化赋予了个人追求归属感和寻找自我认同的自由】。",
+        english: "On a personal level, the globalization of fashion grants individuals the freedom to pursue a sense of belonging and search for identity."
+      },
+      m1_pn_s9: {
+        chinese: "摆脱了【文化的束缚】，个人可以将精力集中在【表达其不断发展的个性】上，最终提升他们的全面健康与福祉。",
+        english: "Free from cultural constraints, individuals can channel their energy into expressing their evolving personalities, ultimately enhancing their overall well-being."
+      },
+      m1_pn_s10: {
+        chinese: "从更宏观的视角来看，【其对全球经济的影响是深远的】。",
+        english: "From a broader perspective, the impact on the global economy is profound."
+      },
+      m1_pn_s11: {
+        chinese: "这一蓬勃发展的【国际时尚产业】为设计师和制造商创造了大量机会，它也成为了【跨文化交流和经济增长】的强大引擎。",
+        english: "This booming international fashion industry creates a multitude of opportunities for designers and manufacturers, and it serves as a powerful engine for cross-cultural exchange and economic growth."
+      },
+      m1_pn_s12: {
+        chinese: "总而言之，关于【全球时尚趋势】的两难困境，源于对【文化认同的需求】和对【个人自由的渴望】的双重追求。",
+        english: "In conclusion, the dilemma regarding global fashion trends stems from the dual pursuit of the need for cultural identity and the desire for personal freedom."
+      },
+      m1_pn_s13: {
+        chinese: "我认为这种现象是完全积极的，因为它不仅提升了个人幸福感和自我表达，还为全球经济注入了活力。",
+        english: "I believe this phenomenon is entirely positive, as it not only enhances personal happiness and self-expression but also injects vitality into the global economy."
+      },
+      m2_s1: {
+        chinese: "在许多国家，【延长暑假的学校做法】已成为一个【由来已久的传统】。",
+        english: "In many nations, the practice of closing schools for extended summer holidays has become a long-standing tradition."
+      },
+      m2_s2: {
+        chinese: "本文将探讨【保留长假】的深远意义，同时也会分析主张【缩短学校假期】的论点。",
+        english: "This essay will explore the profound significance of maintaining long vacations, while also analysing the contention advocating for shorter school holidays."
+      },
+      m2_s3: {
+        chinese: "【长假】的益处主要体现在两个维度。",
+        english: "There are two main dimensions to the benefits of long school holidays."
+      },
+      m2_s4: {
+        chinese: "在个人层面上，【它们为学生提供了一个满足精神需求的独特机会】。",
+        english: "On an individual level, they provide students with a unique opportunity to satisfy their non-material needs."
+      },
+      m2_s5: {
+        chinese: "摆脱了【沉重的学业考核压力】，个人可以【自由地将精力投入个人兴趣和爱好】。",
+        english: "Free from the intense pressure of academic assessments, individuals can freely channel their energy into personal interests and hobbies."
+      },
+      m2_s6: {
+        chinese: "从更宏观的视角来看，这种趋势为【青少年的全面发展】铺平了道路。",
+        english: "From a more broader perspective, this trend paves the way for comprehensive youth development."
+      },
+      m2_s7: {
+        chinese: "这些丰富充实的活动不仅能促进【他们的心理健康】，还能显著拓宽【他们的现实世界经验】。",
+        english: "Such enriching endeavors not only promote their psychological well-being, but also significantly enhance their real-world experience."
+      },
+      m2_s8: {
+        chinese: "然而，尽管有这些不可否认的益处，呼吁另一种观点同样是出于合理的务实考量。",
+        english: "However, valid as these undeniable benefits may be, the call for the alternative perspective is driven by equally valid practical concerns."
+      },
+      m2_s9: {
+        chinese: "从教育的立场来看，【紧凑的假期结构确保了学业的持续进步】。",
+        english: "From an educational standpoint, a condensed holiday structure ensures continuous academic progress."
+      },
+      m2_s10: {
+        chinese: "不同于往往导致【缺乏自律】的【过长的空白期】，【短假】防止了【严重的学业倒退】。",
+        english: "Unlike extended gaps which often leads to a lack of self-discipline, shorter holidays prevent severe academic regression."
+      },
+      m2_s11: {
+        chinese: "在家庭层面上，【修改后的时间表让了照顾孩子更简单】。",
+        english: "On a family level, a revised schedule makes childcare easier for parents."
+      },
+      m2_s12: {
+        chinese: "这极大地缓解了那些总是挣扎于【寻找负担得起的日托服务】的【双职工父母】的【巨大负担】。",
+        english: "This significantly alleviates the immense burden on working parents who constantly struggle to secure affordable daycare services."
+      },
+      m2_s13: {
+        chinese: "总而言之，关于【学校假期的最佳时长】的两难困境，源于对【个人探索】和【实际学业稳定】的双重追求。",
+        english: "In conclusion, the dilemma regarding the optimal duration of school holidays stems from the dual pursuit of individual exploration and practical academic stability."
+      },
+      m2_s14: {
+        chinese: "虽然【长假】在【促进个人成长】中扮演着不可或缺的角色，但【短假】有效地维持了【学业连续性和家庭的维持】。",
+        english: "While long vacations play an indispensable role in fostering personal growth, shorter holidays effectively maintain academic continuity and family sustainability."
+      },
+      m2_s15: {
+        chinese: "最终，当局必须在这两种方法之间取得微妙的平衡。",
+        english: "Ultimately, authorities must strike a delicate balance between these two approaches."
+      },
+      m3_s1: {
+        chinese: "鉴于【全球市场商业化】的快节奏，【弱势群体】【再也无法】享受免受饥饿威胁的稳定粮食安全。",
+        english: "Given the fast pace of global market commercialization, vulnerable populations are no longer able to enjoy food security free from the threat of starvation."
+      },
+      m3_s2: {
+        chinese: "本文将探讨推动这一趋势的主要因素，如【资源分配不均】和【物流供应链中断】，并为【各国政府】提供切实的建议，以准备好迎接这些不可避免的挑战。",
+        english: "This essay will explore the main factors driving this trend, such as unequal resource distribution and logistical supply chain disruptions, and provide practical strategies for national governments to be ready to embrace these inevitable challenges."
+      },
+      m3_s3: {
+        chinese: "导致【全球粮食供应】这一严重问题的原因体现在两个主要维度。",
+        english: "There are two main dimensions to the causes of this huge change in global food supply."
+      },
+      m3_s4: {
+        chinese: "在【经济】层面上，【经济作物种植】的快速发展已经【剥夺了当地居民负担得起的粮食选择】。",
+        english: "On an economic level, the rapid development of cash-crop cultivation has deprived local residents of affordable food choices."
+      },
+      m3_s5: {
+        chinese: "例如，【跨国公司垄断专利种子】，导致了【高昂的粮食价格，这给低收入家庭带来了巨大负担】。",
+        english: "For instance, multinational corporations monopolize patented seeds, leading to very high grain prices that impose an immense burden on low-income households."
+      },
+      m3_s7: {
+        chinese: "从更宏观的视角来看，【地缘政治冲突和地区不稳定】扮演了关键角色。",
+        english: "From a broader perspective, geopolitical conflicts and regional instability play a key role."
+      },
+      m3_s8: {
+        chinese: "如果没有【稳定的人道主义通道】，【援助组织】将面临严重的中断，最终使【实现可持续粮食安全】几乎成为不可能。",
+        english: "Without stable humanitarian access, aid organizations would face serious disruption, ultimately making achieving sustainable food security almost impossible."
+      },
+      m3_s9: {
+        chinese: "为了成功应对这些不确定的情况，【国际社会】必须采取积极的措施。",
+        english: "In order to successfully cope with these uncertain situations, the international community must adopt positive measures."
+      },
+      m3_s10: {
+        chinese: "在【实际政策】层面上，发展【政府主导的粮食储备系统】是至关重要的。",
+        english: "On a practical policy level, it is crucial to develop government-led food storage systems."
+      },
+      m3_s11: {
+        chinese: "通过不断地【补贴农业生产】和【优化用于粮食输送的大众运输网络】，【当局】可以解决问题，【而不是被】不可预测的市场波动【摧毁】。",
+        english: "By continuously subsidizing agricultural production and optimizing mass transit networks for food delivery, authorities can solve problems rather than being destroyed by unpredictable market fluctuations."
+      },
+      m3_s12: {
+        chinese: "在社会与道德层面上，人们必须发展对全球不平等现象的强烈社会责任感。",
+        english: "On a social and moral level, people must develop a strong sense of social responsibility toward global inequality."
+      },
+      m3_s13: {
+        chinese: "与其对【国际粮食援助的高昂财政成本】感到消极或抗拒，他们更应该【积极参与跨国合作以缓解他们的困境】。",
+        english: "Instead of feeling negative or resistant to the high financial costs of international food relief, they should actively participate in cross-border cooperation to alleviate their plight."
+      },
+      m3_s14: {
+        chinese: "保持这种方法是生存和成功的有效策略，这最终【确保了全面的健康与福祉】。",
+        english: "Maintaining this approach is an effective strategy for survival and success, which ultimately ensures comprehensive well-being."
+      },
+      m3_s15: {
+        chinese: "总而言之，【全球粮食分配】中的严重问题是由【不受监管的市场商业化】和【持续的地区冲突】引起的。",
+        english: "In conclusion, the severe problem in global food distribution is caused by unregulated market commercialization and persistent regional conflicts."
+      },
+      m3_s16: {
+        chinese: "然而，通过【补贴农业物流】和【加强国际人道主义合作】，【人类社会】【可以成功适应这个挑战并保护他们的未来】。",
+        english: "However, through subsidizing agricultural logistics and enhancing international humanitarian cooperation, human society can successfully adapt to this fast-paced challenge and protect their future."
+      }
+    };
+
+    const SentenceTrainer = ({ sentenceData, onComplete, totalSentences, currentSentenceIndex, onNavigate }) => {
+      // Map to keep track of user input answers for all `input` parts
+      const inputIndices = sentenceData.parts
+        .map((p, i) => p.type === 'input' ? i : -1)
+        .filter(i => i !== -1);
+      
+      const [values, setValues] = useState({});
+      const [statuses, setStatuses] = useState({}); // 'correct', 'error', 'none'
+      const [showHints, setShowHints] = useState({}); // { index: boolean }
+      const [exampleValue, setExampleValue] = useState('');
+      const [exampleStatus, setExampleStatus] = useState('none');
+      const [showExampleHint, setShowExampleHint] = useState(false);
+      const [isChecked, setIsChecked] = useState(false);
+      const [allCorrect, setAllCorrect] = useState(false);
+      const [shake, setShake] = useState(false);
+      
+      const inputRefs = useRef({});
+      const exampleRef = useRef(null);
+
+      // Reset state when sentence changes
+      useEffect(() => {
+        setValues({});
+        setStatuses({});
+        setShowHints({});
+        setExampleValue('');
+        setExampleStatus('none');
+        setShowExampleHint(false);
+        setIsChecked(false);
+        setAllCorrect(false);
+        setShake(false);
+        // auto focus the example first when it exists; otherwise fall back to the first skeleton input
+        if (sentenceData.example && exampleRef.current) {
+          exampleRef.current.focus();
+        } else if (inputIndices.length > 0 && inputRefs.current[inputIndices[0]]) {
+          inputRefs.current[inputIndices[0]].focus();
+        }
+      }, [sentenceData.id]);
+
+      // ESC 快捷键：显示/隐藏当前聚焦输入框的提示
+      useEffect(() => {
+        const handleEsc = (e) => {
+          if (e.key === 'Escape') {
+            if (sentenceData.example && exampleRef.current === document.activeElement) {
+              setShowExampleHint(prev => !prev);
+              return;
+            }
+
+            const focusedIdx = inputIndices.find(idx => inputRefs.current[idx] === document.activeElement);
+            if (focusedIdx !== undefined) {
+              setShowHints(prev => ({ ...prev, [focusedIdx]: !prev[focusedIdx] }));
+            }
+          }
+        };
+        document.addEventListener('keydown', handleEsc);
+        return () => document.removeEventListener('keydown', handleEsc);
+      }, [statuses, inputIndices]);
+
+      const handleChange = (e, index) => {
+        const newValue = e.target.value;
+        const cleanedValue = cleanText(newValue);
+        const cleanedAnswer = cleanText(sentenceData.parts[index].answer);
+        let nextStatus = 'none';
+
+        if (cleanedValue) {
+          nextStatus = cleanedValue === cleanedAnswer
+            ? 'correct'
+            : cleanedAnswer.startsWith(cleanedValue)
+              ? 'none'
+              : 'error';
+        }
+
+        setValues({ ...values, [index]: newValue });
+        setStatuses({ ...statuses, [index]: nextStatus });
+      };
+
+      const getLiveStatus = (value, answer) => {
+        const cleanedValue = cleanText(value);
+        const cleanedAnswer = cleanText(answer);
+
+        if (!cleanedValue) return 'none';
+        if (cleanedValue === cleanedAnswer) return 'correct';
+        return cleanedAnswer.startsWith(cleanedValue) ? 'none' : 'error';
+      };
+
+      const handleExampleChange = (e) => {
+        const newValue = e.target.value;
+        setExampleValue(newValue);
+
+        if (sentenceData.example) {
+          setExampleStatus(getLiveStatus(newValue, sentenceData.example.english));
+        }
+      };
+
+      const handleKeyDown = (e, index) => {
+        if (e.key === 'Enter') {
+          handleCheck();
+        }
+      };
+
+      const handleCheck = () => {
+        let isPerfect = true;
+        const newStatuses = {};
+        
+        inputIndices.forEach(idx => {
+          const userVal = values[idx] || '';
+          const correctAns = sentenceData.parts[idx].answer;
+          
+          if (cleanText(userVal) === cleanText(correctAns)) {
+            newStatuses[idx] = 'correct';
+          } else {
+            newStatuses[idx] = 'error';
+            isPerfect = false;
+          }
+        });
+        
+        setStatuses(newStatuses);
+        setIsChecked(true);
+        
+        if (sentenceData.example) {
+          const isExamplePerfect = cleanText(exampleValue) === cleanText(sentenceData.example.english);
+          setExampleStatus(isExamplePerfect ? 'correct' : 'error');
+          isPerfect = isPerfect && isExamplePerfect;
+        }
+        
+        if (isPerfect) {
+          setAllCorrect(true);
+          // Auto move to next after briefly showing success
+          setTimeout(() => {
+            if (onComplete) onComplete();
+          }, 1000);
+        } else {
+          setShake(true);
+          setTimeout(() => setShake(false), 500);
+        }
+      };
+
+      const toggleHint = (index) => {
+        setShowHints(prev => ({ ...prev, [index]: !prev[index] }));
+      };
+
+      const speakExample = () => {
+        if (!sentenceData.example || !('speechSynthesis' in window)) return;
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(sentenceData.example.english);
+        utterance.lang = 'en-US';
+        utterance.rate = 0.9;
+        window.speechSynthesis.speak(utterance);
+      };
+
+      return (
+        <div className={`bg-white rounded-2xl shadow-sm border border-gray-100 p-8 w-full max-w-4xl mx-auto ${shake ? 'animate-shake' : ''}`}>
+          <h2 className="text-xl font-bold text-gray-800 mb-6 flex items-center gap-2">
+            <span className="text-blue-500">📝</span> 翻译与默写
+          </h2>
+
+          <div className="mb-6 flex flex-wrap items-center gap-2">
+            {Array.from({ length: totalSentences }, (_, idx) => (
+              <button
+                key={idx}
+                onClick={() => onNavigate(idx)}
+                className={`w-9 h-9 rounded-lg text-sm font-bold transition-all ${
+                  idx === currentSentenceIndex
+                    ? 'bg-blue-600 text-white shadow-md shadow-blue-200'
+                    : idx < currentSentenceIndex
+                      ? 'bg-green-50 text-green-700 border border-green-100 hover:bg-green-100'
+                      : 'bg-gray-50 text-gray-500 border border-gray-200 hover:bg-gray-100 hover:text-gray-700'
+                }`}
+              >
+                {idx + 1}
+              </button>
+            ))}
+          </div>
+
+          {sentenceData.example && (
+            <div className="mb-10 border-b border-gray-100 pb-8">
+              <div className="flex items-center justify-between gap-4 mb-4">
+                <h3 className="text-lg font-bold text-gray-800 flex items-center gap-2">
+                  <span className="text-emerald-500">📌</span> 对应例句
+                  <button
+                    type="button"
+                    onClick={speakExample}
+                    className="w-8 h-8 rounded-lg border border-emerald-200 bg-white text-emerald-600 text-sm font-black hover:bg-emerald-50 hover:border-emerald-300 transition-colors"
+                    title="朗读英文例句"
+                    aria-label="朗读英文例句"
+                  >
+                    ▶
+                  </button>
+                </h3>
+                <span className={`text-xs font-bold px-3 py-1 rounded-full ${
+                  exampleStatus === 'correct'
+                    ? 'bg-green-100 text-green-700'
+                    : exampleStatus === 'error'
+                      ? 'bg-red-100 text-red-700'
+                      : 'bg-gray-100 text-gray-500'
+                }`}>
+                  {exampleStatus === 'correct' ? '例句正确' : exampleStatus === 'error' ? '需要修正' : '等待输入'}
+                </span>
+              </div>
+
+              <div className="text-base text-gray-700 font-medium mb-4 p-4 bg-emerald-50 rounded-xl border border-emerald-100 leading-relaxed">
+                {sentenceData.example.chinese.split(/(【.*?】)/).map((segment, i) => {
+                  if (segment.startsWith('【') && segment.endsWith('】')) {
+                    return <span key={i} className="text-emerald-700 font-bold">{segment}</span>;
+                  }
+                  return segment;
+                })}
+              </div>
+
+              <textarea
+                ref={exampleRef}
+                value={exampleValue}
+                onChange={handleExampleChange}
+                placeholder="请输入完整英文例句"
+                spellCheck="false"
+                className={`w-full min-h-[120px] resize-y rounded-xl border-2 p-4 text-base leading-relaxed outline-none transition-all font-mono ${
+                  exampleStatus === 'correct'
+                    ? 'border-green-400 bg-green-50 text-green-700'
+                    : exampleStatus === 'error'
+                      ? 'border-red-400 bg-red-50 text-red-700'
+                      : 'border-gray-200 bg-gray-50 focus:bg-white focus:border-blue-400 focus:shadow-[0_0_0_3px_rgba(59,130,246,0.1)]'
+                }`}
+              />
+              {showExampleHint && (
+                <div className="mt-3 bg-gray-800 text-white text-sm px-4 py-3 rounded-lg shadow-lg border border-gray-700 whitespace-pre-wrap leading-relaxed">
+                  {sentenceData.example.english}
+                </div>
+              )}
+            </div>
+          )}
+          
+          <div className="text-lg text-gray-700 font-medium mb-8 p-4 bg-gray-50 rounded-xl border border-gray-100">
+            {sentenceData.chinese}
+          </div>
+
+          <div className="flex flex-wrap items-center gap-y-4 gap-x-2 text-lg font-mono">
+            {sentenceData.parts.map((part, index) => {
+              if (part.type === 'placeholder') {
+                return (
+                  <span key={index} className="px-3 py-1.5 bg-blue-500 text-white rounded-md text-sm font-sans tracking-wide shadow-sm self-baseline mt-1">
+                    {part.text}
+                  </span>
+                );
+              }
+              
+              if (part.type === 'text') {
+                return (
+                  <span key={index} className="px-1 py-1.5 text-gray-800 font-sans self-baseline mt-1">
+                    {part.text}
+                  </span>
+                );
+              }
+
+              // Input block
+              const status = statuses[index] || 'none';
+              let inputClass = "px-3 py-1.5 bg-gray-50 border-2 rounded-lg outline-none transition-all focus:bg-white ";
+              
+              if (status === 'correct') {
+                inputClass += "border-green-400 bg-green-50 text-green-700 font-semibold";
+              } else if (status === 'error') {
+                inputClass += "border-red-400 bg-red-50 text-red-700";
+              } else {
+                inputClass += "border-gray-200 focus:border-blue-400 focus:shadow-[0_0_0_3px_rgba(59,130,246,0.1)]";
+              }
+
+              // Intelligently size the input based on the truth answer length and current input
+              const currentInputLength = (values[index] || '').length;
+              const targetLength = Math.max(part.answer.length, currentInputLength, 3);
+              const estimatedWidth = `calc(${targetLength}ch + 2rem)`;
+
+              return (
+                <div key={index} className="flex flex-col relative group">
+                  <div className="flex items-center gap-1 relative">
+                    <input
+                      ref={el => inputRefs.current[index] = el}
+                      type="text"
+                      style={{ width: estimatedWidth }}
+                      className={inputClass}
+                      value={values[index] || ''}
+                      onChange={(e) => handleChange(e, index)}
+                      onKeyDown={(e) => handleKeyDown(e, index)}
+                      onBlur={() => showHints[index] && setShowHints(prev => ({ ...prev, [index]: false }))}
+                      spellCheck="false"
+                      autoComplete="off"
+                      readOnly={status === 'correct'}
+                    />
+                    {status === 'correct' && (
+                      <span className="absolute right-2 top-1/2 -translate-y-1/2 text-green-500 font-bold">✓</span>
+                    )}
+                  </div>
+                  
+                  {(status === 'error' || showHints[index]) && (
+                    <div className="absolute top-full left-0 mt-2 z-10 w-max">
+                      {showHints[index] ? (
+                        <div className="bg-gray-800 text-white text-sm px-4 py-2 rounded-lg shadow-lg border border-gray-700 animate-fade-in whitespace-pre-wrap max-w-sm">
+                          {part.answer}
+                        </div>
+                      ) : (
+                        <button 
+                          onClick={() => toggleHint(index)}
+                          className="text-xs text-red-500 hover:text-red-600 bg-red-50 px-2 py-1 rounded cursor-pointer font-sans transition-colors"
+                        >
+                          Show Hint 💡
+                        </button>
+                      )}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+
+          <div className="mt-12 flex justify-between items-center border-t border-gray-100 pt-6">
+            <div className="text-gray-400 text-sm">
+              ✨ 提示：可以忽略大小写和标点符号。使用 <kbd className="bg-gray-100 px-1 border rounded">Tab</kbd> 键切换输入框，<kbd className="bg-gray-100 px-1 border rounded">Enter</kbd> 键快速校验，<kbd className="bg-gray-100 px-1 border rounded">ESC</kbd> 键显示/隐藏提示。
+            </div>
+            <button 
+              onClick={handleCheck}
+              className={`px-8 py-3 rounded-xl font-bold text-white shadow-md transition-all active:scale-95 ${
+                allCorrect ? 'bg-green-500 hover:bg-green-600' : 'bg-blue-600 hover:bg-blue-700 hover:shadow-lg'
+              }`}
+            >
+              {allCorrect ? 'Perfect! 继续 ➔' : '校验 (Check)'}
+            </button>
+          </div>
+        </div>
+      );
+    };
+
+    const App = () => {
+      const [activeModule, setActiveModule] = useState(TRAINING_MODULES[0].id);
+      const [activeSubtype, setActiveSubtype] = useState(null);
+      const [currentSentenceIndex, setCurrentSentenceIndex] = useState(0);
+
+      // Get current view data
+      const module = TRAINING_MODULES.find(m => m.id === activeModule);
+      const subtype = module.subtypes.find(s => s.id === activeSubtype);
+      const sentences = subtype ? subtype.sentences : module.sentences;
+      const baseSentence = sentences[currentSentenceIndex];
+      const sentence = baseSentence
+        ? { ...baseSentence, example: REPORT_EXAMPLES[baseSentence.id] }
+        : null;
+
+      const handleModuleChange = (modId) => {
+        const mod = TRAINING_MODULES.find(m => m.id === modId);
+        setActiveModule(modId);
+        if (mod.subtypes && mod.subtypes.length > 0) {
+          setActiveSubtype(mod.subtypes[0].id);
+        } else {
+          setActiveSubtype(null);
+        }
+        setCurrentSentenceIndex(0);
+      };
+
+      const handleSubtypeChange = (subId) => {
+        setActiveSubtype(subId);
+        setCurrentSentenceIndex(0);
+      };
+
+      const handleComplete = () => {
+        if (currentSentenceIndex < sentences.length - 1) {
+          setCurrentSentenceIndex(prev => prev + 1);
+        } else {
+          // Module Completed
+          alert("🎉 恭喜！这一节的所有句式骨架已经完成练习。");
+        }
+      };
+
+      const getParagraphTitle = (id) => {
+        const idMap = {
+          m1_ad_s1: "Paragraph 1: 引入段", m1_ad_s4: "Paragraph 2: 主体段 1 (单点说痛点)", m1_ad_s7: "Paragraph 3: 主体段 2 (双维反驳)", m1_ad_s13: "Paragraph 4: 结尾段 (万能归纳)",
+          m1_pn_s1: "Paragraph 1: 引入段", m1_pn_s3: "Paragraph 2: 主体段 1 (单点说痛点)", m1_pn_s7: "Paragraph 3: 主体段 2 (双维推销)", m1_pn_s12: "Paragraph 4: 结尾段 (万能归纳)",
+          m2_s1: "Paragraph 1: 引入段 (绝杀预告)", m2_s3: "Paragraph 2: 主体段 1 (探讨观点 A)", m2_s8: "Paragraph 3: 主体段 2 (探讨观点 B)", m2_s13: "Paragraph 4: 结尾段 (寻求微妙平衡)",
+          m3_s1: "Paragraph 1: 引入段", m3_s3: "Paragraph 2: 主体段 1 (Causes 原因段)", m3_s9: "Paragraph 3: 主体段 2 (Solutions 建议段)", m3_s15: "Paragraph 4: 结尾段 (动名词极简总结)",
+        };
+        return idMap[id];
+      };
+
+      return (
+        <div className="flex h-screen overflow-hidden bg-gray-50">
+          
+          {/* Sidebar */}
+          <div className="w-72 bg-white border-r border-gray-200 flex flex-col shadow-sm">
+            <div className="p-6 border-b border-gray-100">
+              <h1 className="text-2xl font-black bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+                IELTS Trainer
+              </h1>
+              <p className="text-xs text-gray-500 font-medium mt-1 uppercase tracking-wider">Framework Typing App</p>
+            </div>
+            
+            <div className="p-4 flex-1 overflow-y-auto space-y-2">
+              <div className="text-xs font-bold text-gray-400 mb-3 ml-2 tracking-wide">作文骨架</div>
+              {TRAINING_MODULES.map(m => (
+                <button
+                  key={m.id}
+                  onClick={() => handleModuleChange(m.id)}
+                  className={`w-full text-left px-4 py-3 rounded-xl transition-all font-medium ${
+                    activeModule === m.id 
+                      ? 'bg-blue-50 text-blue-700 shadow-sm border border-blue-100' 
+                      : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900 border border-transparent'
+                  }`}
+                >
+                  {m.title}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Main Content */}
+          <div className="flex-1 flex flex-col overflow-hidden relative">
+            {/* Header & Progress */}
+            <div className="bg-white border-b border-gray-200 px-8 py-6 shadow-sm z-10 flex flex-col gap-6">
+              
+              <div className="flex justify-between items-center">
+                <h2 className="text-xl font-bold text-gray-800">{module.title}</h2>
+                <div className="flex items-center gap-3">
+                  <span className="text-sm font-semibold text-gray-500 bg-gray-100 px-3 py-1 rounded-full">
+                    完成 {currentSentenceIndex + 1} / {sentences.length || 0}
+                  </span>
+                </div>
+              </div>
+
+              {/* Subtype Toggle (Tabs) */}
+              {module.subtypes && module.subtypes.length > 0 && (
+                <div className="flex p-1 bg-gray-100 rounded-lg w-max shadow-inner">
+                  {module.subtypes.map(sub => (
+                    <button
+                      key={sub.id}
+                      onClick={() => handleSubtypeChange(sub.id)}
+                      className={`px-6 py-2 rounded-md text-sm font-semibold transition-all ${
+                        activeSubtype === sub.id
+                          ? 'bg-white text-gray-800 shadow-sm'
+                          : 'text-gray-500 hover:text-gray-700'
+                      }`}
+                    >
+                      {sub.name}
+                    </button>
+                  ))}
+                </div>
+              )}
+
+              {/* Progress Bar */}
+              <div className="w-full bg-gray-100 rounded-full h-2 overflow-hidden">
+                <div 
+                  className="bg-blue-500 h-2 rounded-full transition-all duration-500 ease-out" 
+                  style={{ width: `${sentences.length ? ((currentSentenceIndex) / sentences.length) * 100 : 0}%` }}
+                ></div>
+              </div>
+            </div>
+
+            {/* Typing Area */}
+            <div className="flex-1 overflow-y-auto p-8 flex flex-col items-center pt-16 relative gap-8">
+              
+              {/* Decorative background elements */}
+              <div className="absolute top-[-100px] left-[-100px] w-96 h-96 bg-blue-100 rounded-full blur-3xl opacity-50 pointer-events-none"></div>
+              <div className="absolute bottom-[-100px] right-[-100px] w-96 h-96 bg-indigo-100 rounded-full blur-3xl opacity-50 pointer-events-none"></div>
+
+              {sentence ? (
+                <div className="w-full max-w-4xl z-10 relative">
+                  <SentenceTrainer 
+                    sentenceData={sentence} 
+                    onComplete={handleComplete} 
+                    totalSentences={sentences.length}
+                    currentSentenceIndex={currentSentenceIndex}
+                    onNavigate={setCurrentSentenceIndex}
+                  />
+                </div>
+              ) : (
+                <div className="text-center text-gray-400 mt-20 p-8 border-2 border-dashed border-gray-200 rounded-2xl w-full max-w-lg z-10 bg-white/50 backdrop-blur">
+                  <div className="text-4xl mb-4">🚧</div>
+                  <h3 className="text-lg font-bold text-gray-600 mb-2">未找到试题数据</h3>
+                  <p className="text-sm">该模块暂时没有填入题目，请前往其他模块进行练习。</p>
+                </div>
+              )}
+
+              {/* 完整骨架结构展示 */}
+              {sentences.length > 0 && (
+                <div className="bg-white/90 backdrop-blur-md rounded-2xl shadow-sm border border-gray-100 p-8 w-full max-w-4xl z-10 mb-12">
+                  <h3 className="text-lg font-bold text-gray-800 mb-6 flex items-center gap-2">
+                    <span className="text-indigo-500">🗺️</span> 骨架全貌导览 (Structural Overview)
+                  </h3>
+                  <div className="space-y-3">
+                    {sentences.map((s, idx) => {
+                      const pTitle = getParagraphTitle(s.id);
+                      return (
+                        <React.Fragment key={s.id}>
+                          {pTitle && (
+                            <div className="col-span-full mt-6 mb-2 flex items-center gap-2">
+                              <span className="bg-indigo-100 text-indigo-700 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">{pTitle}</span>
+                              <div className="h-[1px] bg-gray-200 flex-1"></div>
+                            </div>
+                          )}
+                          <div 
+                            onClick={() => setCurrentSentenceIndex(idx)}
+                            className={`p-4 rounded-xl text-[15px] border-l-4 transition-all cursor-pointer hover:shadow-md ${
+                              idx === currentSentenceIndex 
+                                ? 'bg-blue-50 border-blue-500 text-blue-900 font-semibold shadow-sm scale-[1.01] -ml-2 hover:bg-blue-100' 
+                                : idx < currentSentenceIndex 
+                                  ? 'bg-gray-50 border-green-400 text-gray-500 hover:bg-gray-100' 
+                                  : 'bg-transparent border-gray-200 text-gray-400 hover:bg-gray-50'
+                            }`}
+                          >
+                            <div className="flex items-start gap-2">
+                              <span className="font-mono opacity-50 w-6 shrink-0">{idx + 1}.</span> 
+                              <span>
+                                {s.chinese.split(/(\[.*?\])/).map((segment, i) => {
+                                    if (segment.startsWith('[') && segment.endsWith(']')) {
+                                        return <span key={i} className="text-blue-600 font-medium">{segment}</span>;
+                                    }
+                                    return segment;
+                                })}
+                              </span>
+                            </div>
+                          </div>
+                        </React.Fragment>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+            </div>
+            
+          </div>
+        </div>
+      );
+    };
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
+  </script>
+</body>
+</html>

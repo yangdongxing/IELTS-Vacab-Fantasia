@@ -1,0 +1,1298 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IELTS Writing Task 2 核心词伙练习</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-gradient: linear-gradient(135deg, #f6f8fb 0%, #e5ebf4 100%);
+            --card-bg: rgba(255, 255, 255, 0.85);
+            --card-border: rgba(255, 255, 255, 0.4);
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --accent-primary: #3b82f6;
+            --accent-hover: #2563eb;
+            --success: #10b981;
+            --error: #ef4444;
+            --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.025);
+            --shadow-glass: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+                --card-bg: rgba(30, 41, 59, 0.75);
+                --card-border: rgba(255, 255, 255, 0.1);
+                --text-primary: #f8fafc;
+                --text-secondary: #94a3b8;
+                --accent-primary: #60a5fa;
+                --accent-hover: #93c5fd;
+                --success: #34d399;
+                --error: #f87171;
+                --shadow-glass: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+            }
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', 'Noto Sans SC', sans-serif;
+            background: var(--bg-gradient);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-x: hidden;
+            padding: 2rem 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .glass-panel {
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            box-shadow: var(--shadow-glass);
+            padding: 2.5rem;
+            width: 100%;
+            max-width: 800px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            text-align: center;
+            background: linear-gradient(to right, #3b82f6, #ec4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: var(--text-secondary);
+            margin-bottom: 2.5rem;
+            font-size: 1rem;
+        }
+
+        /* Views */
+        .view {
+            display: none;
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        .view.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Stats Bar */
+        .stats-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            background: var(--card-bg);
+            backdrop-filter: blur(8px);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            width: 100%;
+            max-width: 800px;
+            font-size: 0.9rem;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+        }
+
+        .stat-value {
+            color: var(--accent-primary);
+            font-weight: 700;
+        }
+
+        .stat-badge {
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            background: rgba(59, 130, 246, 0.1);
+            color: var(--accent-primary);
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        /* Categories Grid */
+        .categories-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .category-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .category-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: var(--accent-primary);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.3s ease;
+        }
+
+        .category-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-md);
+            border-color: var(--accent-primary);
+        }
+
+        .category-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .category-name {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .category-count {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+        
+        .global-actions {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            justify-content: center;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 12px;
+            border: none;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            font-family: inherit;
+        }
+
+        .btn-primary {
+            background: var(--accent-primary);
+            color: white;
+            box-shadow: 0 4px 14px 0 rgba(59, 130, 246, 0.39);
+        }
+
+        .btn-primary:hover {
+            background: var(--accent-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(59, 130, 246, 0.23);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            border: 1px solid var(--text-secondary);
+            color: var(--text-primary);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(100, 116, 139, 0.1);
+        }
+
+        /* Practice Area */
+        .progress-container {
+            width: 100%;
+            height: 6px;
+            background: rgba(100, 116, 139, 0.2);
+            border-radius: 10px;
+            margin-bottom: 2rem;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: var(--accent-primary);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        
+        .practice-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .question-counter {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .score-display {
+            display: flex;
+            gap: 1rem;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+        
+        .score-display .correct { color: var(--success); }
+        .score-display .wrong { color: var(--error); }
+
+        .question-card {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+
+        .chinese-text {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .hint-text {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            transition: all 0.3s ease;
+        }
+
+        .hint-text.hint-active {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--accent-primary);
+            text-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+            animation: hintPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            letter-spacing: 0.5px;
+            padding: 0.5rem 1rem;
+            background: rgba(59, 130, 246, 0.08);
+            border-radius: 12px;
+            display: inline-block;
+        }
+
+        @keyframes hintPop {
+            0% { transform: scale(0.8); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .input-group {
+            position: relative;
+            width: 100%;
+        }
+
+        .answer-input {
+            width: 100%;
+            padding: 1.2rem 1.5rem;
+            font-size: 1.25rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid var(--card-border);
+            border-radius: 16px;
+            color: var(--text-primary);
+            font-family: inherit;
+            transition: all 0.3s ease;
+            outline: none;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.02);
+            text-align: center;
+        }
+
+        .answer-input:focus {
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+        }
+
+        .feedback-area {
+            margin-top: 1.5rem;
+            min-height: 80px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .feedback-msg {
+            font-size: 1.1rem;
+            font-weight: 600;
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            width: 100%;
+            text-align: center;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .feedback-msg.correct {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+
+        .feedback-msg.wrong {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--error);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+
+        /* Diff Styling */
+        .diff-user, .diff-correct {
+            font-family: 'Menlo', 'Consolas', 'Courier New', monospace;
+            font-size: 1.3rem;
+            font-weight: 600;
+            word-break: break-all;
+            line-height: 1.5;
+            letter-spacing: 1px;
+        }
+        .diff-user {
+            color: var(--text-secondary);
+            margin-top: 0.8rem;
+        }
+        .diff-user .diff-same { 
+            /* text-decoration: line-through;  */
+            opacity: 0.6; 
+        }
+        .diff-user .diff-remove { 
+            background-color: var(--error);
+            color: white;
+            border-radius: 3px;
+            padding: 0 4px;
+            text-decoration: line-through;
+        }
+        
+        .diff-correct {
+            margin-top: 0.5rem;
+        }
+        .diff-correct .diff-same { 
+            color: var(--success); 
+        }
+        .diff-correct .diff-add {
+            background-color: var(--success);
+            color: white;
+            border-radius: 3px;
+            padding: 0 4px;
+        }
+
+        .correct-answer-reveal {
+            font-weight: 700;
+            font-size: 1.3rem;
+            margin-top: 0.5rem;
+            letter-spacing: 0.5px;
+        }
+
+        .action-row {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+        }
+
+        /* Animations */
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+            20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
+
+        .shake { animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both; }
+
+        @keyframes pop {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+            100% { transform: scale(1); }
+        }
+
+        .pop { animation: pop 0.3s ease-out; }
+
+        /* Results View */
+        .results-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .final-score {
+            font-size: 3.5rem;
+            font-weight: 800;
+            color: var(--accent-primary);
+            margin: 1rem 0;
+            line-height: 1;
+        }
+
+        .mistakes-list {
+            margin-top: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 0.5rem;
+        }
+        
+        .mistakes-list::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .mistakes-list::-webkit-scrollbar-thumb {
+            background: var(--card-border);
+            border-radius: 10px;
+        }
+
+        .mistake-item {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 1.2rem;
+        }
+
+        .mistake-zh {
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .mistake-en {
+            color: var(--success);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.3rem;
+        }
+
+        .mistake-user {
+            color: var(--error);
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: line-through;
+        }
+
+        .results-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 2.5rem;
+        }
+
+        /* Confetti */
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: #f00;
+            opacity: 0;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Stats Bar (Always visible on Home) -->
+    <div class="stats-bar" id="topStatsBar">
+        <div class="stat-item">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+            <span>练习次数: <span class="stat-value" id="todayCount">0</span>/日</span>
+        </div>
+        <div class="stat-badge" id="streakBadge">
+            🔥 连续 1 天
+        </div>
+        <div class="stat-item">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            <span>总正确率: <span class="stat-value" id="totalAccuracy">0%</span></span>
+        </div>
+    </div>
+
+    <!-- View 1: Home / Category Selection -->
+    <div class="glass-panel view active" id="viewHome">
+        <h1>IELTS 核心词伙练习</h1>
+        <p class="subtitle">完全纯前端实现 · 数据自动存储 · 每日练习纠错</p>
+        
+        <div class="global-actions">
+            <button class="btn btn-primary" id="btnPracticeAll">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                全部词伙练习
+            </button>
+            <button class="btn btn-secondary" id="btnPracticeMistakes">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                只练错题本 (<span id="mistakeBookCount">0</span>)
+            </button>
+        </div>
+
+        <h3 style="margin-top: 2rem; margin-bottom: 1rem; font-size: 1.2rem; color: var(--text-primary);">或者选择单项分类：</h3>
+        <div class="categories-grid" id="categoriesGrid">
+            <!-- Categories injected by JS -->
+        </div>
+    </div>
+
+    <!-- View 2: Practice Interface -->
+    <div class="glass-panel view" id="viewPractice">
+        <div class="practice-header">
+            <div class="question-counter" id="questionCounter">正在准备...</div>
+            <div class="category-badge" id="currentCategory" style="padding: 0.3rem 0.8rem; border-radius: 20px; background: rgba(59, 130, 246, 0.1); color: var(--accent-primary); font-size: 0.85rem; font-weight: 600; white-space: nowrap;">📂 全部词伙</div>
+            <div class="score-display">
+                <span class="correct">✓ <span id="runCorrect">0</span></span>
+                <span class="wrong">✗ <span id="runWrong">0</span></span>
+            </div>
+        </div>
+        
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+
+        <div class="question-card">
+            <div class="chinese-text" id="currentChinese">心理健康</div>
+            <div class="hint-text" id="currentHint">Type the English phrase and press Enter</div>
+        </div>
+
+        <div class="input-group">
+            <input type="text" class="answer-input" id="answerInput" placeholder="Enter English here..." autocomplete="off" spellcheck="false">
+        </div>
+
+        <div class="feedback-area" id="feedbackArea">
+            <!-- Feedback msg goes here -->
+        </div>
+
+        <div class="action-row">
+            <button class="btn btn-secondary" id="btnExitPractice">退出练习</button>
+            <button class="btn btn-secondary" id="btnHint">💡 提示 (ESC / ?)</button>
+            <button class="btn btn-primary" id="btnNext" style="visibility: hidden;">下一题 (Enter) ➔</button>
+        </div>
+    </div>
+
+    <!-- View 3: Results -->
+    <div class="glass-panel view" id="viewResults">
+        <div class="results-header">
+            <h2>练习完成！</h2>
+            <div class="final-score" id="resultScore">100%</div>
+            <p id="resultMsg" style="color: var(--text-secondary); font-size: 1.1rem;">干得漂亮，继续保持！</p>
+        </div>
+
+        <div id="mistakesSection" style="display: none;">
+            <h3 style="margin-top: 2rem; border-bottom: 1px solid var(--card-border); padding-bottom: 0.5rem;">本次错题清单</h3>
+            <div class="mistakes-list" id="CurrentMistakesList">
+                <!-- Mistakes injected here -->
+            </div>
+        </div>
+
+        <div class="results-actions">
+            <button class="btn btn-secondary" id="btnBackToHome">返回首页</button>
+            <button class="btn btn-primary" id="btnRetryWrong" style="display: none;">复习本次错题</button>
+        </div>
+    </div>
+
+    <script>
+        // --- DATA ---
+        const vocabData = [
+            // 一、生活类
+            { category: "生活类", zh: "心理健康", en: "psychological well-being" },
+            { category: "生活类", zh: "工作堆积和拖延", en: "work accumulation and delay" },
+            { category: "生活类", zh: "耗费时间和精力", en: "consume time and energy" },
+            { category: "生活类", zh: "巨大的负担", en: "immense burden" },
+            { category: "生活类", zh: "决定基础天赋", en: "determine basic talents" },
+            { category: "生活类", zh: "本地农民", en: "local farmers" },
+            { category: "生活类", zh: "碳排放", en: "carbon emissions" },
+            { category: "生活类", zh: "保守的人", en: "conservative individuals" },
+            { category: "生活类", zh: "医疗系统", en: "the healthcare system" },
+            { category: "生活类", zh: "银发经济/养老产业", en: "silver economy" },
+            { category: "生活类", zh: "当地环境", en: "local environments" },
+            { category: "生活类", zh: "追求归属感", en: "pursue a sense of belonging" },
+            { category: "生活类", zh: "渴望更多私人空间", en: "desire for more private space" },
+            { category: "生活类", zh: "专注于个人自由", en: "focus on personal freedom" },
+            { category: "生活类", zh: "孤独和抑郁", en: "loneliness and depression" },
+            { category: "生活类", zh: "寻找身份认同", en: "search for identity" },
+            { category: "生活类", zh: "基因检测技术", en: "DNA testing" },
+            { category: "生活类", zh: "久坐不动的生活方式", en: "sedentary lifestyle" },
+            { category: "生活类", zh: "垃圾食品", en: "junk food" },
+            { category: "生活类", zh: "丰厚的薪水", en: "generous salary" },
+            { category: "生活类", zh: "更好的教育和医疗", en: "better education and healthcare" },
+            { category: "生活类", zh: "交通拥堵和住房短缺", en: "traffic congestion and housing shortage" },
+            { category: "生活类", zh: "保持身体健康", en: "maintain physical fitness" },
+            { category: "生活类", zh: "缓解工作压力", en: "relieve working pressure" },
+            { category: "生活类", zh: "企业系统将面临迅速崩溃", en: "the company system would face a rapid collapse" },
+            { category: "生活类", zh: "摆脱混乱的环境", en: "free from a messy environment" },
+            { category: "生活类", zh: "成为了...的强大引擎", en: "serves as a powerful engine for" },
+            { category: "生活类", zh: "摆脱先天限制", en: "free from innate limitations" },
+            { category: "生活类", zh: "面临迅速崩溃", en: "would face a rapid collapse" },
+            { category: "生活类", zh: "摆脱季节限制", en: "free from seasonal restrictions" },
+            { category: "生活类", zh: "摆脱地理障碍", en: "free from geographical barriers" },
+            { category: "生活类", zh: "创造大量机会", en: "creates a multitude of opportunities" },
+            { category: "生活类", zh: "摆脱舒适区", en: "free from the comfort zone" },
+            { category: "生活类", zh: "摆脱经验不足", en: "free from lack of experience" },
+            { category: "生活类", zh: "摆脱严重污染", en: "free from heavy pollution" },
+            { category: "生活类", zh: "确保更好的教育资源", en: "ensures better educational resources" },
+            { category: "生活类", zh: "摆脱持续的焦虑", en: "free from constant anxiety" },
+            { category: "生活类", zh: "确保个人进步", en: "ensures personal progress" },
+            { category: "生活类", zh: "摆脱枯燥的日常", en: "free from a boring routine" },
+            { category: "生活类", zh: "确保忠诚和深厚专业知识", en: "ensures loyalty and deep expertise" },
+            { category: "生活类", zh: "摆脱精神疲劳", en: "free from mental fatigue" },
+            { category: "生活类", zh: "防止认知衰退", en: "prevents cognitive decline" },
+            { category: "生活类", zh: "摆脱攀比压力", en: "free from peer pressure" },
+            { category: "生活类", zh: "确保家庭凝聚力", en: "ensures family cohesion" },
+            { category: "生活类", zh: "摆脱文化束缚", en: "free from cultural constraints" },
+            { category: "生活类", zh: "防止冒犯性的误解", en: "prevents offensive misunderstandings" },
+
+            // 二、经济类
+            { category: "经济类", zh: "低收入群体", en: "low-income groups" },
+            { category: "经济类", zh: "基本生活开销", en: "basic living expenses" },
+            { category: "经济类", zh: "突发紧急情况", en: "sudden emergencies" },
+            { category: "经济类", zh: "可靠的投资工具/资金池", en: "reliable investment vehicle" },
+            { category: "经济类", zh: "制造商", en: "manufacturers" },
+            { category: "经济类", zh: "利润空间", en: "profit margin" },
+            { category: "经济类", zh: "自然资源", en: "natural resources" },
+            { category: "经济类", zh: "关键社会工作者", en: "crucial social workers" },
+            { category: "经济类", zh: "商业价值", en: "commercial value" },
+            { category: "经济类", zh: "严重受伤风险", en: "risk of severe injuries" },
+            { category: "经济类", zh: "社会攀比和虚荣心", en: "social comparison and vanity" },
+            { category: "经济类", zh: "理性的消费习惯", en: "rational consumption habits" },
+            { category: "经济类", zh: "严格的财务纪律", en: "strict financial discipline" },
+            { category: "经济类", zh: "财务焦虑", en: "financial anxiety" },
+            { category: "经济类", zh: "会引发灾难性的", en: "would trigger a catastrophic" },
+            { category: "经济类", zh: "需要巨大的", en: "requires enormous" },
+            { category: "经济类", zh: "摆脱极度的不平等", en: "free from extreme inequality" },
+            { category: "经济类", zh: "为...铺平道路", en: "paves the way for" },
+            { category: "经济类", zh: "极大地缓解了...的巨大负担", en: "significantly alleviates the immense burden on" },
+            { category: "经济类", zh: "而不是被...摧毁", en: "rather than being damaged by" },
+            { category: "经济类", zh: "与其对...感到软弱或抗拒", en: "instead of being weak or resistant to" },
+            { category: "经济类", zh: "积累财富", en: "accumulate wealth" },
+            { category: "经济类", zh: "对抗通胀", en: "combat inflation" },
+            { category: "经济类", zh: "刺激经济", en: "stimulate the economy" },
+
+            // 三、政府类
+            { category: "政府类", zh: "紧迫的社会问题", en: "pressing social issues" },
+            { category: "政府类", zh: "精神需求", en: "spiritual needs" },
+            { category: "政府类", zh: "文化遗产", en: "cultural heritage" },
+            { category: "政府类", zh: "大众运输", en: "mass transit" },
+            { category: "政府类", zh: "门到门的便利", en: "door-to-door convenience" },
+            { category: "政府类", zh: "物流与配送", en: "logistics and delivery" },
+            { category: "政府类", zh: "地方政府", en: "local governments" },
+            { category: "政府类", zh: "司法效率", en: "judicial efficiency" },
+            { category: "政府类", zh: "跨国犯罪", en: "transnational crimes" },
+            { category: "政府类", zh: "偏见和歧视", en: "prejudice and discrimination" },
+            { category: "政府类", zh: "职业培训", en: "vocational training" },
+            { category: "政府类", zh: "雇佣配额", en: "employment quotas" },
+            { category: "政府类", zh: "低收入通勤者", en: "low-income commuters" },
+            { category: "政府类", zh: "公共交通系统", en: "public transport systems" },
+            { category: "政府类", zh: "财政可持续性", en: "financial sustainability" },
+            { category: "政府类", zh: "公共健康危机", en: "public health crises" },
+            { category: "政府类", zh: "社会正义", en: "social justice" },
+            { category: "政府类", zh: "摆脱交通拥堵", en: "free from traffic congestion" },
+            { category: "政府类", zh: "摆脱漫长的旅行时间", en: "free from long travel hours" },
+            { category: "政府类", zh: "确保普惠大众", en: "ensures universal benefits" },
+            { category: "政府类", zh: "摆脱死板的限制", en: "free from rigid restrictions" },
+            { category: "政府类", zh: "防止严重的公共健康危机", en: "prevents severe public health crises" },
+            { category: "政府类", zh: "摆脱久坐的生活方式", en: "free from sedentary lifestyles" },
+            { category: "政府类", zh: "确保全面的健康", en: "ensures comprehensive well-being" },
+            { category: "政府类", zh: "确保真正的社会正义", en: "ensures true social justice" },
+            { category: "政府类", zh: "防止文化冲突", en: "prevents cultural conflicts" },
+            { category: "政府类", zh: "摆脱社会耻辱感", en: "free from social stigma" },
+            { category: "政府类", zh: "拨款给...", en: "allocate funds to" },
+            { category: "政府类", zh: "实施严格政策", en: "implement strict policies" },
+            { category: "政府类", zh: "改善公共基建", en: "improve public infrastructure" },
+
+            // 四、教育类
+            { category: "教育类", zh: "性别平等", en: "gender equality" },
+            { category: "教育类", zh: "教育权利", en: "educational rights" },
+            { category: "教育类", zh: "个人天赋浪费/浪费个人天赋", en: "waste of personal talents" },
+            { category: "教育类", zh: "社会责任感", en: "social responsibility" },
+            { category: "教育类", zh: "叛逆情绪", en: "rebellious emotions" },
+            { category: "教育类", zh: "缺乏自律", en: "lack of self-discipline" },
+            { category: "教育类", zh: "实用技能发展", en: "practical skill development" },
+            { category: "教育类", zh: "职业规划", en: "career planning" },
+            { category: "教育类", zh: "体面高薪工作", en: "decent and high-paying jobs" },
+            { category: "教育类", zh: "解决问题的能力", en: "problem-solving abilities" },
+            { category: "教育类", zh: "技术专业人才", en: "technical professionals" },
+            { category: "教育类", zh: "全面的文化发展", en: "comprehensive cultural development" },
+            { category: "教育类", zh: "道德教育/品德教育", en: "moral education" },
+            { category: "教育类", zh: "个性化指导", en: "personalized guidance" },
+            { category: "教育类", zh: "身体或艺术上限", en: "physical or artistic limits" },
+            { category: "教育类", zh: "人才的持续供应", en: "continuous supply of talents" },
+            { category: "教育类", zh: "禁闭或限制特权", en: "time-out or restricted privileges" },
+            { category: "教育类", zh: "全面发展", en: "comprehensive development" },
+            { category: "教育类", zh: "学业压力", en: "academic pressure" },
+            { category: "教育类", zh: "摆脱知识的匮乏", en: "free from a lack of knowledge" },
+
+            // 五、语言类
+            { category: "语言类", zh: "更好的职业机会", en: "better career opportunities" },
+            { category: "语言类", zh: "日常交流障碍", en: "daily communication barriers" },
+            { category: "语言类", zh: "文化融入/整合", en: "cultural integration" },
+            { category: "语言类", zh: "沟通成本", en: "communication costs" },
+            { category: "语言类", zh: "文化认同", en: "cultural identity" },
+            { category: "语言类", zh: "全球文化多样性", en: "global cultural diversity" },
+            { category: "语言类", zh: "年幼的孩子", en: "young children" },
+            { category: "语言类", zh: "发音", en: "pronunciation" },
+            { category: "语言类", zh: "全球化人才", en: "globalized talents" },
+            { category: "语言类", zh: "自主学习能力", en: "independent learning skills" },
+            { category: "语言类", zh: "沉浸式语言环境", en: "an immersive language environment" },
+            { category: "语言类", zh: "哑巴英语", en: "dumb English" },
+            { category: "语言类", zh: "沟通障碍", en: "communication barriers" },
+            { category: "语言类", zh: "失去文化认同", en: "loss of cultural identity" },
+            { category: "语言类", zh: "文化多样性", en: "cultural diversity" },
+            { category: "语言类", zh: "高昂的财务成本", en: "high financial costs" },
+            { category: "语言类", zh: "摆脱害怕犯错的恐惧", en: "free from the fear of making mistakes" },
+            { category: "语言类", zh: "摆脱高昂的财务成本/留学费用", en: "free from high financial costs" },
+            { category: "语言类", zh: "确保了沉浸式的语言环境", en: "ensures an immersive language environment" },
+            { category: "语言类", zh: "摆脱语言障碍", en: "free from language barriers" },
+            { category: "语言类", zh: "确保了文化多样性", en: "ensures cultural diversity" },
+
+            // 六、媒体类
+            { category: "媒体类", zh: "免费在线资源", en: "free online resources" },
+            { category: "媒体类", zh: "低收入读者", en: "low-income readers" },
+            { category: "媒体类", zh: "触觉阅读体验", en: "tactile reading experience" },
+            { category: "媒体类", zh: "数字疲劳/分心", en: "digital fatigue/distraction" },
+            { category: "媒体类", zh: "收藏价值", en: "collectible value" },
+            { category: "媒体类", zh: "代沟", en: "generational gaps" },
+            { category: "媒体类", zh: "老年人", en: "elderly people" },
+            { category: "媒体类", zh: "世界通用语言", en: "universal language" },
+            { category: "媒体类", zh: "误解", en: "misunderstandings" },
+            { category: "媒体类", zh: "跨文化交流", en: "cross-cultural exchange" },
+            { category: "媒体类", zh: "民族认同感/民族认同", en: "national identity" },
+            { category: "媒体类", zh: "本土艺术家", en: "local artists" },
+            { category: "媒体类", zh: "审美/审美标准", en: "aesthetic standards" },
+            { category: "媒体类", zh: "多样性", en: "diversity" },
+            { category: "媒体类", zh: "隐蔽的营销策略", en: "subtle marketing strategies" },
+            { category: "媒体类", zh: "物质欲望", en: "material desires" },
+            { category: "媒体类", zh: "摆脱地理限制", en: "free from geographical limitations" },
+            { category: "媒体类", zh: "摆脱无休止的商业打扰", en: "free from endless commercial interruptions" },
+            { category: "媒体类", zh: "引发灾难性的物欲", en: "trigger catastrophic material desires" },
+
+            // 七、科技类
+            { category: "科技类", zh: "拼写和语法错误", en: "spelling and grammatical errors" },
+            { category: "科技类", zh: "年轻学生", en: "young students" },
+            { category: "科技类", zh: "自动纠错功能", en: "autocorrect" },
+            { category: "科技类", zh: "数字读写能力", en: "digital literacy" },
+            { category: "科技类", zh: "传统司机", en: "traditional drivers" },
+            { category: "科技类", zh: "大规模失业", en: "massive unemployment" },
+            { category: "科技类", zh: "道路安全", en: "road safety" },
+            { category: "科技类", zh: "智能交通系统", en: "smart transportation system" },
+            { category: "科技类", zh: "信息爆炸", en: "information explosion" },
+            { category: "科技类", zh: "数字疲劳", en: "digital fatigue" },
+            { category: "科技类", zh: "高生产力", en: "high productivity" },
+            { category: "科技类", zh: "深度的情感连接", en: "deep emotional connection" },
+            { category: "科技类", zh: "即时通讯", en: "instant communication" },
+            { category: "科技类", zh: "传统技能的丧失", en: "loss of traditional skills" },
+            { category: "科技类", zh: "传统工人", en: "traditional workers" },
+            { category: "科技类", zh: "出租车司机", en: "taxi drivers" },
+            { category: "科技类", zh: "摆脱人为错误和疲劳驾驶", en: "free from human errors and fatigue" },
+            { category: "科技类", zh: "确保了高生产力", en: "ensures high productivity" },
+            { category: "科技类", zh: "摆脱重复的体力劳动", en: "free from repetitive manual labor" },
+            { category: "科技类", zh: "摆脱冰冷的屏幕", en: "free from cold screens" },
+            { category: "科技类", zh: "确保了即时通讯", en: "ensures instant communication" },
+            { category: "科技类", zh: "成为全球经济的强大引擎", en: "serves as a powerful engine for global economy" },
+            { category: "科技类", zh: "引发灾难性的大规模失业", en: "trigger a catastrophic massive unemployment" },
+
+            // 八、环境类
+            { category: "环境类", zh: "生物多样性丧失", en: "loss of biodiversity" },
+            { category: "环境类", zh: "全球变暖", en: "global warming" },
+            { category: "环境类", zh: "碳排放", en: "carbon emissions" },
+            { category: "环境类", zh: "脆弱人群/灾民", en: "vulnerable populations" },
+            { category: "环境类", zh: "极端天气", en: "extreme weather conditions" },
+            { category: "环境类", zh: "食物分配不均", en: "unequal food distribution" },
+            { category: "环境类", zh: "回收设施", en: "recycling facilities" },
+            { category: "环境类", zh: "一次性包装", en: "disposable packaging" },
+            { category: "环境类", zh: "一次性产品/包装", en: "disposable products/packaging" },
+            { category: "环境类", zh: "消费主义", en: "consumerism" },
+            { category: "环境类", zh: "全面的回收项目", en: "comprehensive recycling programs" },
+            { category: "环境类", zh: "垃圾填埋场", en: "landfills" },
+            { category: "环境类", zh: "可降解材料", en: "biodegradable materials" },
+            { category: "环境类", zh: "可持续发展", en: "sustainable development" },
+            { category: "环境类", zh: "摆脱生物多样性的丧失", en: "free from the loss of biodiversity" },
+            { category: "环境类", zh: "严重依赖", en: "rely heavily on" },
+            { category: "环境类", zh: "个人的努力太渺小", en: "individual efforts are too small" },
+            { category: "环境类", zh: "实施严格法规和重罚", en: "impose strict regulations and heavy fines" },
+            { category: "环境类", zh: "提供全面的回收设施", en: "provide comprehensive recycling facilities" }
+        ];
+
+        // --- APP STATE ---
+        let currentQueue = [];
+        let currentIndex = 0;
+        let correctCount = 0;
+        let wrongCount = 0;
+        let currentMistakes = [];
+        let isWaitingForNext = false;
+        let currentCategoryName = '全部词伙';
+
+        // Local Storage Sync keys
+        const STORE_KEY = 'ielts_vocab_stats';
+        const MISTAKES_KEY = 'ielts_vocab_mistakes';
+
+        function loadStats() {
+            try {
+                const data = JSON.parse(localStorage.getItem(STORE_KEY)) || {
+                    history: {},
+                    totalQuestions: 0,
+                    correctAnswers: 0,
+                    streak: 0,
+                    lastPracticeDate: null
+                };
+                return data;
+            } catch (e) {
+                return { history: {}, totalQuestions: 0, correctAnswers: 0, streak: 0, lastPracticeDate: null };
+            }
+        }
+
+        function saveStats(stats) {
+            localStorage.setItem(STORE_KEY, JSON.stringify(stats));
+        }
+
+        function loadGlobalMistakes() {
+            try {
+                return JSON.parse(localStorage.getItem(MISTAKES_KEY)) || [];
+            } catch (e) {
+                return [];
+            }
+        }
+
+        function saveGlobalMistakes(mistakes) {
+            // deduplicate
+            const unique = [];
+            const seen = new Set();
+            for (let m of mistakes) {
+                if (!seen.has(m.zh)) {
+                    seen.add(m.zh);
+                    unique.push(m);
+                }
+            }
+            localStorage.setItem(MISTAKES_KEY, JSON.stringify(unique));
+        }
+
+        function removeGlobalMistake(zh) {
+            let mlist = loadGlobalMistakes();
+            mlist = mlist.filter(m => m.zh !== zh);
+            saveGlobalMistakes(mlist);
+            updateHomeStats();
+        }
+
+        function updateHomeStats() {
+            const stats = loadStats();
+            const todayStr = new Date().toISOString().split('T')[0];
+            const todayCount = stats.history[todayStr] || 0;
+            
+            document.getElementById('todayCount').innerText = todayCount;
+            
+            const acc = stats.totalQuestions > 0 
+                ? Math.round((stats.correctAnswers / stats.totalQuestions) * 100) 
+                : 0;
+            document.getElementById('totalAccuracy').innerText = acc + '%';
+            
+            // Calc Streak
+            let streak = stats.streak || 0;
+            if (stats.lastPracticeDate) {
+                const lastDate = new Date(stats.lastPracticeDate);
+                const today = new Date();
+                const diffTime = Math.abs(today - lastDate);
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
+                if (diffDays > 1 && todayStr !== stats.lastPracticeDate) {
+                    streak = 0; // streak broken
+                }
+            }
+            document.getElementById('streakBadge').innerText = `🔥 连续 ${streak} 天`;
+
+            // Update Mistakes count
+            const mistakes = loadGlobalMistakes();
+            document.getElementById('mistakeBookCount').innerText = mistakes.length;
+            
+            if (mistakes.length === 0) {
+                document.getElementById('btnPracticeMistakes').style.opacity = '0.5';
+                document.getElementById('btnPracticeMistakes').style.cursor = 'not-allowed';
+            } else {
+                document.getElementById('btnPracticeMistakes').style.opacity = '1';
+                document.getElementById('btnPracticeMistakes').style.cursor = 'pointer';
+            }
+        }
+
+        function logPractice(isCorrect) {
+            const stats = loadStats();
+            const todayStr = new Date().toISOString().split('T')[0];
+            
+            if (!stats.history[todayStr]) {
+                stats.history[todayStr] = 0;
+                // new day, increase streak if last practice was yesterday
+                if (stats.lastPracticeDate) {
+                    const lastD = new Date(stats.lastPracticeDate);
+                    const todayD = new Date(todayStr);
+                    const diffTime = Math.abs(todayD - lastD);
+                    const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24)); 
+                    if (diffDays === 1) {
+                        stats.streak = (stats.streak || 0) + 1;
+                    } else if (diffDays > 1) {
+                        stats.streak = 1;
+                    }
+                } else {
+                    stats.streak = 1;
+                }
+                stats.lastPracticeDate = todayStr;
+            }
+            
+            stats.history[todayStr]++;
+            stats.totalQuestions++;
+            if (isCorrect) stats.correctAnswers++;
+            
+            saveStats(stats);
+        }
+
+        // --- DOM Elements ---
+        const viewHome = document.getElementById('viewHome');
+        const viewPractice = document.getElementById('viewPractice');
+        const viewResults = document.getElementById('viewResults');
+        const topStatsBar = document.getElementById('topStatsBar');
+        const inputField = document.getElementById('answerInput');
+        const feedbackArea = document.getElementById('feedbackArea');
+        const btnNext = document.getElementById('btnNext');
+        const btnHint = document.getElementById('btnHint');
+
+        // --- Init App ---
+        function initApp() {
+            // Render Categories
+            const categories = [...new Set(vocabData.map(v => v.category))];
+            const catGrid = document.getElementById('categoriesGrid');
+            
+            categories.forEach(cat => {
+                const count = vocabData.filter(v => v.category === cat).length;
+                const card = document.createElement('div');
+                card.className = 'category-card';
+                card.innerHTML = `
+                    <div class="category-name">${cat}</div>
+                    <div class="category-count">${count} 个词伙</div>
+                `;
+                card.addEventListener('click', () => startPractice(vocabData.filter(v => v.category === cat), cat));
+                catGrid.appendChild(card);
+            });
+
+            updateHomeStats();
+        }
+
+        // --- Navigation ---
+        function switchView(viewId) {
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+            document.getElementById(viewId).classList.add('active');
+            
+            if (viewId === 'viewHome') {
+                topStatsBar.style.display = 'flex';
+                updateHomeStats();
+            } else {
+                topStatsBar.style.display = 'none';
+            }
+        }
+
+        // --- Core Logic ---
+        function shuffle(array) {
+            let currentIndex = array.length,  randomIndex;
+            while (currentIndex != 0) {
+                randomIndex = Math.floor(Math.random() * currentIndex);
+                currentIndex--;
+                [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
+            }
+            return array;
+        }
+
+        function startPractice(dataset, categoryName) {
+            if (dataset.length === 0) return;
+            currentQueue = shuffle([...dataset]);
+            currentIndex = 0;
+            correctCount = 0;
+            wrongCount = 0;
+            currentMistakes = [];
+            isWaitingForNext = false;
+            currentCategoryName = categoryName || '全部词伙';
+            document.getElementById('currentCategory').innerText = '📂 ' + currentCategoryName;
+            
+            switchView('viewPractice');
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            isWaitingForNext = false;
+            const q = currentQueue[currentIndex];
+            
+            // Update UI
+            document.getElementById('questionCounter').innerText = `进度: ${currentIndex + 1} / ${currentQueue.length}`;
+            document.getElementById('runCorrect').innerText = correctCount;
+            document.getElementById('runWrong').innerText = wrongCount;
+            document.getElementById('currentChinese').innerText = q.zh;
+            
+            const progressPct = ((currentIndex) / currentQueue.length) * 100;
+            document.getElementById('progressBar').style.width = `${progressPct}%`;
+            
+            const hintEl = document.getElementById('currentHint');
+            hintEl.innerText = "Type the English phrase and press Enter";
+            hintEl.classList.remove('hint-active');
+
+            inputField.value = '';
+            inputField.disabled = false;
+            inputField.focus();
+            
+            feedbackArea.innerHTML = '';
+            btnNext.style.visibility = 'hidden';
+        }
+
+        function checkAnswer() {
+            if (isWaitingForNext) {
+                goToNext();
+                return;
+            }
+
+            const ans = inputField.value.trim().toLowerCase();
+            if (ans === '') return; // don't submit empty
+
+            const q = currentQueue[currentIndex];
+            // Normalize: remove extra spaces, punctuation
+            const normalize = (str) => str.toLowerCase().replace(/[^a-z0-9]/g, '');
+            const isCorrect = normalize(ans) === normalize(q.en);
+
+            inputField.disabled = true;
+            isWaitingForNext = true;
+            btnNext.style.visibility = 'visible';
+            btnNext.focus();
+
+            logPractice(isCorrect);
+
+            if (isCorrect) {
+                correctCount++;
+                document.getElementById('runCorrect').innerText = correctCount;
+                
+                // If it was in global mistakes, we might remove it if they got it right
+                // Optional: removeGlobalMistake(q.zh);
+                removeGlobalMistake(q.zh); 
+                
+                feedbackArea.innerHTML = `
+                    <div class="feedback-msg correct pop">
+                        <div>✨ 完全正确！</div>
+                        <div class="correct-answer-reveal">${q.en}</div>
+                    </div>
+                `;
+            } else {
+                wrongCount++;
+                document.getElementById('runWrong').innerText = wrongCount;
+                currentMistakes.push({ ...q, user_ans: ans });
+                
+                // Add to global mistakes
+                const globalM = loadGlobalMistakes();
+                globalM.push(q);
+                saveGlobalMistakes(globalM);
+
+                const card = document.querySelector('.glass-panel.active');
+                card.classList.remove('shake');
+                void card.offsetWidth; // trigger reflow
+                card.classList.add('shake');
+
+                const diffs = generateDiffHTML(ans, q.en);
+
+                feedbackArea.innerHTML = `
+                    <div class="feedback-msg wrong pop">
+                        <div>❌ 需要订正</div>
+                        <div class="diff-user">${diffs.userDiff}</div>
+                        <div class="diff-correct">${diffs.correctDiff}</div>
+                    </div>
+                `;
+            }
+        }
+
+        function escapeHTML(str) {
+            return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        }
+
+        function generateDiffHTML(userStr, correctStr) {
+            const m = userStr.length;
+            const n = correctStr.length;
+            const dp = Array(m + 1).fill(null).map(() => Array(n + 1).fill(0));
+            
+            for (let i = 1; i <= m; i++) {
+                for (let j = 1; j <= n; j++) {
+                    if (userStr[i - 1] === correctStr[j - 1]) {
+                        dp[i][j] = dp[i - 1][j - 1] + 1;
+                    } else {
+                        dp[i][j] = Math.max(dp[i - 1][j], dp[i][j - 1]);
+                    }
+                }
+            }
+            
+            let i = m, j = n;
+            const userOps = [];
+            const correctOps = [];
+            
+            while (i > 0 || j > 0) {
+                if (i > 0 && j > 0 && userStr[i - 1] === correctStr[j - 1]) {
+                    userOps.push({ type: 'same', char: userStr[i - 1] });
+                    correctOps.push({ type: 'same', char: correctStr[j - 1] });
+                    i--; j--;
+                } else if (j > 0 && (i === 0 || dp[i][j - 1] >= dp[i - 1][j])) {
+                    correctOps.push({ type: 'add', char: correctStr[j - 1] });
+                    j--;
+                } else if (i > 0 && (j === 0 || dp[i][j - 1] < dp[i - 1][j])) {
+                    userOps.push({ type: 'remove', char: userStr[i - 1] });
+                    i--;
+                }
+            }
+            
+            userOps.reverse();
+            correctOps.reverse();
+
+            function renderOps(ops) {
+                if (ops.length === 0) return '';
+                let result = '';
+                let type = ops[0].type;
+                let text = ops[0].char;
+                for (let k = 1; k < ops.length; k++) {
+                    if (ops[k].type === type) {
+                        text += ops[k].char;
+                    } else {
+                        result += `<span class="diff-${type}">${escapeHTML(text)}</span>`;
+                        type = ops[k].type;
+                        text = ops[k].char;
+                    }
+                }
+                result += `<span class="diff-${type}">${escapeHTML(text)}</span>`;
+                return result;
+            }
+
+            return {
+                userDiff: renderOps(userOps),
+                correctDiff: renderOps(correctOps)
+            };
+        }
+
+        function goToNext() {
+            currentIndex++;
+            if (currentIndex >= currentQueue.length) {
+                showResults();
+            } else {
+                loadQuestion();
+            }
+        }
+
+        function showHint() {
+            if (isWaitingForNext || currentQueue.length === 0) return;
+            const q = currentQueue[currentIndex];
+            const hintEl = document.getElementById('currentHint');
+            hintEl.innerText = `💡 ${q.en}`;
+            hintEl.classList.add('hint-active');
+            
+            setTimeout(() => {
+                if (!isWaitingForNext) {
+                    hintEl.innerText = "Type the English phrase and press Enter";
+                    hintEl.classList.remove('hint-active');
+                }
+            }, 5000);
+            
+            inputField.focus();
+        }
+
+        function showResults() {
+            document.getElementById('progressBar').style.width = '100%';
+            
+            const accuracy = Math.round((correctCount / currentQueue.length) * 100);
+            document.getElementById('resultScore').innerText = `${accuracy}%`;
+            
+            const msgEl = document.getElementById('resultMsg');
+            if (accuracy >= 90) msgEl.innerText = "太棒了！雅思写作一定能拿高分！🎉";
+            else if (accuracy >= 70) msgEl.innerText = "还不错，再接再厉！👍";
+            else msgEl.innerText = "需要多加练习哦，熟能生巧！💪";
+
+            const mstkSection = document.getElementById('mistakesSection');
+            const mstkList = document.getElementById('CurrentMistakesList');
+            const btnRetry = document.getElementById('btnRetryWrong');
+
+            if (currentMistakes.length > 0) {
+                mstkSection.style.display = 'block';
+                btnRetry.style.display = 'inline-flex';
+                
+                mstkList.innerHTML = currentMistakes.map(m => `
+                    <div class="mistake-item">
+                        <div class="mistake-zh">${m.zh}</div>
+                        <div class="mistake-en">✓ ${m.en}</div>
+                        <div class="mistake-user">✗ ${m.user_ans}</div>
+                    </div>
+                `).join('');
+            } else {
+                mstkSection.style.display = 'none';
+                btnRetry.style.display = 'none';
+            }
+
+            switchView('viewResults');
+        }
+
+        // --- Event Listeners ---
+        document.getElementById('btnPracticeAll').addEventListener('click', () => startPractice(vocabData, '全部词伙'));
+        
+        document.getElementById('btnPracticeMistakes').addEventListener('click', () => {
+            const m = loadGlobalMistakes();
+            if (m.length > 0) startPractice(m, '错题本');
+        });
+
+        document.getElementById('btnRetryWrong').addEventListener('click', () => {
+            // retry current session's wrong ones only by mapping to original format
+            const retryData = currentMistakes.map(m => ({ category: m.category, zh: m.zh, en: m.en }));
+            startPractice(retryData, '复习错题');
+        });
+
+        document.getElementById('btnBackToHome').addEventListener('click', () => switchView('viewHome'));
+        document.getElementById('btnExitPractice').addEventListener('click', () => switchView('viewHome'));
+        btnHint.addEventListener('click', showHint);
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                if (document.getElementById('viewPractice').classList.contains('active')) {
+                    if (isWaitingForNext) {
+                        goToNext();
+                    } else if (document.activeElement === inputField) {
+                        checkAnswer();
+                    }
+                }
+            } else if (e.key === 'Escape') {
+                if (document.getElementById('viewPractice').classList.contains('active')) {
+                    e.preventDefault();
+                    showHint();
+                }
+            } else if (e.key === '?' && document.activeElement === inputField) {
+                if (document.getElementById('viewPractice').classList.contains('active')) {
+                    e.preventDefault();
+                    showHint();
+                }
+            }
+        });
+
+        btnNext.addEventListener('click', goToNext);
+
+        // Run
+        initApp();
+    </script>
+</body>
+</html>

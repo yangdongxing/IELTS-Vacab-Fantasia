@@ -1,0 +1,1150 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IELTS 骨架实例文章默写列表 Mini</title>
+  <style>
+    :root {
+      --bg: #f6f7fb;
+      --panel: #ffffff;
+      --line: #e5e7eb;
+      --text: #172033;
+      --muted: #697386;
+      --blue: #2563eb;
+      --blue-soft: #eff6ff;
+      --green: #059669;
+      --green-soft: #ecfdf5;
+      --red: #dc2626;
+      --red-soft: #fef2f2;
+      --amber: #d97706;
+      --amber-soft: #fffbeb;
+      --emerald-soft: #ecfdf5;
+      --emerald-line: #a7f3d0;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC", Arial, sans-serif;
+    }
+
+    .shell {
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 28px 0 56px;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      margin: 0 -16px 20px;
+      padding: 16px;
+      background: rgba(246, 247, 251, 0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(229, 231, 235, 0.8);
+    }
+
+    .topbar-inner {
+      width: min(1180px, 100%);
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 16px;
+      align-items: center;
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: 28px;
+      line-height: 1.2;
+      letter-spacing: 0;
+    }
+
+    .subtitle {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .stats {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .stat {
+      min-width: 92px;
+      padding: 10px 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+      text-align: center;
+      box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+    }
+
+    .stat strong {
+      display: block;
+      font-size: 20px;
+      line-height: 1.1;
+    }
+
+    .stat span {
+      display: block;
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .filters {
+      width: min(1180px, 100%);
+      margin: 14px auto 0;
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      padding-bottom: 2px;
+    }
+
+    .filter-btn {
+      border: 1px solid var(--line);
+      background: var(--panel);
+      color: var(--muted);
+      border-radius: 8px;
+      padding: 8px 12px;
+      font-weight: 700;
+      white-space: nowrap;
+      cursor: pointer;
+    }
+
+    .filter-btn.active {
+      border-color: var(--blue);
+      background: var(--blue-soft);
+      color: var(--blue);
+    }
+
+    .tools {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin: 18px 0 22px;
+    }
+
+    .tool-btn {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+      color: var(--text);
+      padding: 9px 12px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .tool-btn.primary {
+      border-color: var(--blue);
+      background: var(--blue);
+      color: white;
+    }
+
+    .category-section {
+      margin-bottom: 28px;
+      scroll-margin-top: 150px;
+    }
+
+    .category-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 0 0 12px;
+      font-size: 18px;
+    }
+
+    .category-count {
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .article-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .paragraph-divider {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 10px 0 2px;
+      color: var(--blue);
+      font-size: 14px;
+      font-weight: 900;
+    }
+
+    .paragraph-divider::after {
+      content: '';
+      height: 1px;
+      flex: 1;
+      background: var(--line);
+    }
+
+    .paragraph-divider span {
+      padding: 7px 10px;
+      border-radius: 8px;
+      border: 1px solid rgba(37, 99, 235, 0.16);
+      background: var(--blue-soft);
+    }
+
+    .article-row {
+      display: grid;
+      grid-template-columns: 44px minmax(260px, 0.9fr) minmax(320px, 1.1fr) auto auto;
+      gap: 12px;
+      align-items: start;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+      box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+    }
+
+    .article-row.correct {
+      border-color: rgba(5, 150, 105, 0.35);
+      background: var(--green-soft);
+    }
+
+    .article-row.error {
+      border-color: rgba(220, 38, 38, 0.35);
+      background: var(--red-soft);
+    }
+
+    .index-pill {
+      width: 36px;
+      min-height: 36px;
+      border-radius: 8px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: #f8fafc;
+      color: var(--muted);
+      font-weight: 900;
+      border: 1px solid var(--line);
+    }
+
+    .zh-cell {
+      display: grid;
+      gap: 8px;
+    }
+
+    .zh {
+      min-height: 46px;
+      padding: 10px 12px;
+      border-radius: 8px;
+      background: var(--emerald-soft);
+      border: 1px solid var(--emerald-line);
+      font-size: 15px;
+      font-weight: 700;
+      line-height: 1.5;
+      cursor: pointer;
+    }
+
+    .zh mark {
+      color: #047857;
+      background: transparent;
+      font-weight: 900;
+    }
+
+    .skeleton {
+      display: none;
+      padding: 10px 12px;
+      border-radius: 8px;
+      border: 1px solid rgba(37, 99, 235, 0.16);
+      background: var(--blue-soft);
+      color: var(--blue);
+      font: 750 13px/1.5 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+    }
+
+    .article-row.show-skeleton .skeleton {
+      display: block;
+    }
+
+    .mini-badge {
+      display: inline-flex;
+      width: max-content;
+      margin-right: 8px;
+      padding: 3px 7px;
+      border-radius: 999px;
+      background: #dbeafe;
+      color: #1d4ed8;
+      font: 800 12px/1 -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC", Arial, sans-serif;
+      vertical-align: 1px;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 92px;
+      resize: vertical;
+      border: 2px solid var(--line);
+      border-radius: 8px;
+      padding: 10px 12px;
+      font: 650 15px/1.45 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      color: var(--text);
+      outline: none;
+      background: #fff;
+    }
+
+    .input-cell {
+      display: grid;
+      gap: 8px;
+    }
+
+    textarea:focus {
+      border-color: var(--blue);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+    }
+
+    .article-row.correct textarea {
+      border-color: var(--green);
+      color: var(--green);
+      background: #fff;
+    }
+
+    .article-row.error textarea {
+      border-color: var(--red);
+      color: var(--red);
+      background: #fff;
+    }
+
+    .play-btn {
+      width: 42px;
+      height: 42px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      color: var(--blue);
+      font-size: 16px;
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    .play-btn:hover {
+      border-color: var(--blue);
+      background: var(--blue-soft);
+    }
+
+    .status {
+      width: 92px;
+      min-height: 34px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 8px;
+      color: var(--muted);
+      background: #f8fafc;
+      font-size: 13px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .article-row.correct .status {
+      color: var(--green);
+      background: rgba(5, 150, 105, 0.1);
+    }
+
+    .article-row.error .status {
+      color: var(--red);
+      background: rgba(220, 38, 38, 0.1);
+    }
+
+    .answer {
+      display: none;
+      padding: 9px 11px;
+      border-radius: 8px;
+      background: var(--amber-soft);
+      color: var(--amber);
+      font: 750 14px/1.45 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+    }
+
+    .article-row.show-answer .answer {
+      display: block;
+    }
+
+    .hidden { display: none; }
+
+    @media (max-width: 920px) {
+      .topbar-inner { grid-template-columns: 1fr; }
+      .stats { justify-content: stretch; }
+      .stat { flex: 1; }
+      .article-row { grid-template-columns: 1fr; }
+      .index-pill, .play-btn, .status { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="topbar-inner">
+      <div>
+        <h1>IELTS 骨架实例文章默写列表 Mini</h1>
+        <p class="subtitle">保留全部实例句；双边讨论类和报告类的可替换句显示压缩骨架，并与当前英文答案保持同构。输入校验规则不变。</p>
+      </div>
+      <div class="stats">
+        <div class="stat"><strong id="totalCount">0</strong><span>总数</span></div>
+        <div class="stat"><strong id="correctCount">0</strong><span>正确</span></div>
+        <div class="stat"><strong id="errorCount">0</strong><span>需修正</span></div>
+      </div>
+    </div>
+    <div class="filters" id="filters"></div>
+  </div>
+
+  <main class="shell">
+    <div class="tools">
+      <button class="tool-btn primary" id="focusFirst">从第一句开始</button>
+      <button class="tool-btn" id="showAnswers">显示答案</button>
+      <button class="tool-btn" id="hideAnswers">隐藏答案</button>
+      <button class="tool-btn" id="showOnlyErrors">只看需修正</button>
+      <button class="tool-btn" id="showAll">显示全部</button>
+    </div>
+    <div id="app"></div>
+  </main>
+
+  <script>
+    const examples = [
+      {
+            "id": "m1_ad_s1",
+            "category": "是否同意类",
+            "categoryKey": "m1_ad",
+            "number": 1,
+            "chinese": "普遍认为，【维护当地环境】是一项【基本的社会责任】。",
+            "english": "It is widely acknowledged that maintaining local environments is a fundamental social responsibility.",
+            "skeleton": "It is widely acknowledged that [背景描述] is [公认权利/属性]."
+      },
+      {
+            "id": "m1_ad_s2",
+            "category": "是否同意类",
+            "categoryKey": "m1_ad",
+            "number": 2,
+            "chinese": "因此，出现了一种争议，主张【政府应将家庭垃圾回收作为一项法律要求】。",
+            "english": "Consequently, there is a controversy advocating for governments should make household waste recycling a legal requirement.",
+            "skeleton": "Consequently, there is a controversy advocating for [题目极端建议]."
+      },
+      {
+            "id": "m1_ad_s3",
+            "category": "是否同意类",
+            "categoryKey": "m1_ad",
+            "number": 3,
+            "chinese": "虽然我承认【提高回收率】是必要的，但我坚决不同意【实施严格法规和高额罚款】的提议，因为这不可避免地会导致严重的负面后果。",
+            "english": "While I admit that increasing recycling rates is necessary, I firmly disagree with the proposal of imposing strict regulations and heavy fines, as it would inevitably lead to severe negative consequences.",
+            "skeleton": "While I admit that [承认合理部分] is necessity, I firmly disagree with the proposal of [重复做法], as it would inevitably lead to severe negative consequences."
+      },
+      {
+            "id": "m1_ad_s4",
+            "category": "是否同意类",
+            "categoryKey": "m1_ad",
+            "number": 4,
+            "chinese": "诚然，支持【这种立法手段】的论点源于一个合理的视角。",
+            "english": "Admittedly, the arguments for this legislative approach stem from a reasonable perspective.",
+            "skeleton": "Admittedly, the argument for or against [题目中的做法/趋势] stems from a reasonable perspective."
+      },
+      {
+            "id": "m1_ad_s5",
+            "category": "是否同意类",
+            "categoryKey": "m1_ad",
+            "number": 5,
+            "chinese": "对于【环保倡导者】来说，【家庭垃圾的不断积累】可能是一个巨大的负担。",
+            "english": "For environmental advocates, the continuous accumulation of domestic waste could be an immense burden.",
+            "skeleton": "For [特定受众/弱势群体], [面临的困难/挑战] can be an immense burden."
+      },
+      {
+            "id": "m1_ad_s6",
+            "category": "是否同意类",
+            "categoryKey": "m1_ad",
+            "number": 6,
+            "chinese": "摆脱了这种【严重的污染】，【当地环境】的困境就能得到缓解，这有效地确保了它们基本的【全面健康与福祉】。",
+            "english": "Free from this heavy pollution, local environments can alleviate their plight, which effectively ensures their basic comprehensive well-being.",
+            "skeleton": "Free from this [负面状态/压力], [受影响人群] could alleviate their plight, which effectively ensures their basic [福祉/权利]."
+      },
+      {
+            "id": "m1_ad_s7",
+            "category": "是否同意类",
+            "categoryKey": "m1_ad",
+            "number": 7,
+            "chinese": "尽管这些【考量】有其合理性，但实施【强制回收法律】是一种极不切实际的策略。",
+            "english": "Valid as these considerations may be, implementing compulsory recycling laws is a highly impractical strategy.",
+            "skeleton": "valid as these considerations may be, implementing [题目做法] is a highly impractical strategy."
+      },
+      {
+            "id": "m1_ad_s8",
+            "category": "是否同意类",
+            "categoryKey": "m1_ad",
+            "number": 8,
+            "chinese": "其不利后果主要体现在两个维度。",
+            "english": "There are two main dimensions to its adverse consequences.",
+            "skeleton": "There are two main dimensions to its adverse consequences."
+      },
+      {
+            "id": "m1_ad_s9",
+            "category": "是否同意类",
+            "categoryKey": "m1_ad",
+            "number": 9,
+            "chinese": "在个人/心理层面上，【迫使公民遵守死板的限制会破坏他们对个人自由的关注，并引发严重的财务焦虑】。",
+            "english": "On a individual/psychological level, forcing citizens to conform to rigid restrictions undermines their focus on personal freedom and triggers severe financial anxiety.",
+            "skeleton": "On an individual or psychological level, [微观考量核心句]."
+      },
+      {
+            "id": "m1_ad_s10",
+            "category": "是否同意类",
+            "categoryKey": "m1_ad",
+            "number": 10,
+            "chinese": "不同于鼓励【自发环保习惯】的【自愿性社区项目】，这会引发【公众怒火的灾难性上升和自律性的缺乏】。",
+            "english": "Unlike voluntary community programs that encourage spontaneous eco-friendly habits, this would trigger a catastrophic rise in public anger and a lack of self-discipline.",
+            "skeleton": "Unlike a [对比项], which encourages [正面行为], this would trigger a catastrophic [负面结果]."
+      },
+      {
+            "id": "m1_ad_s11",
+            "category": "是否同意类",
+            "categoryKey": "m1_ad",
+            "number": 11,
+            "chinese": "从更宏观的视角来看，【强制执行会耗尽公共资源并破坏市场繁荣】。",
+            "english": "From a broader perspective, mandatory enforcement exhausts public resources and undermines market prosperity.",
+            "skeleton": "From a broader perspective, [宏观考量核心句]."
+      },
+      {
+            "id": "m1_ad_s12",
+            "category": "是否同意类",
+            "categoryKey": "m1_ad",
+            "number": 12,
+            "chinese": "这需要巨额【资金】来【监督居民和强制执行规定】。如果没有【财政的可持续性】，整个系统将面临迅速崩溃，最终剥夺【每个人的心理健康】。",
+            "english": "This requires enormous funds for supervising residents and enforcing regulations. Without financial sustainability, the entire system would face a rapid collapse, ultimately depriving everyone of their psychological well-being.",
+            "skeleton": "It requires enormous [资源/资金] for [维持运作的环节]. Without the [必要的支撑/收入], the entire system would face a rapid collapse, ultimately depriving everyone of [核心利益]."
+      },
+      {
+            "id": "m1_ad_s13",
+            "category": "是否同意类",
+            "categoryKey": "m1_ad",
+            "number": 13,
+            "chinese": "总而言之，关于【家庭垃圾管理】的两难困境，源于对【环境保护】和【个人自由】的双重追求。",
+            "english": "In conclusion, the dilemma regarding household waste management stems from the dual pursuit of environmental preservation and individual liberty.",
+            "skeleton": "In conclusion, the dilemma regarding [核心话题] stems from the dual pursuit of [追求1] and [追求2]."
+      },
+      {
+            "id": "m1_ad_s14",
+            "category": "是否同意类",
+            "categoryKey": "m1_ad",
+            "number": 14,
+            "chinese": "最理性的方法是建立一个【政府主导的激励计划】。这种折中方案在【生态目标】与【个人自由】之间取得了最佳平衡。",
+            "english": "The most rational approach is to establish a government-led incentive scheme. This compromise optimally balances ecological goals with personal freedom.",
+            "skeleton": "The most rational approach is to establish a [建议的折中方案]. This compromise optimally balances [追求1] with [追求2]."
+      },
+      {
+            "id": "m1_pn_s1",
+            "category": "利弊分析类",
+            "categoryKey": "m1_pn",
+            "number": 1,
+            "chinese": "在许多国家，【全球时尚现象对人们穿着方式的广泛影响】已成为一个突出的趋势。",
+            "english": "In many nations, the widespread influence of global fashion phenomenon on the way people dress has become a prominent trend.",
+            "skeleton": "In many nations, [题目核心现象] has become a prominent trend."
+      },
+      {
+            "id": "m1_pn_s2",
+            "category": "利弊分析类",
+            "categoryKey": "m1_pn",
+            "number": 2,
+            "chinese": "虽然这种现象引发了关于【丧失文化认同】的某些担忧，但我坚信这对个人和更广泛的社会来说都是一个极其积极的发展。",
+            "english": "While this phenomenon raises certain concerns regarding the loss of cultural identity, I firmly believe that it is a highly positive development for both individuals and the broader society.",
+            "skeleton": "While this phenomenon raises certain concerns regarding [核心弊端], I firmly believe it is a highly positive development for both individuals and the broader society."
+      },
+      {
+            "id": "m1_pn_s3",
+            "category": "利弊分析类",
+            "categoryKey": "m1_pn",
+            "number": 3,
+            "chinese": "诚然，反对【全球时尚趋势主导地位】的论点源于一个合理的视角。",
+            "english": "Admittedly, the arguments against the dominance of global fashion trends stem from a reasonable perspective.",
+            "skeleton": "Admittedly, the argument for or against [题目中的做法/趋势] stems from a reasonable perspective."
+      },
+      {
+            "id": "m1_pn_s4",
+            "category": "利弊分析类",
+            "categoryKey": "m1_pn",
+            "number": 4,
+            "chinese": "对于【深植于传统文化的保守人士】来说，【当地服装遗产的受到侵蚀】可能是一个巨大的负担。",
+            "english": "For conservative individuals deeply rooted in traditional cultures, the erosion of local clothing heritage can be an immense burden.",
+            "skeleton": "For [特定受众/弱势群体], [面临的困难/挑战] can be an immense burden."
+      },
+      {
+            "id": "m1_pn_s5",
+            "category": "利弊分析类",
+            "categoryKey": "m1_pn",
+            "number": 5,
+            "chinese": "不同于通常能确保【文化遗产】的平衡状况，这一发展将引发【一种灾难性的局面，即传统工艺的产业系统将面临迅速崩溃】。",
+            "english": "Unlike a balanced situation, which often ensures cultural heritage, this development would trigger a catastrophic situation where the company system of traditional craft would face a rapid collapse.",
+            "skeleton": "Unlike a balanced situation, which often ensures [原有好处], this development would trigger a catastrophic [某种负面结果]."
+      },
+      {
+            "id": "m1_pn_s6",
+            "category": "利弊分析类",
+            "categoryKey": "m1_pn",
+            "number": 6,
+            "chinese": "失去了【当地的传统工艺】，它们将面临迅速崩溃，最终剥夺【每个人的独特文化认同】。",
+            "english": "Without the local traditional craftsmanship, they would face a rapid collapse, ultimately depriving everyone of unique cultural identity.",
+            "skeleton": "Without the [必要的支撑/收入], they would face a rapid collapse, ultimately depriving everyone of [核心利益]."
+      },
+      {
+            "id": "m1_pn_s7",
+            "category": "利弊分析类",
+            "categoryKey": "m1_pn",
+            "number": 7,
+            "chinese": "然而，我坚信这一趋势会产生重大的积极结果。其益处主要体现在两个维度。",
+            "english": "However, I firmly believe this trend yields substantial positive outcomes. There are two main dimensions to its benefits.",
+            "skeleton": "However, I firmly believe this trend yields substantial positive outcomes. There are two main dimensions to its benefits."
+      },
+      {
+            "id": "m1_pn_s8",
+            "category": "利弊分析类",
+            "categoryKey": "m1_pn",
+            "number": 8,
+            "chinese": "在个人层面上，【时尚的全球化赋予了个人追求归属感和寻找自我认同的自由】。",
+            "english": "On a personal level, the globalization of fashion grants individuals the freedom to pursue a sense of belonging and search for identity.",
+            "skeleton": "On an individual or psychological level, [微观考量核心句]."
+      },
+      {
+            "id": "m1_pn_s9",
+            "category": "利弊分析类",
+            "categoryKey": "m1_pn",
+            "number": 9,
+            "chinese": "摆脱了【文化的束缚】，个人可以将精力集中在【表达其不断发展的个性】上，最终提升他们的全面健康与福祉。",
+            "english": "Free from cultural constraints, individuals can channel their energy into expressing their evolving personalities, ultimately enhancing their overall well-being.",
+            "skeleton": "Free from [某种束缚/负面状态], individuals can channel their energy into [具体领域], ultimately enhancing their overall well-being."
+      },
+      {
+            "id": "m1_pn_s10",
+            "category": "利弊分析类",
+            "categoryKey": "m1_pn",
+            "number": 10,
+            "chinese": "从更宏观的视角来看，【其对全球经济的影响是深远的】。",
+            "english": "From a broader perspective, the impact on the global economy is profound.",
+            "skeleton": "From a broader perspective, [宏观考量核心句]."
+      },
+      {
+            "id": "m1_pn_s11",
+            "category": "利弊分析类",
+            "categoryKey": "m1_pn",
+            "number": 11,
+            "chinese": "这一蓬勃发展的【国际时尚产业】为设计师和制造商创造了大量机会，它也成为了【跨文化交流和经济增长】的强大引擎。",
+            "english": "This booming international fashion industry creates a multitude of opportunities for designers and manufacturers, and it serves as a powerful engine for cross-cultural exchange and economic growth.",
+            "skeleton": "This booming [相关领域/供应链] creates a multitude of opportunities and serves as a powerful engine for [宏观经济/社会目标]."
+      },
+      {
+            "id": "m1_pn_s12",
+            "category": "利弊分析类",
+            "categoryKey": "m1_pn",
+            "number": 12,
+            "chinese": "总而言之，关于【全球时尚趋势】的两难困境，源于对【文化认同的需求】和对【个人自由的渴望】的双重追求。",
+            "english": "In conclusion, the dilemma regarding global fashion trends stems from the dual pursuit of the need for cultural identity and the desire for personal freedom.",
+            "skeleton": "In conclusion, the dilemma regarding [核心话题] stems from the dual pursuit of [追求1] and [追求2]."
+      },
+      {
+            "id": "m1_pn_s13",
+            "category": "利弊分析类",
+            "categoryKey": "m1_pn",
+            "number": 13,
+            "chinese": "我认为这种现象是完全积极的，因为它不仅提升了个人幸福感和自我表达，还为全球经济注入了活力。",
+            "english": "I believe this phenomenon is entirely positive, as it not only enhances personal happiness and self-expression but also injects vitality into the global economy.",
+            "skeleton": "I believe this phenomenon is entirely positive, as it not only enhances personal happiness and self-expression but also injects vitality into the global economy."
+      },
+      {
+            "id": "m2_s1",
+            "category": "双边讨论类",
+            "categoryKey": "m2",
+            "number": 1,
+            "chinese": "在许多国家，【延长暑假的学校做法】已成为一个【由来已久的传统】。",
+            "english": "In many nations, the practice of closing schools for extended summer holidays has become a long-standing tradition.",
+            "skeleton": "In many nations, [题目核心现象] has become a long-standing tradition.",
+            "originalSkeleton": "In many nations, [客观现象描述] has become a prominent trend or long-standing tradition.",
+            "miniReplacement": true
+      },
+      {
+            "id": "m2_s2",
+            "category": "双边讨论类",
+            "categoryKey": "m2",
+            "number": 2,
+            "chinese": "本文将探讨【保留长假】的深远意义，同时也会分析主张【缩短学校假期】的论点。",
+            "english": "This essay will explore the profound significance of maintaining long vacations, while also analysing the contention advocating for shorter school holidays.",
+            "skeleton": "This essay will explore the profound significance of [观点A], while also analyzing the contention advocating for [观点B]."
+      },
+      {
+            "id": "m2_s3",
+            "category": "双边讨论类",
+            "categoryKey": "m2",
+            "number": 3,
+            "chinese": "【长假】的益处主要体现在两个维度。",
+            "english": "There are two main dimensions to the benefits of long school holidays.",
+            "skeleton": "There are two main dimensions to [核心分析对象].",
+            "originalSkeleton": "There are two main dimensions to the benefits of [观点A].",
+            "miniReplacement": true
+      },
+      {
+            "id": "m2_s4",
+            "category": "双边讨论类",
+            "categoryKey": "m2",
+            "number": 4,
+            "chinese": "在个人层面上，【它们为学生提供了一个满足精神需求的独特机会】。",
+            "english": "On an individual level, they provide students with a unique opportunity to satisfy their non-material needs.",
+            "skeleton": "On an individual level, [微观考量核心句].",
+            "originalSkeleton": "On an individual or practical level, [观点A的第一个好处].",
+            "miniReplacement": true
+      },
+      {
+            "id": "m2_s5",
+            "category": "双边讨论类",
+            "categoryKey": "m2",
+            "number": 5,
+            "chinese": "摆脱了【沉重的学业考核压力】，个人可以【自由地将精力投入个人兴趣和爱好】。",
+            "english": "Free from the intense pressure of academic assessments, individuals can freely channel their energy into personal interests and hobbies.",
+            "skeleton": "Free from [某种束缚/负面状态], individuals can [具体行动/结果].",
+            "originalSkeleton": "Free from [负面状态], individuals can [具体解释好处1].",
+            "miniReplacement": true
+      },
+      {
+            "id": "m2_s6",
+            "category": "双边讨论类",
+            "categoryKey": "m2",
+            "number": 6,
+            "chinese": "从更宏观的视角来看，这种趋势为【青少年的全面发展】铺平了道路。",
+            "english": "From a more broader perspective, this trend paves the way for comprehensive youth development.",
+            "skeleton": "From a more broader perspective, [宏观考量核心句].",
+            "originalSkeleton": "From a broader or societal perspective, this approach paves the way for [观点A的第二个好处].",
+            "miniReplacement": true
+      },
+      {
+            "id": "m2_s7",
+            "category": "双边讨论类",
+            "categoryKey": "m2",
+            "number": 7,
+            "chinese": "这些丰富充实的活动不仅能促进【他们的心理健康】，还能显著拓宽【他们的现实世界经验】。",
+            "english": "Such enriching endeavors not only promote their psychological well-being, but also significantly enhance their real-world experience.",
+            "skeleton": "Such enriching endeavors not only promote [进一步解释2a] but also significantly enhance [进一步解释2b]."
+      },
+      {
+            "id": "m2_s8",
+            "category": "双边讨论类",
+            "categoryKey": "m2",
+            "number": 8,
+            "chinese": "然而，尽管有这些不可否认的益处，呼吁另一种观点同样是出于合理的务实考量。",
+            "english": "However, valid as these undeniable benefits may be, the call for the alternative perspective is driven by equally valid practical concerns.",
+            "skeleton": "However, valid as these undeniable benefits may be, the call for the alternative perspective is driven by equally valid practical concerns."
+      },
+      {
+            "id": "m2_s9",
+            "category": "双边讨论类",
+            "categoryKey": "m2",
+            "number": 9,
+            "chinese": "从教育的立场来看，【紧凑的假期结构确保了学业的持续进步】。",
+            "english": "From an educational standpoint, a condensed holiday structure ensures continuous academic progress.",
+            "skeleton": "From an educational standpoint, [教育层面的核心句].",
+            "originalSkeleton": "From an economic, educational or environmental standpoint, [观点B的第一个好处].",
+            "miniReplacement": true
+      },
+      {
+            "id": "m2_s10",
+            "category": "双边讨论类",
+            "categoryKey": "m2",
+            "number": 10,
+            "chinese": "不同于往往导致【缺乏自律】的【过长的空白期】，【短假】防止了【严重的学业倒退】。",
+            "english": "Unlike extended gaps which often leads to a lack of self-discipline, shorter holidays prevent severe academic regression.",
+            "skeleton": "Unlike [对比项] which often leads to [负面结果], [观点B] prevent(s) [积极结果].",
+            "originalSkeleton": "Unlike [对比观点A的劣势], which often leads to [A带来的坏处], [观点B] ensures [具体解释观点B的优势].",
+            "miniReplacement": true
+      },
+      {
+            "id": "m2_s11",
+            "category": "双边讨论类",
+            "categoryKey": "m2",
+            "number": 11,
+            "chinese": "在家庭层面上，【修改后的时间表让了照顾孩子更简单】。",
+            "english": "On a family level, a revised schedule makes childcare easier for parents.",
+            "skeleton": "On a family or social level, [观点B的第二个好处]."
+      },
+      {
+            "id": "m2_s12",
+            "category": "双边讨论类",
+            "categoryKey": "m2",
+            "number": 12,
+            "chinese": "这极大地缓解了那些总是挣扎于【寻找负担得起的日托服务】的【双职工父母】的【巨大负担】。",
+            "english": "This significantly alleviates the immense burden on working parents who constantly struggle to secure affordable daycare services.",
+            "skeleton": "This significantly alleviates the immense burden on [特定受众] who constantly struggle to [解决某个痛点]."
+      },
+      {
+            "id": "m2_s13",
+            "category": "双边讨论类",
+            "categoryKey": "m2",
+            "number": 13,
+            "chinese": "总而言之，关于【学校假期的最佳时长】的两难困境，源于对【个人探索】和【实际学业稳定】的双重追求。",
+            "english": "In conclusion, the dilemma regarding the optimal duration of school holidays stems from the dual pursuit of individual exploration and practical academic stability.",
+            "skeleton": "In conclusion, the dilemma regarding [核心话题] stems from the dual pursuit of [追求1] and [追求2].",
+            "originalSkeleton": "In conclusion, the dilemma regarding [题目核心冲突的话题] stems from the dual pursuit of [深层追求1] and [深层追求2].",
+            "miniReplacement": true
+      },
+      {
+            "id": "m2_s15",
+            "category": "双边讨论类",
+            "categoryKey": "m2",
+            "number": 14,
+            "chinese": "最终，当局必须在这两种方法之间取得微妙的平衡。",
+            "english": "Ultimately, authorities must strike a delicate balance between these two approaches.",
+            "skeleton": "Ultimately, authorities or individuals must strike a delicate balance between these two approaches."
+      },
+      {
+            "id": "m3_s1",
+            "category": "报告类",
+            "categoryKey": "m3",
+            "number": 1,
+            "chinese": "鉴于【全球市场商业化】的快节奏，【弱势群体】【再也无法】享受免受饥饿威胁的稳定粮食安全。",
+            "english": "Given the fast pace of global market commercialization, vulnerable populations are no longer able to enjoy food security free from the threat of starvation.",
+            "skeleton": "Given the fast pace of [宏观背景], [主体] are no longer able to [原有状态].",
+            "originalSkeleton": "Given the fast pace of [宏观背景], [受影响的人群/主体] are no longer able to [原有的理想状态]",
+            "miniReplacement": true
+      },
+      {
+            "id": "m3_s2",
+            "category": "报告类",
+            "categoryKey": "m3",
+            "number": 2,
+            "chinese": "本文将探讨推动这一趋势的主要因素，如【资源分配不均】和【物流供应链中断】，并为【各国政府】提供切实的建议，以准备好迎接这些不可避免的挑战。",
+            "english": "This essay will explore the primary factors driving this trend, such as unequal resource distribution and logistical supply chain disruptions, and suggest practical strategies for national governments to be ready to embrace these inevitable challenges.",
+            "skeleton": "This essay will explore the primary factors driving this trend, such as [原因1] and [原因2], and suggest practical strategies for [应对的主体] to be ready to embrace these inevitable challenges."
+      },
+      {
+            "id": "m3_s3",
+            "category": "报告类",
+            "categoryKey": "m3",
+            "number": 3,
+            "chinese": "导致【全球粮食供应】这一严重问题的原因体现在两个主要维度。",
+            "english": "There are two main dimensions to the causes of this huge change in global food supply.",
+            "skeleton": "There are two main dimensions to the causes of [核心问题].",
+            "originalSkeleton": "There are two main dimensions to the causes of this huge change/problem in [相关领域].",
+            "miniReplacement": true
+      },
+      {
+            "id": "m3_s4",
+            "category": "报告类",
+            "categoryKey": "m3",
+            "number": 4,
+            "chinese": "在【经济】层面上，【经济作物种植】的快速发展已经【剥夺了当地居民负担得起的粮食选择】。",
+            "english": "On an economic level, the rapid development of cash-crop cultivation has deprived local residents of affordable food choices.",
+            "skeleton": "On an economic level, the rapid development of [具体现象] has [不良影响].",
+            "originalSkeleton": "On an economic level, the rapid development of [具体现象A] has [产生的不良影响].",
+            "miniReplacement": true
+      },
+      {
+            "id": "m3_s5",
+            "category": "报告类",
+            "categoryKey": "m3",
+            "number": 5,
+            "chinese": "例如，【跨国公司垄断专利种子】，导致了【高昂的粮食价格，这给低收入家庭带来了巨大负担】。",
+            "english": "For instance, multinational corporations monopolize patented seeds, leading to very high grain prices that impose an immense burden on low-income households.",
+            "skeleton": "For instance, [简单举例说明], leading to [导致的不良结果]."
+      },
+      {
+            "id": "m3_s7",
+            "category": "报告类",
+            "categoryKey": "m3",
+            "number": 6,
+            "chinese": "从更宏观的视角来看，【地缘政治冲突和地区不稳定】扮演了关键角色。",
+            "english": "From a broader perspective, geopolitical conflicts and regional instability play a key role.",
+            "skeleton": "From a broader perspective, [宏观考量核心句].",
+            "originalSkeleton": "From a broader perspective, [维度B] plays a key role.",
+            "miniReplacement": true
+      },
+      {
+            "id": "m3_s8_mini",
+            "category": "报告类",
+            "categoryKey": "m3",
+            "number": 7,
+            "chinese": "如果没有【有效协调】，整个系统将面临迅速崩溃，最终剥夺【弱势群体】的基本粮食安全。",
+            "english": "Without effective coordination, the entire system would face a rapid collapse, ultimately depriving vulnerable groups of basic food security.",
+            "skeleton": "Without the [必要的支撑/收入], the entire system would face a rapid collapse, ultimately depriving everyone of [核心利益]."
+      },
+      {
+            "id": "m3_s9",
+            "category": "报告类",
+            "categoryKey": "m3",
+            "number": 8,
+            "chinese": "为了成功应对这些不确定的情况，【国际社会】必须采取积极的措施。",
+            "english": "In order to successfully cope with these uncertain situations, the international community must adopt positive measures.",
+            "skeleton": "In order to successfully cope with these uncertain situations, [应对的主体] must adopt positive measures."
+      },
+      {
+            "id": "m3_s10",
+            "category": "报告类",
+            "categoryKey": "m3",
+            "number": 9,
+            "chinese": "在【实际政策】层面上，发展【政府主导的粮食储备系统】是至关重要的。",
+            "english": "On a practical policy level, it is crucial to develop government-led food storage systems.",
+            "skeleton": "On a practical policy level, it is crucial to develop [建议/措施].",
+            "originalSkeleton": "On a practical policy level, it is crucial to develop [建议1的核心举措].",
+            "miniReplacement": true
+      },
+      {
+            "id": "m3_s11",
+            "category": "报告类",
+            "categoryKey": "m3",
+            "number": 10,
+            "chinese": "通过【持续支持农业生产】和【改善粮食运输网络】，【政府】可以【稳定粮食供应】并【减少市场波动的影响】。",
+            "english": "Through continuous support for agricultural production and better food delivery networks, governments can stabilize food supplies and reduce the impact of market fluctuations.",
+            "skeleton": "Through [做法A] and [做法B], [主体] can [结果A] and [结果B]."
+      },
+      {
+            "id": "m3_s14",
+            "category": "报告类",
+            "categoryKey": "m3",
+            "number": 11,
+            "chinese": "保持这种方法是生存和成功的有效策略，这最终【确保了全面的健康与福祉】。",
+            "english": "Maintaining this approach is an effective strategy for survival and success, which ultimately ensures comprehensive well-being.",
+            "skeleton": "Maintaining this approach is an effective strategy for survival and success, which ultimately ensures comprehensive well-being."
+      },
+      {
+            "id": "m3_s15",
+            "category": "报告类",
+            "categoryKey": "m3",
+            "number": 12,
+            "chinese": "总而言之，【全球粮食分配】中的严重问题是由【不受监管的市场商业化】和【持续的地区冲突】引起的。",
+            "english": "In conclusion, the severe problem in global food distribution is caused by unregulated market commercialization and persistent regional conflicts.",
+            "skeleton": "In conclusion, the severe problem in [相关领域] is caused by [原因1] and [原因2].",
+            "originalSkeleton": "In conclusion, the frequent changes or serious problems in [相关领域] are caused by [原因1的名词化总结] and [原因2的名词化总结].",
+            "miniReplacement": true
+      },
+      {
+            "id": "m3_s16",
+            "category": "报告类",
+            "categoryKey": "m3",
+            "number": 13,
+            "chinese": "然而，通过【补贴农业物流】和【加强国际人道主义合作】，【人类社会】可以成功适应这个挑战并保护他们的未来。",
+            "english": "However, through subsidizing agricultural logistics and enhancing international humanitarian cooperation, human society can successfully adapt to this fast-paced challenge and protect their future.",
+            "skeleton": "However, by [建议1的动名词总结] and [建议2的动名词总结], [应对的主体] can successfully adapt to this fast-paced challenge and protect their future."
+      }
+];
+
+    const app = document.getElementById('app');
+    const filters = document.getElementById('filters');
+    const totalCount = document.getElementById('totalCount');
+    const correctCount = document.getElementById('correctCount');
+    const errorCount = document.getElementById('errorCount');
+    let activeCategory = '全部';
+    let onlyErrors = false;
+
+    const clean = value => value.toLowerCase().replace(/[^a-z0-9]/g, '');
+
+    const paragraphTitles = {
+      m1_ad: {
+        1: 'Paragraph 1: 引入段',
+        4: 'Paragraph 2: 主体段 1 (单点说痛点)',
+        7: 'Paragraph 3: 主体段 2 (双维反驳)',
+        13: 'Paragraph 4: 结尾段 (万能归纳)'
+      },
+      m1_pn: {
+        1: 'Paragraph 1: 引入段',
+        3: 'Paragraph 2: 主体段 1 (让步段)',
+        7: 'Paragraph 3: 主体段 2 (双维支持段)',
+        12: 'Paragraph 4: 结尾段'
+      },
+      m2: {
+        1: 'Paragraph 1: 引入段 (绝杀预告)',
+        3: 'Paragraph 2: 主体段 1 (探讨观点 A)',
+        8: 'Paragraph 3: 主体段 2 (探讨观点 B)',
+        13: 'Paragraph 4: 结尾段 (寻求微妙平衡)'
+      },
+      m3: {
+        1: 'Paragraph 1: 引入段',
+        3: 'Paragraph 2: 主体段 1 (Causes 原因段)',
+        8: 'Paragraph 3: 主体段 2 (Solutions 建议段)',
+        12: 'Paragraph 4: 结尾段'
+      }
+    };
+
+    function getState(row) {
+      const textarea = row.querySelector('textarea');
+      const user = clean(textarea.value);
+      const answer = clean(textarea.dataset.answer);
+      if (!user) return 'empty';
+      if (user === answer) return 'correct';
+      if (answer.startsWith(user)) return 'partial';
+      return 'error';
+    }
+
+    function updateRow(row) {
+      const state = getState(row);
+      const status = row.querySelector('.status');
+      row.classList.toggle('correct', state === 'correct');
+      row.classList.toggle('error', state === 'error');
+      status.textContent = state === 'correct' ? '正确' : state === 'error' ? '错误' : state === 'partial' ? '继续' : '待输入';
+      updateStats();
+    }
+
+    function updateStats() {
+      const rows = [...document.querySelectorAll('.article-row')];
+      totalCount.textContent = rows.length;
+      correctCount.textContent = rows.filter(row => getState(row) === 'correct').length;
+      errorCount.textContent = rows.filter(row => getState(row) === 'error').length;
+    }
+
+    function speakSentence(text) {
+      if (!('speechSynthesis' in window)) return;
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = 'en-US';
+      utterance.rate = 0.9;
+      window.speechSynthesis.speak(utterance);
+    }
+
+    function focusNextTextarea(currentTextarea) {
+      const textareas = [...document.querySelectorAll('.article-row:not(.hidden) textarea')];
+      const currentIndex = textareas.indexOf(currentTextarea);
+      const nextTextarea = textareas[currentIndex + 1];
+      if (nextTextarea) {
+        nextTextarea.focus();
+        nextTextarea.scrollIntoView({ block: 'center', behavior: 'smooth' });
+      }
+    }
+
+    function applyVisibility() {
+      document.querySelectorAll('.category-section').forEach(section => {
+        const cat = section.dataset.category;
+        const rows = [...section.querySelectorAll('.article-row')];
+        let visibleRows = 0;
+        rows.forEach(row => {
+          const categoryMatch = activeCategory === '全部' || cat === activeCategory;
+          const errorMatch = !onlyErrors || getState(row) === 'error';
+          const visible = categoryMatch && errorMatch;
+          row.classList.toggle('hidden', !visible);
+          if (visible) visibleRows += 1;
+        });
+        section.querySelectorAll('.paragraph-divider').forEach(divider => {
+          let hasVisibleRow = false;
+          let node = divider.nextElementSibling;
+          while (node && !node.classList.contains('paragraph-divider')) {
+            if (node.classList.contains('article-row') && !node.classList.contains('hidden')) {
+              hasVisibleRow = true;
+              break;
+            }
+            node = node.nextElementSibling;
+          }
+          divider.classList.toggle('hidden', !hasVisibleRow);
+        });
+        section.classList.toggle('hidden', visibleRows === 0);
+      });
+    }
+
+    function renderFilters() {
+      const categories = ['全部', ...new Set(examples.map(item => item.category))];
+      filters.innerHTML = categories.map(cat => '<button class="filter-btn" data-category="' + escapeAttr(cat) + '">' + escapeHTML(cat) + '</button>').join('');
+      filters.addEventListener('click', event => {
+        const btn = event.target.closest('.filter-btn');
+        if (!btn) return;
+        activeCategory = btn.dataset.category;
+        document.querySelectorAll('.filter-btn').forEach(item => item.classList.toggle('active', item === btn));
+        applyVisibility();
+      });
+      filters.querySelector('.filter-btn').classList.add('active');
+    }
+
+    function renderList() {
+      const grouped = new Map();
+      examples.forEach(item => {
+        if (!grouped.has(item.category)) grouped.set(item.category, []);
+        grouped.get(item.category).push(item);
+      });
+
+      app.innerHTML = [...grouped.entries()].map(([category, items]) => {
+        const rows = items.map(item => {
+          const paragraphTitle = paragraphTitles[item.categoryKey] && paragraphTitles[item.categoryKey][item.number];
+          const divider = paragraphTitle
+            ? '<div class="paragraph-divider"><span>' + escapeHTML(paragraphTitle) + '</span></div>'
+            : '';
+          return divider + '<div class="article-row" data-category="' + escapeAttr(item.category) + '">' +
+            '<div class="index-pill">' + item.number + '</div>' +
+            '<div class="zh-cell">' +
+              '<div class="zh" title="点击显示/隐藏英文骨架">' + highlightChinese(item.chinese) + '</div>' +
+              '<div class="skeleton">' + (item.miniReplacement ? '<span class="mini-badge">压缩骨架</span>' : '') + escapeHTML(item.skeleton) + '</div>' +
+            '</div>' +
+            '<div class="input-cell">' +
+              '<textarea autocomplete="off" spellcheck="false" data-answer="' + escapeAttr(item.english) + '" placeholder="Type the full English sentence"></textarea>' +
+              '<div class="answer">' + escapeHTML(item.english) + '</div>' +
+            '</div>' +
+            '<button class="play-btn" type="button" data-sentence="' + escapeAttr(item.english) + '" title="播放英文句子" aria-label="播放英文句子">▶</button>' +
+            '<div class="status">待输入</div>' +
+          '</div>';
+        }).join('');
+        return '<section class="category-section" data-category="' + escapeAttr(category) + '">' +
+          '<h2 class="category-title">' + escapeHTML(category) + '<span class="category-count">' + items.length + ' 句</span></h2>' +
+          '<div class="article-list">' + rows + '</div>' +
+        '</section>';
+      }).join('');
+
+      document.querySelectorAll('textarea').forEach(textarea => {
+        textarea.addEventListener('input', () => {
+          updateRow(textarea.closest('.article-row'));
+          if (onlyErrors) applyVisibility();
+        });
+        textarea.addEventListener('keydown', event => {
+          if (event.key === 'Enter' && !event.shiftKey) {
+            event.preventDefault();
+            focusNextTextarea(textarea);
+          }
+          if (event.key === 'Escape') {
+            textarea.closest('.article-row').classList.toggle('show-answer');
+          }
+        });
+      });
+      document.querySelectorAll('.play-btn').forEach(button => {
+        button.addEventListener('click', () => speakSentence(button.dataset.sentence));
+      });
+      document.querySelectorAll('.zh').forEach(block => {
+        block.addEventListener('click', () => block.closest('.article-row').classList.toggle('show-skeleton'));
+      });
+      updateStats();
+    }
+
+    function highlightChinese(value) {
+      return escapeHTML(value).replace(/【(.*?)】/g, '<mark>【$1】</mark>');
+    }
+
+    function escapeHTML(value) {
+      return String(value).replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]));
+    }
+
+    function escapeAttr(value) {
+      return escapeHTML(value);
+    }
+
+    document.getElementById('focusFirst').addEventListener('click', () => {
+      const first = document.querySelector('.article-row:not(.hidden) textarea');
+      if (first) first.focus();
+    });
+
+    document.getElementById('showAnswers').addEventListener('click', () => {
+      document.querySelectorAll('.article-row').forEach(row => row.classList.add('show-answer'));
+    });
+
+    document.getElementById('hideAnswers').addEventListener('click', () => {
+      document.querySelectorAll('.article-row').forEach(row => row.classList.remove('show-answer'));
+    });
+
+    document.getElementById('showOnlyErrors').addEventListener('click', () => {
+      onlyErrors = true;
+      applyVisibility();
+    });
+
+    document.getElementById('showAll').addEventListener('click', () => {
+      onlyErrors = false;
+      applyVisibility();
+    });
+
+    renderFilters();
+    renderList();
+  </script>
+</body>
+</html>
