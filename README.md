@@ -1,6 +1,32 @@
 # IELTS-Vacab-Fantasia
 
-一个本地 IELTS 词汇与词伙记忆工具。项目将 `content/` 中新增或变更的 Markdown 增量编译到 `dist/`，并提供翻译气泡、图片记忆卡、TTS、生词本和快捷键切词等交互。
+<p align="center">
+  <img src="assets/branding/project-logo.svg" alt="IELTS-Vacab-Fantasia：视觉与听觉结合的立体词汇记忆" width="760">
+</p>
+
+一个把单词变成**可看、可听、可应用**记忆单元的本地 IELTS 词汇学习工具。项目将 `content/` 中新增或变更的 Markdown 增量编译到 `dist/`，并提供翻译气泡、图片记忆卡、TTS、生词本和快捷键切词等交互。
+
+## 多维度单词记忆
+
+IELTS-Vacab-Fantasia 不把单词停留在孤立的“英文—中文”对照上。同一个词会同时连接三类线索：
+
+- **视觉记忆**：用具象照片建立画面联想，并在正文气泡和沉浸式覆层中重复呈现。
+- **听觉记忆**：可朗读单词、中文词义和英文例句，让发音、含义与使用场景形成连续的声音线索。
+- **精选例句**：以简短、自然、日常可用的完整句子呈现真实用法；适合共享时复用同一句，减少不必要的例句负担。
+
+复习时还可以通过主动输入单词或完整英文例句进行验证。视觉负责唤起画面，听觉负责建立语音印象，例句负责提供语境，主动回忆负责把它们真正连接起来。
+
+<p align="center">
+  <img src="assets/branding/memory-overlay.png" alt="沉浸式单词记忆覆层：照片、释义、精选中英例句与主动输入验证" width="720">
+  <br>
+  <sub>沉浸式覆层：照片联想、词义、精选例句、朗读与主动输入集中在一次复习中。</sub>
+</p>
+
+<p align="center">
+  <img src="assets/branding/context-image-tip.png" alt="短篇剧场正文中的单词图片联想气泡" width="820">
+  <br>
+  <sub>短篇剧场：单词保留在连续语境中，点击即可调出对应的视觉记忆。</sub>
+</p>
 
 ## 构建
 
@@ -38,6 +64,7 @@ IELTS-Vacab-Fantasia/
 │   ├── writing/                  # IELTS 写作词伙
 │   └── junior-high/              # 初中英语内容
 ├── assets/                       # 唯一静态资源库
+│   ├── branding/                 # 项目 logo、icon 与 README 截图
 │   ├── css/                      # 页面样式
 │   ├── js/                       # 页面交互脚本
 │   └── images/                   # 单词图片
@@ -71,6 +98,10 @@ IELTS-Vacab-Fantasia/
 
 ## 关键文件
 
+- `assets/branding/project-icon.svg`：融合照片与语音波形的项目 icon。
+- `assets/branding/project-logo.svg`：包含完整项目名称的横向 logo。
+- `assets/branding/memory-overlay.png`：多维度单词记忆覆层截图。
+- `assets/branding/context-image-tip.png`：短篇语境与图片联想气泡截图。
 - `assets/css/almond.css`：阅读页面基础样式。
 - `assets/js/monkey-for-extensions.js`：翻译、TTS、生词本和快捷键交互。
 - `assets/js/word-image-preview.js`：图片气泡与全屏记忆卡。
