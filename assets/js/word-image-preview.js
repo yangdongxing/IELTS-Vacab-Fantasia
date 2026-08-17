@@ -327,7 +327,7 @@
     }
 
     function scheduleKeyInputFallback(event, answer) {
-        if (!answer || event.metaKey || event.ctrlKey || event.altKey) return;
+        if (!answer || event.isTrusted || event.isComposing || event.metaKey || event.ctrlKey || event.altKey) return;
         if (event.key.length !== 1 && event.key !== "Backspace" && event.key !== "Delete") return;
 
         const before = answer.value;
@@ -356,7 +356,7 @@
     }
 
     function schedulePasteFallback(event, answer) {
-        if (!answer || !event.clipboardData) return;
+        if (!answer || event.isTrusted || !event.clipboardData) return;
 
         const text = event.clipboardData.getData("text");
         if (!text) return;
