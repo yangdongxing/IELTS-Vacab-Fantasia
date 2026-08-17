@@ -206,11 +206,26 @@
                 bottom: 100% !important;
                 border-color: transparent transparent #172033 transparent !important;
             }
-            strong:hover .translation-bubble.geek-has-word-image,
-            em:hover .translation-bubble.geek-has-word-image,
             .translation-bubble.geek-has-word-image.force-show {
                 background-color: #172033 !important;
                 transform: translateX(-50%) scale(1) !important;
+                pointer-events: auto !important;
+            }
+            .translation-bubble.geek-has-word-image.force-show .geek-bubble-image {
+                pointer-events: auto !important;
+            }
+            @media (hover: hover) {
+                strong:hover .translation-bubble.geek-has-word-image,
+                em:hover .translation-bubble.geek-has-word-image,
+                strong:hover .translation-bubble.geek-has-word-image .geek-bubble-image,
+                em:hover .translation-bubble.geek-has-word-image .geek-bubble-image {
+                    pointer-events: auto !important;
+                }
+                strong:hover .translation-bubble.geek-has-word-image,
+                em:hover .translation-bubble.geek-has-word-image {
+                    background-color: #172033 !important;
+                    transform: translateX(-50%) scale(1) !important;
+                }
             }
             .translation-bubble.geek-has-word-image.force-show::after {
                 border-color: #172033 transparent transparent transparent !important;
@@ -1211,6 +1226,13 @@
         image.loading = "lazy";
         image.draggable = false;
         image.addEventListener("load", () => placeBubble(bubble));
+        image.addEventListener("click", event => {
+            const data = bubbleMemoryData.get(bubble);
+            if (!data) return;
+            event.preventDefault();
+            event.stopPropagation();
+            openMemoryModal(data, { speak: true });
+        });
 
         const text = document.createElement("span");
         text.className = "geek-bubble-text";
@@ -1233,39 +1255,6 @@
                 bubble.classList.remove("geek-bubble-below");
             }
         });
-    }
-
-    function isVisibleBubble(bubble) {
-        if (!bubble) return false;
-        const styles = window.getComputedStyle(bubble);
-        return Number(styles.opacity) > 0.5;
-    }
-
-    function handleImageCoordinateClick(event) {
-        if (event.target && event.target.closest && event.target.closest("#geek-memory-modal")) return;
-
-        for (const image of document.querySelectorAll(".translation-bubble.geek-has-word-image .geek-bubble-image")) {
-            const bubble = image.closest(".translation-bubble");
-            if (!isVisibleBubble(bubble)) continue;
-
-            const rect = image.getBoundingClientRect();
-            const hit =
-                event.clientX >= rect.left &&
-                event.clientX <= rect.right &&
-                event.clientY >= rect.top &&
-                event.clientY <= rect.bottom;
-
-            if (!hit) continue;
-
-            const data = bubbleMemoryData.get(bubble);
-            if (!data) return;
-
-            event.preventDefault();
-            event.stopPropagation();
-            event.stopImmediatePropagation();
-            openMemoryModal(data, { speak: true });
-            return;
-        }
     }
 
     function clearForcedImageBubbles() {
@@ -1337,7 +1326,6 @@
 
         window.addEventListener("scroll", placeActiveBubble, { passive: true });
         window.addEventListener("resize", placeActiveBubble);
-        document.addEventListener("click", handleImageCoordinateClick, true);
         document.addEventListener("click", handleBlankClickCloseBubble, true);
     }
 

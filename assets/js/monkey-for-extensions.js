@@ -40,7 +40,11 @@
             transform: translateX(-50%) !important; border-width: 6px !important; border-style: solid !important;
             border-color: #e74c3c transparent transparent transparent !important;
         }
-        strong:hover .translation-bubble, em:hover .translation-bubble,
+        @media (hover: hover) {
+            strong:hover .translation-bubble, em:hover .translation-bubble {
+                opacity: 1 !important; transform: translateX(-50%) scale(1) !important; background-color: #e74c3c !important;
+            }
+        }
         .translation-bubble.force-show {
             opacity: 1 !important; transform: translateX(-50%) scale(1) !important; background-color: #e74c3c !important;
         }
