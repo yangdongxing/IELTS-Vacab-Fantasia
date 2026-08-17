@@ -29,7 +29,6 @@
 {"key":"scientist","reuse":"clone"}
 {"key":"library","reuse":"petition"}
 {"key":"resident","reuse":"petition"}
-{"key":"gland","reuse":"secrete"}
 {"key":"substance","reuse":"secrete"}
 {"key":"leak","reuse":"hydraulic"}
 {"key":"mechanic","reuse":"hydraulic"}

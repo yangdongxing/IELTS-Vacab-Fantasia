@@ -43,6 +43,7 @@
             data.translationText || "",
             data.entry.spoken?.en || "",
             data.entry.spoken?.zh || "",
+            data.entry.spoken?.focus || "",
             data.contextText || "",
         ].join("\u0001");
     }
@@ -601,6 +602,10 @@
                 .geek-memory-example-en:hover {
                     color: #7dd3fc;
                 }
+                .geek-memory-example-en strong {
+                    color: #fde68a;
+                    font-weight: 850;
+                }
                 .geek-memory-example-zh {
                     margin: 5px 0 0;
                     color: rgba(226,232,240,0.7);
@@ -824,7 +829,7 @@
                   <p class="geek-memory-example-en" id="geek-memory-example-en" title="点击朗读例句"></p>
                   <p class="geek-memory-example-zh" id="geek-memory-example-zh"></p>
                 </div>
-                <input class="geek-memory-answer" id="geek-memory-answer" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="输入单词或英文例句">
+                <input class="geek-memory-answer" id="geek-memory-answer" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="输入单词、加粗短语或完整例句">
                 <div class="geek-paragraph-complete" aria-live="polite" aria-hidden="true">
                   <div class="geek-paragraph-check">
                     <span aria-hidden="true">✓</span>
@@ -1026,7 +1031,7 @@
         translation.textContent = data.translationText;
         const spoken = data.entry.spoken || {};
         example.hidden = !(spoken.en && spoken.zh);
-        exampleEnglish.textContent = spoken.en || "";
+        renderFocusedExample(exampleEnglish, spoken.en || "", spoken.focus || "");
         exampleChinese.textContent = spoken.zh || "";
         renderContextText(context, data.contextText, data.displayWord || data.entry.word);
 
@@ -1039,6 +1044,25 @@
         if (isMemoryModalOpen() && options.focus !== false) {
             focusMemoryAnswer();
         }
+    }
+
+    function renderFocusedExample(element, sentence, focus) {
+        element.replaceChildren();
+        if (!sentence || !focus) {
+            element.textContent = sentence;
+            return;
+        }
+
+        const index = sentence.toLowerCase().indexOf(focus.toLowerCase());
+        if (index < 0) {
+            element.textContent = sentence;
+            return;
+        }
+
+        element.append(document.createTextNode(sentence.slice(0, index)));
+        const strong = document.createElement("strong");
+        strong.textContent = sentence.slice(index, index + focus.length);
+        element.append(strong, document.createTextNode(sentence.slice(index + focus.length)));
     }
 
     function openMemoryModal(data, options = {}) {
@@ -1155,6 +1179,7 @@
         const typed = answerKey(getAnswerText(input));
         const targets = [
             currentMemoryData.displayWord || currentMemoryData.entry.word,
+            currentMemoryData.entry.spoken?.focus || "",
             currentMemoryData.entry.spoken?.en || "",
         ].map(answerKey).filter(Boolean);
         input.classList.remove("is-correct", "is-wrong");

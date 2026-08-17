@@ -26,10 +26,11 @@ python3 build_site.py build
 - 图片与记忆卡：`assets/js/word-image-preview.js`
 - 单词图片：`assets/images/`
 - 原始 CSV：`data/`
-- 中英实用例句：`data/spoken-usage.jsonl`
+- 中英实用例句与核心短语：`data/spoken-usage.jsonl`
 - 原模板句的策展替换：`data/guided-replacements.jsonl`
 - 已有例句共享映射：`data/shared-example-reuse.jsonl`
 - 例句生成与校验：`tools/generate_spoken_usage.py`
+- 核心短语编辑：`tools/focus.py`
 - 策展替换工具：`tools/curate_guided_usage.py`
 - 构建逻辑：`build_site.py`
 
@@ -52,7 +53,7 @@ node --check assets/js/word-image-preview.js
 
 ## 口语例句
 
-`data/spoken-usage.jsonl` 为每个唯一图片词条保存一条简短自然的英文例句和简体中文翻译。语料中的优质短句会保留原貌，不添加说明性前缀。已有条目默认保留，重新生成使用：
+`data/spoken-usage.jsonl` 为每个唯一图片词条保存一条简短自然的英文例句、简体中文翻译和可选的核心记忆短语。语料中的优质短句会保留原貌，不添加说明性前缀。已有条目默认保留，重新生成使用：
 
 ```bash
 python3 tools/generate_spoken_usage.py build
@@ -76,3 +77,32 @@ python3 tools/curate_guided_usage.py validate
 减少例句数量时，只允许复用 `data/spoken-usage.jsonl` 中已经存在的完整中英文句对。不得新增、改写、拼接、翻译或替换关键词来制造共享例句。人工复核通过后，在 `data/shared-example-reuse.jsonl` 中记录目标词和锚点词；构建时会原样复制锚点的英文、中文、来源和署名，并拒绝缺失或链式引用。
 
 添加共享映射前，必须确认锚点句保留目标词当前释义和词性。仅仅出现同形词、派生形式或拼写相近的词，不构成共享理由；常用含义会被偏门含义替代时，也必须保留原例句。
+
+## 核心记忆短语
+
+已经采纳的核心短语直接保存在对应例句记录的可选 `focus` 字段中：
+
+```json
+{"key":"uncomfortable","word":"Uncomfortable","en":"I didn’t mean to make anyone uncomfortable.","zh":"我没想让人感到不适。","focus":"make anyone uncomfortable","source":"tatoeba","usage_id":"usage-7ae366719c1f"}
+```
+
+没有自然、实用短语的例句不添加 `focus`。新增或调整短语后运行唯一构建命令；构建和例句校验器都会拒绝空短语或不在英文例句中的短语。例句生成器会在原句不变时保留 `focus`；已经标注的原句发生变化时会报错，必须先人工复核短语。
+
+日常修改优先使用命令行工具，不直接编辑 JSONL：
+
+```bash
+python3 tools/focus.py show faint
+python3 tools/focus.py set faint "I'm going to faint"
+python3 tools/focus.py clear faint
+python3 tools/focus.py validate
+```
+
+`set` 会显示最终标粗预览，并自动重建站点。省略短语会进入交互输入；也可以粘贴包含一处 `**标粗短语**` 的完整例句。工具会采用原句中的大小写和引号，并去掉短语末尾的句号等标点。
+
+连续修改多条时可暂缓构建，最后统一执行一次：
+
+```bash
+python3 tools/focus.py set faint "I'm going to faint" --no-build
+python3 tools/focus.py set feeble "feeble excuses" --no-build
+python3 build_site.py build
+```

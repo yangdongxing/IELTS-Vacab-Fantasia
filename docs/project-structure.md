@@ -26,7 +26,7 @@
 
 ## 数据与文档
 
-- `data/`：CSV 与口语例句等结构化数据。`spoken-usage.jsonl` 会在图片索引生成时合入每个词条的 `spoken` 字段；`shared-example-reuse.jsonl` 只记录复用已有例句的目标词与锚点词。
+- `data/`：CSV 与口语例句等结构化数据。`spoken-usage.jsonl` 保存中英例句及可选的 `focus` 核心短语，并在图片索引生成时合入每个词条的 `spoken` 字段；`shared-example-reuse.jsonl` 只记录复用已有例句的目标词与锚点词。
 - `tools/`：数据生成和校验脚本，不参与网页编译。
 - `docs/`：项目结构、内容索引和维护说明，不参与网页构建。
 - `archive/`：历史 HTML 和笔记，仅供留档。

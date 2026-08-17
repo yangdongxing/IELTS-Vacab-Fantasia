@@ -23,7 +23,7 @@ IELTS-Vacab-Fantasia 不把单词停留在孤立的“英文—中文”对照�
 - **精选例句**：以简短、自然、日常可用的完整句子呈现真实用法；适合共享时复用同一句，减少不必要的例句负担。
 - **故事记忆**：以中文母语叙事承载情节，将英文关键词自然穿插其中，降低理解语境的负担，并在连续故事中记住单词的含义与用法。
 
-复习时还可以通过主动输入单词或完整英文例句进行验证。视觉负责唤起画面，听觉负责建立语音印象，例句负责呈现实际用法，故事负责串联上下文，主动回忆负责把它们真正连接起来。
+复习时还可以通过主动输入单词、例句中的核心短语或完整英文例句进行验证。较长例句会加粗自然、实用且与目标词直接相关的短语，便于先记搭配，再逐步记住整句；短句或没有实际意义短语的例句不会强行标注。视觉负责唤起画面，听觉负责建立语音印象，例句负责呈现实际用法，故事负责串联上下文，主动回忆负责把它们真正连接起来。
 
 <p align="center">
   <img src="assets/branding/memory-overlay.png" alt="沉浸式单词记忆覆层：照片、释义、精选中英例句与主动输入验证" width="720">
@@ -78,12 +78,13 @@ IELTS-Vacab-Fantasia/
 │   ├── js/                       # 页面交互脚本
 │   └── images/                   # 单词图片
 ├── data/                         # CSV 等原始数据
-│   ├── spoken-usage.jsonl        # 图片词条的中英实用例句与来源
+│   ├── spoken-usage.jsonl        # 中英实用例句、来源及可选核心短语
 │   ├── guided-replacements.jsonl # 原模板句的人工策展替换
 │   └── shared-example-reuse.jsonl # 仅复用已有例句的共享映射
 ├── tools/                        # 数据生成与校验工具
-│   └── generate_spoken_usage.py  # 生成、保留和检查口语例句
-│   └── curate_guided_usage.py    # 筛选和维护模板句替换
+│   ├── generate_spoken_usage.py  # 生成、保留和检查口语例句
+│   ├── curate_guided_usage.py    # 筛选和维护模板句替换
+│   └── focus.py                  # 查询和修改例句核心短语
 ├── docs/                         # 项目维护文档
 ├── archive/                      # 不参与构建的历史资料
 │   ├── legacy-html/              # 旧版 HTML 页面
@@ -115,9 +116,28 @@ IELTS-Vacab-Fantasia/
 - `assets/js/monkey-for-extensions.js`：翻译、TTS、生词本和快捷键交互。
 - `assets/js/word-image-preview.js`：图片气泡与全屏记忆卡。
 - `data/雅思词汇真经单词共3674个.csv`：原始词汇数据。
-- `data/spoken-usage.jsonl`：图片词条的中英口语例句；构建时写入 `word-images.js`。
+- `data/spoken-usage.jsonl`：图片词条的中英口语例句与可选 `focus` 核心短语；构建时写入 `word-images.js`。
 - `data/shared-example-reuse.jsonl`：人工复核后的目标词到已有例句锚点映射；不保存或创造新例句。
 - `tools/generate_spoken_usage.py`：口语例句生成器和完整性校验器。
+- `tools/focus.py`：安全查询、设置和清除例句的 `focus` 核心短语。
+
+## 核心短语命令
+
+日常维护例句标粗时使用 `tools/focus.py`，不需要直接编辑 JSONL：
+
+```bash
+python3 tools/focus.py show faint
+python3 tools/focus.py set faint "I'm going to faint"
+python3 tools/focus.py set faint "I feel like **I'm going to faint.**"
+python3 tools/focus.py clear faint
+python3 tools/focus.py validate
+```
+
+`set` 和 `clear` 默认会重新构建站点。连续修改多条时可在命令末尾添加 `--no-build`，全部完成后统一运行：
+
+```bash
+python3 build_site.py build
+```
 
 ## 更多说明
 

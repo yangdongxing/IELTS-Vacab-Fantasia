@@ -205,10 +205,20 @@ def load_spoken_usage() -> dict[str, dict[str, str]]:
             item = json.loads(line)
         except json.JSONDecodeError as error:
             raise ValueError(f"Invalid spoken usage on line {line_number}: {error}") from error
-        usage[image_key(str(item.get("key", "")))] = {
-            "en": str(item.get("en", "")).strip(),
+        item_key = image_key(str(item.get("key", "")))
+        if item_key in usage:
+            raise ValueError(f"Duplicate spoken usage key on line {line_number}: {item_key}")
+        english = str(item.get("en", "")).strip()
+        spoken = {
+            "en": english,
             "zh": str(item.get("zh", "")).strip(),
         }
+        if "focus" in item:
+            focus = str(item.get("focus", "")).strip()
+            if not focus or focus.casefold() not in english.casefold():
+                raise ValueError(f"Spoken focus is not in its sentence on line {line_number}: {item_key}")
+            spoken["focus"] = focus
+        usage[item_key] = spoken
     return usage
 
 

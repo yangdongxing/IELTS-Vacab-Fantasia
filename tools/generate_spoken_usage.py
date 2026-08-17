@@ -567,6 +567,34 @@ def load_existing() -> dict[str, dict[str, object]]:
     return existing
 
 
+def preserve_existing_focus(
+    items: list[dict[str, object]],
+    existing: dict[str, dict[str, object]],
+) -> None:
+    for item in items:
+        item_key = key(str(item.get("key", "")))
+        previous = existing.get(item_key)
+        focus = str(previous.get("focus", "")).strip() if previous else ""
+        if not focus:
+            continue
+        previous_english = str(previous.get("en", "")).strip()
+        current_english = str(item.get("en", "")).strip()
+        if previous_english != current_english:
+            raise ValueError(
+                f"cannot preserve focus after example changed: {item_key}: "
+                f"{previous_english!r} -> {current_english!r}"
+            )
+
+        item.pop("focus", None)
+        ordered: dict[str, object] = {}
+        for field, value in item.items():
+            ordered[field] = value
+            if field == "zh":
+                ordered["focus"] = focus
+        item.clear()
+        item.update(ordered)
+
+
 def load_guided_replacements() -> dict[str, dict[str, object]]:
     replacements: dict[str, dict[str, object]] = {}
     if not GUIDED_REPLACEMENTS_FILE.exists():
@@ -711,6 +739,7 @@ def build(corpus: Path, preserve_existing: bool) -> list[dict[str, object]]:
             item["shared_with"] = related
         else:
             item.pop("shared_with", None)
+    preserve_existing_focus(output, reuse_source)
     return output
 
 
@@ -748,6 +777,10 @@ def validate(items: list[dict[str, object]]) -> list[str]:
         item_key = key(str(item.get("key", "")))
         english = str(item.get("en", "")).strip()
         chinese = str(item.get("zh", "")).strip()
+        if "focus" in item:
+            focus = str(item.get("focus", "")).strip()
+            if not focus or focus.casefold() not in english.casefold():
+                errors.append(f"invalid focus: {item_key}: {focus}")
         word_count = len(english_words(english))
         if not 3 <= word_count <= 12:
             errors.append(f"word count {word_count}: {item_key}: {english}")
