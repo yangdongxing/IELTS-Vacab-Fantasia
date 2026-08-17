@@ -59,7 +59,8 @@
         .geek-select {
             background-color: rgba(0,0,0,0.4) !important; border: 1px solid rgba(255,255,255,0.2) !important;
             color: white !important; padding: 6px 8px !important; border-radius: 6px !important; outline: none !important;
-            width: 180px !important; max-width: 180px !important; font-size: 13px !important; cursor: pointer !important; box-sizing: border-box !important; height: auto !important;
+            width: 180px !important; max-width: 180px !important; min-width: 0 !important; flex: 0 1 180px !important;
+            font-size: 13px !important; cursor: pointer !important; box-sizing: border-box !important; height: auto !important;
         }
 
         .geek-segmented {
