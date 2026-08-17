@@ -6,6 +6,14 @@
 
 一个把单词变成**可看、可听、可应用**记忆单元的本地 IELTS 词汇学习工具。项目将 `content/` 中新增或变更的 Markdown 增量编译到 `dist/`，并提供翻译气泡、图片记忆卡、TTS、生词本和快捷键切词等交互。
 
+<br>
+
+<p align="center">
+  <a href="https://yangdongxing.github.io/IELTS-Vacab-Fantasia/"><strong>快速查看：打开在线版本体验 →</strong></a>
+</p>
+
+<br>
+
 ## 多维度单词记忆
 
 IELTS-Vacab-Fantasia 不把单词停留在孤立的“英文—中文”对照上。同一个词会同时连接三类线索：
