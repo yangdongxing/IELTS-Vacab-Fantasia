@@ -6,6 +6,9 @@
     const MANIFEST_URL = new URL("__word_images__.json", siteRootUrl).href;
     const EDGE_PADDING = 12;
     const CORRECT_ADVANCE_DELAY = 3000;
+    const MOBILE_MEMORY_MEDIA = "(max-width: 720px)";
+    const MEMORY_SWIPE_MIN_DISTANCE = 48;
+    const MEMORY_SWIPE_AXIS_RATIO = 1.2;
 
     let imageIndex = {};
     let activeBubble = null;
@@ -422,6 +425,49 @@
         return false;
     }
 
+    function bindMemoryImageSwipe(image) {
+        let touchStart = null;
+
+        image.addEventListener("touchstart", event => {
+            if (!window.matchMedia(MOBILE_MEMORY_MEDIA).matches || event.touches.length !== 1) {
+                touchStart = null;
+                return;
+            }
+
+            const touch = event.touches[0];
+            touchStart = { x: touch.clientX, y: touch.clientY };
+        }, { passive: true });
+
+        image.addEventListener("touchmove", event => {
+            if (!touchStart || event.touches.length !== 1) return;
+
+            const touch = event.touches[0];
+            const deltaX = touch.clientX - touchStart.x;
+            const deltaY = touch.clientY - touchStart.y;
+            if (Math.abs(deltaY) > 8 && Math.abs(deltaY) > Math.abs(deltaX)) {
+                event.preventDefault();
+            }
+        }, { passive: false });
+
+        image.addEventListener("touchend", event => {
+            if (!touchStart) return;
+
+            const touch = event.changedTouches[0];
+            const deltaX = touch ? touch.clientX - touchStart.x : 0;
+            const deltaY = touch ? touch.clientY - touchStart.y : 0;
+            touchStart = null;
+
+            const isVerticalSwipe =
+                Math.abs(deltaY) >= MEMORY_SWIPE_MIN_DISTANCE
+                && Math.abs(deltaY) > Math.abs(deltaX) * MEMORY_SWIPE_AXIS_RATIO;
+            if (isVerticalSwipe) dispatchNextWord(deltaY > 0);
+        }, { passive: true });
+
+        image.addEventListener("touchcancel", () => {
+            touchStart = null;
+        }, { passive: true });
+    }
+
     function createMemoryModal() {
         const modal = document.createElement("div");
         modal.id = "geek-memory-modal";
@@ -745,6 +791,10 @@
                     }
                 }
                 @media (max-width: 720px) {
+                    .geek-memory-image {
+                        touch-action: none;
+                        -webkit-user-drag: none;
+                    }
                     .geek-memory-context {
                         display: none;
                     }
@@ -753,7 +803,7 @@
             <div class="geek-memory-shell">
               <div class="geek-memory-card" role="dialog" aria-modal="true">
                 <h2 class="geek-memory-word" id="geek-memory-word" title="点击朗读单词和释义"></h2>
-                <img class="geek-memory-image" id="geek-memory-image" alt="">
+                <img class="geek-memory-image" id="geek-memory-image" alt="" draggable="false">
                 <p class="geek-memory-translation" id="geek-memory-translation"></p>
                 <div class="geek-memory-example" id="geek-memory-example" hidden>
                   <p class="geek-memory-example-en" id="geek-memory-example-en" title="点击朗读例句"></p>
@@ -809,6 +859,7 @@
             speakExampleData(currentMemoryData);
             requestAnimationFrame(focusMemoryAnswer);
         });
+        bindMemoryImageSwipe(memoryModalRefs.image);
         document.body.appendChild(modal);
 
         answer.addEventListener("input", handleAnswerInput);
