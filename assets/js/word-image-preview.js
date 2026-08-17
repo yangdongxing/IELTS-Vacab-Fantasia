@@ -746,12 +746,7 @@
                 }
                 @media (max-width: 720px) {
                     .geek-memory-context {
-                        left: 14px;
-                        right: 14px;
-                        bottom: 12px;
-                        max-height: 24vh;
-                        padding: 12px 14px;
-                        font-size: 14px;
+                        display: none;
                     }
                 }
             </style>
