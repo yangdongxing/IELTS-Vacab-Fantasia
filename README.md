@@ -12,6 +12,16 @@ python3 build_site.py build
 
 构建完成后直接打开 `dist/index.html`。未变化的 Markdown 会被跳过，新增或修改的内容会生成对应 HTML，删除 Markdown 时也会清理旧 HTML。
 
+## GitHub Pages
+
+`main` 分支中影响站点的文件发生变化后，`.github/workflows/deploy-pages.yml` 会重新构建并发布 `dist/`。站点地址为：
+
+<https://yangdongxing.github.io/IELTS-Vacab-Fantasia/>
+
+首次使用时，需要在仓库的 **Settings > Pages > Build and deployment > Source** 中选择 **GitHub Actions**。也可以在 Actions 页面手动运行 `Deploy GitHub Pages`。
+
+`dist/assets` 在仓库中仍是指向外层 `assets/` 的符号链接；Pages 官方上传 Action 会在打包时解引用该链接，因此线上产物包含完整 CSS、JavaScript 和图片，但仓库中仍只维护一份资源。
+
 ## 目录结构
 
 ```text
