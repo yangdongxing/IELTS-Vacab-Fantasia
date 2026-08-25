@@ -125,6 +125,133 @@
         return (value || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, "");
     }
 
+    const IRREGULAR_LEMMAS = {
+        was: "be", were: "be", been: "be",
+        went: "go", gone: "go",
+        saw: "see", seen: "see",
+        took: "take", taken: "take",
+        wrote: "write", written: "write",
+        spoke: "speak", spoken: "speak",
+        lost: "lose",
+        began: "begin", begun: "begin",
+        felt: "feel",
+        found: "find",
+        gave: "give", given: "give",
+        ran: "run",
+        swam: "swim", swum: "swim",
+        flew: "fly", flown: "fly",
+        built: "build",
+        taught: "teach",
+        thought: "think",
+        bought: "buy",
+        caught: "catch",
+        drew: "draw", drawn: "draw",
+        drove: "drive", driven: "drive",
+        ate: "eat", eaten: "eat",
+        fell: "fall", fallen: "fall",
+        froze: "freeze", frozen: "freeze",
+        grew: "grow", grown: "grow",
+        held: "hold",
+        hid: "hide", hidden: "hide",
+        knew: "know", known: "know",
+        laid: "lay", lain: "lie",
+        led: "lead",
+        left: "leave",
+        made: "make",
+        meant: "mean",
+        met: "meet",
+        paid: "pay",
+        rode: "ride", ridden: "ride",
+        rose: "rise", risen: "rise",
+        said: "say",
+        sold: "sell",
+        sent: "send",
+        shook: "shake", shaken: "shake",
+        shone: "shine",
+        shot: "shoot",
+        showed: "show", shown: "show",
+        shut: "shut",
+        slept: "sleep",
+        slid: "slide",
+        spent: "spend",
+        stood: "stand",
+        stole: "steal", stolen: "steal",
+        struck: "strike", stricken: "strike",
+        swept: "sweep",
+        swung: "swing",
+        told: "tell",
+        threw: "throw", thrown: "throw",
+        understood: "understand",
+        woke: "wake", woken: "wake",
+        wore: "wear", worn: "wear",
+        won: "win",
+        wound: "wind",
+        children: "child",
+        men: "man",
+        women: "woman",
+        feet: "foot",
+        teeth: "tooth",
+        geese: "goose",
+        mice: "mouse",
+        criteria: "criterion",
+        phenomena: "phenomenon"
+    };
+
+    function getWordLemmas(value) {
+        const lemmas = new Set();
+        if (!value) return lemmas;
+        const lower = value.toLowerCase();
+
+        if (IRREGULAR_LEMMAS[lower]) {
+            lemmas.add(IRREGULAR_LEMMAS[lower]);
+        }
+
+        // -ies -> -y (e.g. lorries -> lorry, centuries -> century)
+        if (lower.endsWith("ies") && lower.length > 4) {
+            lemmas.add(lower.slice(0, -3) + "y");
+        } else if (lower.endsWith("es") && lower.length > 3) {
+            lemmas.add(lower.slice(0, -2));
+            lemmas.add(lower.slice(0, -1));
+        } else if (lower.endsWith("s") && !lower.endsWith("ss") && lower.length > 2) {
+            lemmas.add(lower.slice(0, -1));
+        }
+
+        // -ied -> -y (e.g. worried -> worry)
+        if (lower.endsWith("ied") && lower.length > 4) {
+            lemmas.add(lower.slice(0, -3) + "y");
+        } else if (lower.endsWith("ed") && lower.length > 3) {
+            lemmas.add(lower.slice(0, -2));
+            lemmas.add(lower.slice(0, -1));
+            // double consonant: e.g. stopped -> stop, swapped -> swap, trapped -> trap
+            if (lower.length > 4 && lower[lower.length - 3] === lower[lower.length - 4]) {
+                lemmas.add(lower.slice(0, -3));
+            }
+        }
+
+        // -ing (e.g. traveling -> travel, making -> make, dancing -> dance, swimming -> swim)
+        if (lower.endsWith("ying") && lower.length > 4) {
+            lemmas.add(lower.slice(0, -4) + "ie");
+        } else if (lower.endsWith("ing") && lower.length > 4) {
+            lemmas.add(lower.slice(0, -3));
+            lemmas.add(lower.slice(0, -3) + "e");
+            if (lower.length > 5 && lower[lower.length - 4] === lower[lower.length - 5]) {
+                lemmas.add(lower.slice(0, -4));
+            }
+            if (lower.endsWith("lling") && lower.length > 5) {
+                lemmas.add(lower.slice(0, -5) + "l");
+            }
+        }
+
+        // -ly / -ily (e.g. merrily -> merry, quickly -> quick)
+        if (lower.endsWith("ily") && lower.length > 4) {
+            lemmas.add(lower.slice(0, -3) + "y");
+        } else if (lower.endsWith("ly") && lower.length > 4) {
+            lemmas.add(lower.slice(0, -2));
+        }
+
+        return lemmas;
+    }
+
     function addCandidateKeyVariants(keys, value) {
         const key = normalizeWord(value);
         if (!key) return;
@@ -145,6 +272,15 @@
             const compact = compactKey(candidate);
             if (compact) keys.add(compact);
         });
+
+        // Add morphological variants
+        for (const lemma of getWordLemmas(key)) {
+            if (!keys.has(lemma)) {
+                keys.add(lemma);
+                const compact = compactKey(lemma);
+                if (compact) keys.add(compact);
+            }
+        }
     }
 
     function candidateKeys(word) {

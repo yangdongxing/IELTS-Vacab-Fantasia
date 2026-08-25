@@ -167,6 +167,74 @@ def compact_image_key(key: str) -> str:
     return re.sub(r"[^a-z0-9]+", "", ascii_key)
 
 
+IRREGULAR_LEMMAS = {
+    "was": "be", "were": "be", "been": "be",
+    "went": "go", "gone": "go",
+    "saw": "see", "seen": "see",
+    "took": "take", "taken": "take",
+    "wrote": "write", "written": "write",
+    "spoke": "speak", "spoken": "speak",
+    "lost": "lose",
+    "began": "begin", "begun": "begin",
+    "felt": "feel",
+    "found": "find",
+    "gave": "give", "given": "give",
+    "ran": "run",
+    "swam": "swim", "swum": "swim",
+    "flew": "fly", "flown": "fly",
+    "built": "build",
+    "taught": "teach",
+    "thought": "think",
+    "bought": "buy",
+    "caught": "catch",
+    "drew": "draw", "drawn": "draw",
+    "drove": "drive", "driven": "drive",
+    "ate": "eat", "eaten": "eat",
+    "fell": "fall", "fallen": "fall",
+    "froze": "freeze", "frozen": "freeze",
+    "grew": "grow", "grown": "grow",
+    "held": "hold",
+    "hid": "hide", "hidden": "hide",
+    "knew": "know", "known": "know",
+    "laid": "lay", "lain": "lie",
+    "led": "lead",
+    "left": "leave",
+    "made": "make",
+    "meant": "mean",
+    "met": "meet",
+    "paid": "pay",
+    "rode": "ride", "ridden": "ride",
+    "rose": "rise", "risen": "rise",
+    "said": "say",
+    "sold": "sell",
+    "sent": "send",
+    "shook": "shake", "shaken": "shake",
+    "shone": "shine",
+    "shot": "shoot",
+    "showed": "show", "shown": "show",
+    "shut": "shut",
+    "slept": "sleep",
+    "slid": "slide",
+    "spent": "spend",
+    "stood": "stand",
+    "stole": "steal", "stolen": "steal",
+    "struck": "strike", "stricken": "strike",
+    "swept": "sweep",
+    "swung": "swing",
+    "told": "tell",
+    "threw": "throw", "thrown": "throw",
+    "understood": "understand",
+    "woke": "wake", "woken": "wake",
+    "wore": "wear", "worn": "wear",
+    "won": "win",
+    "wound": "wind",
+}
+
+IRREGULAR_INFLECTIONS: dict[str, list[str]] = {}
+for _inf, _base in IRREGULAR_LEMMAS.items():
+    IRREGULAR_INFLECTIONS.setdefault(_base, []).append(_inf)
+
+
 def image_key_aliases(key: str) -> set[str]:
     aliases = {
         key,
@@ -174,6 +242,45 @@ def image_key_aliases(key: str) -> set[str]:
         re.sub(r"\s+", "-", key),
         re.sub(r"^(a|an|the)\s+", "", key),
     }
+
+    # Add inflections for single words
+    if " " not in key and "-" not in key and len(key) > 2:
+        k = key.lower()
+        # Irregular forms
+        for inf in IRREGULAR_INFLECTIONS.get(k, []):
+            aliases.add(inf)
+        # Regular noun plurals / 3rd person singular verbs
+        if k.endswith("y") and len(k) > 2 and k[-2] not in "aeiou":
+            aliases.add(k[:-1] + "ies")
+        elif k.endswith(("s", "sh", "ch", "x", "z")):
+            aliases.add(k + "es")
+        else:
+            aliases.add(k + "s")
+
+        # Regular verb past / participle (-ed)
+        if k.endswith("y") and len(k) > 2 and k[-2] not in "aeiou":
+            aliases.add(k[:-1] + "ied")
+        elif k.endswith("e"):
+            aliases.add(k + "d")
+        else:
+            aliases.add(k + "ed")
+            if len(k) > 2 and k[-1] not in "aeiouy" and k[-2] in "aeiou" and (len(k) == 3 or k[-3] not in "aeiou"):
+                aliases.add(k + k[-1] + "ed")
+
+        # Regular verb participle (-ing)
+        if k.endswith("ie"):
+            aliases.add(k[:-2] + "ying")
+        elif k.endswith("e") and not k.endswith(("ee", "oe", "ye")):
+            aliases.add(k[:-1] + "ing")
+        else:
+            aliases.add(k + "ing")
+            if len(k) > 2 and k[-1] not in "aeiouy" and k[-2] in "aeiou" and (len(k) == 3 or k[-3] not in "aeiou"):
+                aliases.add(k + k[-1] + "ing")
+        if k.endswith("l"):
+            aliases.add(k + "ling")
+            aliases.add(k + "lling")
+            aliases.add(k + "led")
+            aliases.add(k + "lled")
 
     parts = key.split()
     if len(parts) > 1:
@@ -392,6 +499,7 @@ def index_section(relative: Path) -> tuple[int, str]:
     sections = {
         "ielts": (10, "IELTS 词汇总表"),
         "ielts/chapters": (20, "IELTS 章节串记"),
+        "ielts/40-stories": (25, "IELTS 40篇故事串记"),
         "ielts/vocabulary-notebooks": (30, "IELTS 生词本"),
         "ielts/phrase-notebooks": (40, "IELTS 词伙与短语"),
         "writing": (50, "IELTS 写作词伙"),
