@@ -1,6 +1,6 @@
 {
   "summary": {
-    "marks": 96,
+    "marks": 106,
     "modalOpens": 1,
     "inputSuccess": 0
   },
@@ -287,66 +287,66 @@
     },
     "wrong": {
       "w": "wrong",
-      "marks": 4,
+      "marks": 5,
       "modalOpens": 0,
       "inputSuccess": 0,
-      "lastUpdated": 1787717753116
+      "lastUpdated": 1787717852483
     },
     "perfect": {
       "w": "perfect",
-      "marks": 3,
+      "marks": 4,
       "modalOpens": 0,
       "inputSuccess": 0,
-      "lastUpdated": 1787717753110
+      "lastUpdated": 1787717852476
     },
     "sum": {
       "w": "sum",
-      "marks": 3,
+      "marks": 4,
       "modalOpens": 0,
       "inputSuccess": 0,
-      "lastUpdated": 1787717753113
+      "lastUpdated": 1787717852479
     },
     "way": {
       "w": "way",
-      "marks": 6,
+      "marks": 8,
       "modalOpens": 1,
       "inputSuccess": 0,
-      "lastUpdated": 1787717753116
+      "lastUpdated": 1787717852483
     },
     "view": {
       "w": "view",
-      "marks": 3,
+      "marks": 4,
       "modalOpens": 0,
       "inputSuccess": 0,
-      "lastUpdated": 1787717753114
+      "lastUpdated": 1787717852481
     },
     "habit": {
       "w": "habit",
-      "marks": 3,
+      "marks": 4,
       "modalOpens": 0,
       "inputSuccess": 0,
-      "lastUpdated": 1787717753115
+      "lastUpdated": 1787717852482
     },
     "consume": {
       "w": "consume",
-      "marks": 3,
+      "marks": 4,
       "modalOpens": 0,
       "inputSuccess": 0,
-      "lastUpdated": 1787717753117
+      "lastUpdated": 1787717852484
     },
     "similar": {
       "w": "similar",
-      "marks": 3,
+      "marks": 4,
       "modalOpens": 0,
       "inputSuccess": 0,
-      "lastUpdated": 1787717753118
+      "lastUpdated": 1787717852485
     },
     "content": {
       "w": "content",
-      "marks": 3,
+      "marks": 4,
       "modalOpens": 0,
       "inputSuccess": 0,
-      "lastUpdated": 1787717753118
+      "lastUpdated": 1787717852486
     },
     "altitude": {
       "w": "altitude",
