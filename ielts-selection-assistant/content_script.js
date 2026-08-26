@@ -227,12 +227,9 @@
                 display: inline-block !important;
                 color: inherit !important;
                 font-weight: 700 !important;
-                text-decoration: none !important;
-                cursor: grab !important;
-            }
-            strong.geek-vocab-mark.is-already-bold, em.geek-vocab-mark.is-already-bold {
                 text-decoration: underline wavy currentColor !important;
                 text-underline-offset: 4px !important;
+                cursor: grab !important;
             }
             strong.geek-vocab-mark:active, em.geek-vocab-mark:active {
                 cursor: grabbing !important;
@@ -875,7 +872,7 @@
                 // Authentic Project DOM Structure:
                 // <strong class="geek-vocab-mark">token<span class="translation-bubble geek-has-word-image"><img class="geek-bubble-image" /><span class="geek-bubble-text">...</span></span></strong>
                 const mark = document.createElement("strong");
-                mark.className = isAlreadyBold ? "geek-vocab-mark is-already-bold" : "geek-vocab-mark";
+                mark.className = "geek-vocab-mark";
                 mark.appendChild(document.createTextNode(m.token));
 
                 const bubble = document.createElement("span");
