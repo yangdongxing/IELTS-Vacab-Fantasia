@@ -1,7 +1,7 @@
 {
   "summary": {
-    "marks": 86,
-    "modalOpens": 1,
+    "marks": 106,
+    "modalOpens": 2,
     "inputSuccess": 0
   },
   "words": {
@@ -330,9 +330,9 @@
     "consume": {
       "w": "consume",
       "marks": 4,
-      "modalOpens": 0,
+      "modalOpens": 1,
       "inputSuccess": 0,
-      "lastUpdated": 1787717852484
+      "lastUpdated": 1787718368133
     },
     "similar": {
       "w": "similar",

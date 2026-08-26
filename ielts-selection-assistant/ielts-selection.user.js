@@ -1111,6 +1111,11 @@
                 const textSpan = document.createElement("span");
                 textSpan.className = "geek-bubble-text";
                 textSpan.textContent = `(${m.entry.d})`;
+                textSpan.style.cursor = "pointer";
+                textSpan.addEventListener("click", (e) => {
+                    e.stopPropagation();
+                    speakText(m.entry.w);
+                });
 
                 bubble.appendChild(image);
                 bubble.appendChild(textSpan);
@@ -1119,7 +1124,7 @@
                 mark.addEventListener("mouseenter", () => {
                     requestAnimationFrame(() => placeBubble(bubble));
                 });
-                mark.addEventListener("click", () => {
+                mark.addEventListener("click", (e) => {
                     speakText(m.entry.w);
                 });
 
