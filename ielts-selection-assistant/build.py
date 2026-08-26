@@ -1969,21 +1969,32 @@ stats_html_content = """<!DOCTYPE html>
 
     <script>
         const STATS_STORAGE_KEY = "ielts_vocab_fantasia_stats";
-        let DICT = {};
+        const DICT = __DICTIONARY_JSON__;
         let currentSort = { field: "lastUpdated", order: "desc" };
         let currentFilter = "all";
         let searchQuery = "";
 
-        // Load Dictionary
-        fetch("data/dictionary.json")
-            .then(res => res.json())
-            .then(data => {
-                DICT = data;
-                render();
-            })
-            .catch(() => {
-                render();
-            });
+        function lookupDef(word) {
+            if (!word) return "-";
+            const key = word.toLowerCase().trim();
+            if (DICT[key] && DICT[key].d) return DICT[key].d;
+            const candidates = [
+                key,
+                key.replace(/s$/, ""),
+                key.replace(/es$/, ""),
+                key.replace(/ed$/, ""),
+                key.replace(/ed$/, "e"),
+                key.replace(/ing$/, ""),
+                key.replace(/ing$/, "e"),
+                key.replace(/ly$/, "")
+            ];
+            for (const cand of candidates) {
+                if (DICT[cand] && DICT[cand].d) {
+                    return DICT[cand].d;
+                }
+            }
+            return "-";
+        }
 
         function loadStats() {
             try {
@@ -2048,11 +2059,11 @@ stats_html_content = """<!DOCTYPE html>
             // Filter
             let filtered = wordsList.filter(item => {
                 const w = item.w || "";
-                const def = (DICT[w.toLowerCase()] && DICT[w.toLowerCase()].d) || "";
+                const def = lookupDef(w);
                 
                 if (searchQuery) {
                     const q = searchQuery.toLowerCase();
-                    if (!w.toLowerCase().includes(q) && !def.includes(q)) return false;
+                    if (!w.toLowerCase().includes(q) && !def.toLowerCase().includes(q)) return false;
                 }
 
                 if (currentFilter === "marks" && !(item.marks > 0)) return false;
@@ -2093,8 +2104,7 @@ stats_html_content = """<!DOCTYPE html>
             }
 
             tbody.innerHTML = filtered.map((item, idx) => {
-                const dictEntry = DICT[item.w.toLowerCase()];
-                const def = dictEntry ? dictEntry.d : "-";
+                const def = lookupDef(item.w);
 
                 return `
                     <tr>
@@ -2105,7 +2115,7 @@ stats_html_content = """<!DOCTYPE html>
                                 <button class="btn-speak" title="朗读" onclick="speakWord('${item.w}')">🔊</button>
                             </div>
                         </td>
-                        <td style="color: #475569;">${def}</td>
+                        <td style="color: #475569; font-weight: 500;">${def}</td>
                         <td style="text-align: center;">
                             <span class="badge ${item.marks > 0 ? 'badge-blue' : 'badge-gray'}">${item.marks || 0}</span>
                         </td>
@@ -2185,7 +2195,7 @@ stats_html_content = """<!DOCTYPE html>
 
             let csv = "\\uFEFF序号,单词,释义,标记次数,覆层查看次数,拼写成功次数,最近更新时间\\n";
             list.forEach((item, i) => {
-                const def = (DICT[item.w.toLowerCase()] && DICT[item.w.toLowerCase()].d) || "";
+                const def = lookupDef(item.w);
                 csv += `${i + 1},"${item.w}","${def.replace(/"/g, '""')}",${item.marks||0},${item.modalOpens||0},${item.inputSuccess||0},"${formatDate(item.lastUpdated)}"\\n`;
             });
 
@@ -2244,6 +2254,7 @@ stats_html_content = """<!DOCTYPE html>
 </html>
 """
 stats_html_path = TARGET_DIR / "stats.html"
-stats_html_path.write_text(stats_html_content, encoding="utf-8")
+stats_html_final = stats_html_content.replace("__DICTIONARY_JSON__", dict_json_str)
+stats_html_path.write_text(stats_html_final, encoding="utf-8")
 print(f"Generated {stats_html_path}")
 
