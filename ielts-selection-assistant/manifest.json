@@ -1,0 +1,20 @@
+{
+  "manifest_version": 3,
+  "name": "雅思真经划词划划看 (IELTS Selection Assistant)",
+  "version": "1.4.0",
+  "description": "划选任意网页文本，一键在正文中直接标注《雅思词汇真经》核心词汇。Tips气泡与大图例句覆层100%对齐，支持输入单词校验并自动退出。",
+  "permissions": [
+    "activeTab"
+  ],
+  "content_scripts": [
+    {
+      "matches": [
+        "<all_urls>"
+      ],
+      "js": [
+        "content_script.js"
+      ],
+      "run_at": "document_end"
+    }
+  ]
+}

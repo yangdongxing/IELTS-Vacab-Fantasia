@@ -500,6 +500,7 @@ def index_section(relative: Path) -> tuple[int, str]:
         "ielts": (10, "IELTS 词汇总表"),
         "ielts/chapters": (20, "IELTS 章节串记"),
         "ielts/40-stories": (25, "IELTS 40篇故事串记"),
+        "ielts/40-stories-ori": (26, "IELTS 40篇故事串记 (原版)"),
         "ielts/vocabulary-notebooks": (30, "IELTS 生词本"),
         "ielts/phrase-notebooks": (40, "IELTS 词伙与短语"),
         "writing": (50, "IELTS 写作词伙"),

@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>雅思真经划词助手 · 测试演示页</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: #f8fafc;
+            color: #1e293b;
+            padding: 40px 20px;
+            line-height: 1.8;
+            max-width: 840px;
+            margin: 0 auto;
+        }
+        h1 {
+            color: #0f172a;
+            font-size: 26px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .subtitle {
+            color: #64748b;
+            font-size: 15px;
+            margin-bottom: 30px;
+        }
+        .sample-box {
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+            margin-bottom: 24px;
+            border: 1px solid #e2e8f0;
+        }
+        h2 {
+            font-size: 18px;
+            color: #e11d48;
+            margin-bottom: 12px;
+        }
+        p {
+            font-size: 16px;
+            color: #334155;
+            margin-bottom: 16px;
+        }
+        .guide-box {
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            border-radius: 8px;
+            padding: 16px 20px;
+            color: #166534;
+            font-size: 14px;
+            margin-bottom: 24px;
+        }
+    </style>
+</head>
+<body>
+    <h1>📖 雅思真经划词划划看 (Selection Assistant)</h1>
+    <div class="subtitle">选中文本 ➜ 点击按钮标记 ➜ Hover 查看 Tips ➜ 点击图片看大图 ➜ 键盘敲入单词验证成功后自动关闭。</div>
+
+    <div class="guide-box">
+        💡 <strong>操作测试步骤：</strong><br>
+        1. 鼠标选中下方一段英文；<br>
+        2. 点击弹出的 <strong>【📖 标记真经 (N)】</strong> 按钮；<br>
+        3. 鼠标 <strong>Hover</strong> 到加粗单词上弹出 Tips 气泡；<br>
+        4. <strong>点击 Tips 中的微缩图片</strong>打开全屏居中大图卡片；<br>
+        5. 在底部输入框敲入单词（例如输入 <code>plateau</code>、<code>horizon</code> 等）：<br>
+        &nbsp;&nbsp;• <strong>输入正确时</strong>：立即触发绿色对钩反馈与单词下落动画，播放发音，并<strong>等待 3 秒后自动平滑关闭覆层</strong>！<br>
+        &nbsp;&nbsp;• 也可以随时按 <code>ESC</code> 键退出。
+    </div>
+
+    <div class="sample-box">
+        <h2>测试段落 1：自然地理与极端气候</h2>
+        <p>
+            Standing at a high altitude on the plateau, the explorers observed the endless horizon. The earth's crust and lithosphere have experienced dramatic volcanic eruptions, discharging magma, ash, and toxic gases into the atmosphere. The heavy rainfall and storms caused devastating floods across the continent.
+        </p>
+    </div>
+
+    <div class="sample-box">
+        <h2>测试段落 2：旅行与时态变形测试（含已有加粗文本测试）</h2>
+        <p>
+            My sister was fond of traveling. Ever since graduating, she had been determined to organize a trip to an ancient temple. <b>Our pace was slow because the river frequently had sharp bends through deep valleys.</b> When we reached the valley, it was quiet and the columns of ice hung from the rocks. She disagreed with taking the train and preferred cycling.
+        </p>
+    </div>
+
+    <div class="sample-box">
+        <h2>测试段落 3：科技与现代生活</h2>
+        <p>
+            With artificial intelligence and computers simplifying complex calculations, scientists can easily predict environmental catastrophes, such as global warming and greenhouse effects caused by excessive carbon dioxide emissions.
+        </p>
+    </div>
+
+    <script src="content_script.js"></script>
+</body>
+</html>
