@@ -313,12 +313,21 @@ js_template = """/**
         style.textContent = `
             strong.geek-vocab-mark, em.geek-vocab-mark {
                 position: relative !important;
-                display: inline-block !important;
+                display: inline !important;
                 color: inherit !important;
-                font-weight: 700 !important;
-                text-decoration: underline wavy currentColor !important;
-                text-underline-offset: 4px !important;
-                cursor: grab !important;
+                font-weight: 600 !important;
+                text-decoration: none !important;
+                background-color: rgba(244, 63, 94, 0.18) !important;
+                border-radius: 3px !important;
+                padding: 1px 3.5px !important;
+                margin: 0 1px !important;
+                box-decoration-break: clone !important;
+                -webkit-box-decoration-break: clone !important;
+                cursor: pointer !important;
+                transition: background-color 0.15s ease !important;
+            }
+            strong.geek-vocab-mark:hover, em.geek-vocab-mark:hover {
+                background-color: rgba(244, 63, 94, 0.3) !important;
             }
             strong.geek-vocab-mark:active, em.geek-vocab-mark:active {
                 cursor: grabbing !important;
