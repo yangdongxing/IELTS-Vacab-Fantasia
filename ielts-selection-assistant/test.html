@@ -87,24 +87,19 @@
 
     <div class="sample-box" style="border-left: 4px solid #0284c7; background: #f0f9ff;">
         <h2 style="color: #0284c7; display: flex; justify-content: space-between; align-items: center;">
-            <span>📊 数据统计与打点面板 (Telemetry Dashboard)</span>
+            <span>📊 数据统计看板</span>
             <span style="font-size: 13px; font-weight: normal;">
-                <button id="btn-export-stats" style="padding: 3px 8px; border-radius: 4px; border: 1px solid #bae6fd; background: #fff; cursor: pointer; color: #0369a1;">📥 导出 JSON</button>
-                <button id="btn-clear-stats" style="padding: 3px 8px; border-radius: 4px; border: 1px solid #fecdd3; background: #fff; cursor: pointer; color: #e11d48; margin-left: 6px;">🗑️ 清空统计</button>
+                <a href="stats.html" target="_blank" style="padding: 4px 10px; border-radius: 6px; background: #0284c7; color: #fff; text-decoration: none; font-weight: 500;">📋 打开完整统计表格页面 ➔</a>
             </span>
         </h2>
-        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin: 16px 0; text-align: center;">
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 16px 0; text-align: center;">
             <div style="background: #ffffff; padding: 12px; border-radius: 8px; border: 1px solid #e0f2fe;">
                 <div style="font-size: 12px; color: #64748b;">累计标记单词</div>
                 <div id="stat-marks" style="font-size: 24px; font-weight: 700; color: #0284c7;">0</div>
             </div>
             <div style="background: #ffffff; padding: 12px; border-radius: 8px; border: 1px solid #e0f2fe;">
-                <div style="font-size: 12px; color: #64748b;">覆层弹开次数</div>
+                <div style="font-size: 12px; color: #64748b;">覆层查看次数</div>
                 <div id="stat-modal" style="font-size: 24px; font-weight: 700; color: #7c3aed;">0</div>
-            </div>
-            <div style="background: #ffffff; padding: 12px; border-radius: 8px; border: 1px solid #e0f2fe;">
-                <div style="font-size: 12px; color: #64748b;">键盘输入击键</div>
-                <div id="stat-typed" style="font-size: 24px; font-weight: 700; color: #d97706;">0</div>
             </div>
             <div style="background: #ffffff; padding: 12px; border-radius: 8px; border: 1px solid #e0f2fe;">
                 <div style="font-size: 12px; color: #64748b;">拼写验证成功</div>
@@ -122,11 +117,10 @@
         function renderDashboard() {
             if (!window.ieltsVocabStats) return;
             const stats = window.ieltsVocabStats.getStats();
-            const summary = stats.summary || { marks: 0, modalOpens: 0, inputTyped: 0, inputSuccess: 0 };
+            const summary = stats.summary || { marks: 0, modalOpens: 0, inputSuccess: 0 };
             
             document.getElementById("stat-marks").textContent = summary.marks || 0;
             document.getElementById("stat-modal").textContent = summary.modalOpens || 0;
-            document.getElementById("stat-typed").textContent = summary.inputTyped || 0;
             document.getElementById("stat-success").textContent = summary.inputSuccess || 0;
 
             const top = window.ieltsVocabStats.getTopWords("marks", 5);
@@ -136,7 +130,7 @@
             } else {
                 listEl.innerHTML = top.map(w => `
                     <span style="display: inline-block; background: #e0f2fe; color: #0369a1; padding: 2px 8px; border-radius: 12px; margin: 2px 4px; font-size: 12px;">
-                        <strong>${w.w}</strong>: 标记 ${w.marks||0}次 | 覆层 ${w.modalOpens||0}次 | 输入 ${w.inputTyped||0}次
+                        <strong>${w.w}</strong>: 标记 ${w.marks||0}次 | 覆层 ${w.modalOpens||0}次 | 拼写成功 ${w.inputSuccess||0}次
                     </span>
                 `).join("");
             }
@@ -145,23 +139,6 @@
         window.addEventListener("ielts_stats_updated", renderDashboard);
         window.addEventListener("DOMContentLoaded", renderDashboard);
         setTimeout(renderDashboard, 100);
-
-        document.getElementById("btn-clear-stats").onclick = () => {
-            if (confirm("确定要清空所有单词打点统计数据吗？")) {
-                window.ieltsVocabStats.clearStats();
-                renderDashboard();
-            }
-        };
-
-        document.getElementById("btn-export-stats").onclick = () => {
-            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(window.ieltsVocabStats.exportJSON());
-            const a = document.createElement('a');
-            a.setAttribute("href", dataStr);
-            a.setAttribute("download", "ielts_vocab_stats.json");
-            document.body.appendChild(a);
-            a.click();
-            a.remove();
-        };
     </script>
 </body>
 </html>

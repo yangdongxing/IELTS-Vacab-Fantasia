@@ -311,9 +311,9 @@ js_template = """/**
     function loadStats() {
         try {
             const raw = localStorage.getItem(STATS_STORAGE_KEY);
-            return raw ? JSON.parse(raw) : { summary: { marks: 0, modalOpens: 0, inputTyped: 0, inputSuccess: 0 }, words: {} };
+            return raw ? JSON.parse(raw) : { summary: { marks: 0, modalOpens: 0, inputSuccess: 0 }, words: {} };
         } catch (e) {
-            return { summary: { marks: 0, modalOpens: 0, inputTyped: 0, inputSuccess: 0 }, words: {} };
+            return { summary: { marks: 0, modalOpens: 0, inputSuccess: 0 }, words: {} };
         }
     }
 
@@ -321,6 +321,13 @@ js_template = """/**
         try {
             localStorage.setItem(STATS_STORAGE_KEY, JSON.stringify(stats));
             window.dispatchEvent(new CustomEvent("ielts_stats_updated", { detail: stats }));
+            if (typeof fetch === "function") {
+                fetch("http://127.0.0.1:8777/api/stats", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(stats)
+                }).catch(() => {});
+            }
         } catch (e) {}
     }
 
@@ -331,14 +338,13 @@ js_template = """/**
         const now = Date.now();
 
         if (!stats.words) stats.words = {};
-        if (!stats.summary) stats.summary = { marks: 0, modalOpens: 0, inputTyped: 0, inputSuccess: 0 };
+        if (!stats.summary) stats.summary = { marks: 0, modalOpens: 0, inputSuccess: 0 };
 
         if (!stats.words[key]) {
             stats.words[key] = {
                 w: word,
                 marks: 0,
                 modalOpens: 0,
-                inputTyped: 0,
                 inputSuccess: 0,
                 lastUpdated: now
             };
@@ -353,9 +359,6 @@ js_template = """/**
         } else if (eventType === "modal_open") {
             entry.modalOpens = (entry.modalOpens || 0) + 1;
             stats.summary.modalOpens = (stats.summary.modalOpens || 0) + 1;
-        } else if (eventType === "input_typed") {
-            entry.inputTyped = (entry.inputTyped || 0) + 1;
-            stats.summary.inputTyped = (stats.summary.inputTyped || 0) + 1;
         } else if (eventType === "input_success") {
             entry.inputSuccess = (entry.inputSuccess || 0) + 1;
             stats.summary.inputSuccess = (stats.summary.inputSuccess || 0) + 1;
@@ -377,6 +380,13 @@ js_template = """/**
         clearStats: () => {
             localStorage.removeItem(STATS_STORAGE_KEY);
             window.dispatchEvent(new CustomEvent("ielts_stats_updated", { detail: loadStats() }));
+            if (typeof fetch === "function") {
+                fetch("http://127.0.0.1:8777/api/stats", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ summary: { marks: 0, modalOpens: 0, inputSuccess: 0 }, words: {} })
+                }).catch(() => {});
+            }
             console.log("[IELTS Stats] Telemetry data cleared.");
         }
     };
@@ -900,7 +910,6 @@ js_template = """/**
         resetMemoryAnimation();
 
         if (!typed) return;
-        trackWordEvent(currentMemoryData.w, "input_typed");
 
         if (typed === target) {
             input.classList.add("is-correct");
@@ -1347,24 +1356,19 @@ test_html_content = """<!DOCTYPE html>
 
     <div class="sample-box" style="border-left: 4px solid #0284c7; background: #f0f9ff;">
         <h2 style="color: #0284c7; display: flex; justify-content: space-between; align-items: center;">
-            <span>📊 数据统计与打点面板 (Telemetry Dashboard)</span>
+            <span>📊 数据统计看板</span>
             <span style="font-size: 13px; font-weight: normal;">
-                <button id="btn-export-stats" style="padding: 3px 8px; border-radius: 4px; border: 1px solid #bae6fd; background: #fff; cursor: pointer; color: #0369a1;">📥 导出 JSON</button>
-                <button id="btn-clear-stats" style="padding: 3px 8px; border-radius: 4px; border: 1px solid #fecdd3; background: #fff; cursor: pointer; color: #e11d48; margin-left: 6px;">🗑️ 清空统计</button>
+                <a href="stats.html" target="_blank" style="padding: 4px 10px; border-radius: 6px; background: #0284c7; color: #fff; text-decoration: none; font-weight: 500;">📋 打开完整统计表格页面 ➔</a>
             </span>
         </h2>
-        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin: 16px 0; text-align: center;">
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 16px 0; text-align: center;">
             <div style="background: #ffffff; padding: 12px; border-radius: 8px; border: 1px solid #e0f2fe;">
                 <div style="font-size: 12px; color: #64748b;">累计标记单词</div>
                 <div id="stat-marks" style="font-size: 24px; font-weight: 700; color: #0284c7;">0</div>
             </div>
             <div style="background: #ffffff; padding: 12px; border-radius: 8px; border: 1px solid #e0f2fe;">
-                <div style="font-size: 12px; color: #64748b;">覆层弹开次数</div>
+                <div style="font-size: 12px; color: #64748b;">覆层查看次数</div>
                 <div id="stat-modal" style="font-size: 24px; font-weight: 700; color: #7c3aed;">0</div>
-            </div>
-            <div style="background: #ffffff; padding: 12px; border-radius: 8px; border: 1px solid #e0f2fe;">
-                <div style="font-size: 12px; color: #64748b;">键盘输入击键</div>
-                <div id="stat-typed" style="font-size: 24px; font-weight: 700; color: #d97706;">0</div>
             </div>
             <div style="background: #ffffff; padding: 12px; border-radius: 8px; border: 1px solid #e0f2fe;">
                 <div style="font-size: 12px; color: #64748b;">拼写验证成功</div>
@@ -1382,11 +1386,10 @@ test_html_content = """<!DOCTYPE html>
         function renderDashboard() {
             if (!window.ieltsVocabStats) return;
             const stats = window.ieltsVocabStats.getStats();
-            const summary = stats.summary || { marks: 0, modalOpens: 0, inputTyped: 0, inputSuccess: 0 };
+            const summary = stats.summary || { marks: 0, modalOpens: 0, inputSuccess: 0 };
             
             document.getElementById("stat-marks").textContent = summary.marks || 0;
             document.getElementById("stat-modal").textContent = summary.modalOpens || 0;
-            document.getElementById("stat-typed").textContent = summary.inputTyped || 0;
             document.getElementById("stat-success").textContent = summary.inputSuccess || 0;
 
             const top = window.ieltsVocabStats.getTopWords("marks", 5);
@@ -1396,7 +1399,7 @@ test_html_content = """<!DOCTYPE html>
             } else {
                 listEl.innerHTML = top.map(w => `
                     <span style="display: inline-block; background: #e0f2fe; color: #0369a1; padding: 2px 8px; border-radius: 12px; margin: 2px 4px; font-size: 12px;">
-                        <strong>${w.w}</strong>: 标记 ${w.marks||0}次 | 覆层 ${w.modalOpens||0}次 | 输入 ${w.inputTyped||0}次
+                        <strong>${w.w}</strong>: 标记 ${w.marks||0}次 | 覆层 ${w.modalOpens||0}次 | 拼写成功 ${w.inputSuccess||0}次
                     </span>
                 `).join("");
             }
@@ -1405,23 +1408,6 @@ test_html_content = """<!DOCTYPE html>
         window.addEventListener("ielts_stats_updated", renderDashboard);
         window.addEventListener("DOMContentLoaded", renderDashboard);
         setTimeout(renderDashboard, 100);
-
-        document.getElementById("btn-clear-stats").onclick = () => {
-            if (confirm("确定要清空所有单词打点统计数据吗？")) {
-                window.ieltsVocabStats.clearStats();
-                renderDashboard();
-            }
-        };
-
-        document.getElementById("btn-export-stats").onclick = () => {
-            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(window.ieltsVocabStats.exportJSON());
-            const a = document.createElement('a');
-            a.setAttribute("href", dataStr);
-            a.setAttribute("download", "ielts_vocab_stats.json");
-            document.body.appendChild(a);
-            a.click();
-            a.remove();
-        };
     </script>
 </body>
 </html>
@@ -1429,3 +1415,588 @@ test_html_content = """<!DOCTYPE html>
 test_html_path = TARGET_DIR / "test.html"
 test_html_path.write_text(test_html_content, encoding="utf-8")
 print(f"Generated {test_html_path}")
+
+# 7. Generate dedicated statistics page (stats.html)
+stats_html_content = """<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>雅思真经打点与学习统计 · 数据管理台</title>
+    <style>
+        :root {
+            --bg: #f8fafc;
+            --surface: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --primary: #0284c7;
+            --primary-light: #e0f2fe;
+            --rose: #e11d48;
+            --purple: #7c3aed;
+            --green: #16a34a;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif;
+            background: var(--bg);
+            color: var(--text-main);
+            padding: 32px 24px;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 1140px;
+            margin: 0 auto;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+        .title-area h1 {
+            font-size: 24px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .title-area p {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+        .kpi-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .kpi-card .label {
+            font-size: 13px;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+        .kpi-card .value {
+            font-size: 32px;
+            font-weight: 700;
+            line-height: 1.1;
+        }
+        .kpi-card.blue .value { color: var(--primary); }
+        .kpi-card.purple .value { color: var(--purple); }
+        .kpi-card.green .value { color: var(--green); }
+        .kpi-card.rose .value { color: var(--rose); }
+
+        .toolbar {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 16px 20px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        .search-box {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex: 1;
+            max-width: 360px;
+        }
+        .search-box input {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.15s;
+        }
+        .search-box input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.12);
+        }
+        .filter-buttons {
+            display: flex;
+            gap: 8px;
+        }
+        .filter-btn {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+            color: var(--text-muted);
+            transition: all 0.15s;
+        }
+        .filter-btn.active {
+            background: var(--primary);
+            color: #fff;
+            border-color: var(--primary);
+        }
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+        }
+        .btn {
+            padding: 7px 14px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            border: 1px solid transparent;
+            transition: all 0.15s;
+            text-decoration: none;
+        }
+        .btn-outline {
+            background: #fff;
+            border-color: var(--border);
+            color: var(--text-main);
+        }
+        .btn-outline:hover {
+            background: var(--bg);
+            border-color: #cbd5e1;
+        }
+        .btn-danger {
+            background: #fff;
+            border-color: #fecdd3;
+            color: var(--rose);
+        }
+        .btn-danger:hover {
+            background: #ffe4e6;
+        }
+
+        .table-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 14px;
+        }
+        thead th {
+            background: #f1f5f9;
+            padding: 12px 16px;
+            font-weight: 600;
+            color: #475569;
+            border-bottom: 1px solid var(--border);
+            cursor: pointer;
+            user-select: none;
+            white-space: nowrap;
+        }
+        thead th:hover {
+            background: #e2e8f0;
+        }
+        tbody tr {
+            border-bottom: 1px solid var(--border);
+            transition: background 0.1s;
+        }
+        tbody tr:hover {
+            background: #f8fafc;
+        }
+        tbody td {
+            padding: 14px 16px;
+            vertical-align: middle;
+        }
+        .word-cell {
+            font-weight: 600;
+            color: #0f172a;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 15px;
+        }
+        .btn-speak {
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            opacity: 0.6;
+            transition: opacity 0.15s, transform 0.15s;
+        }
+        .btn-speak:hover {
+            opacity: 1;
+            transform: scale(1.15);
+        }
+        .badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 9999px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .badge-blue { background: #e0f2fe; color: #0369a1; }
+        .badge-purple { background: #f3e8ff; color: #6b21a8; }
+        .badge-green { background: #dcfce7; color: #15803d; }
+        .badge-gray { background: #f1f5f9; color: #64748b; }
+
+        .time-cell {
+            font-size: 13px;
+            color: var(--text-muted);
+            white-space: nowrap;
+        }
+        .empty-state {
+            padding: 60px 20px;
+            text-align: center;
+            color: var(--text-muted);
+        }
+        .empty-state svg {
+            width: 48px;
+            height: 48px;
+            color: #cbd5e1;
+            margin-bottom: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="title-area">
+                <h1>📊 雅思真经打点与学习统计</h1>
+                <p>记录网页正文划词标记、全局覆层弹开、拼写验证等全流程学习轨迹 (数据已持久化)</p>
+            </div>
+            <div class="action-buttons">
+                <button id="btn-sync" class="btn btn-outline" title="从本地服务器同步数据">🔄 同步本地数据</button>
+                <button id="btn-export-csv" class="btn btn-outline">📥 导出 CSV</button>
+                <button id="btn-export-json" class="btn btn-outline">📥 导出 JSON</button>
+                <button id="btn-clear" class="btn btn-danger">🗑️ 清空统计</button>
+            </div>
+        </header>
+
+        <section class="kpi-grid">
+            <div class="kpi-card blue">
+                <span class="label">📘 累计打点单词数</span>
+                <span class="value" id="kpi-words">0</span>
+            </div>
+            <div class="kpi-card rose">
+                <span class="label">🔖 网页正文标记总次数</span>
+                <span class="value" id="kpi-marks">0</span>
+            </div>
+            <div class="kpi-card purple">
+                <span class="label">🖼️ 全局覆层弹开查看总次数</span>
+                <span class="value" id="kpi-modal">0</span>
+            </div>
+            <div class="kpi-card green">
+                <span class="label">🎯 拼写验证成功总次数</span>
+                <span class="value" id="kpi-success">0</span>
+            </div>
+        </section>
+
+        <div class="toolbar">
+            <div class="search-box">
+                <input type="text" id="search-input" placeholder="🔍 搜索单词或中文释义...">
+            </div>
+            <div class="filter-buttons">
+                <button class="filter-btn active" data-filter="all">全部</button>
+                <button class="filter-btn" data-filter="marks">已标记词</button>
+                <button class="filter-btn" data-filter="modal">已查看大图</button>
+                <button class="filter-btn" data-filter="success">已拼写成功</button>
+            </div>
+        </div>
+
+        <div class="table-card">
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 60px;">#</th>
+                        <th data-sort="w">单词 (Word) ⇅</th>
+                        <th>释义 (Definition)</th>
+                        <th data-sort="marks" style="text-align: center;">标记次数 ⇅</th>
+                        <th data-sort="modalOpens" style="text-align: center;">覆层查看 ⇅</th>
+                        <th data-sort="inputSuccess" style="text-align: center;">拼写成功 ⇅</th>
+                        <th data-sort="lastUpdated">最近记录时间 ⇅</th>
+                    </tr>
+                </thead>
+                <tbody id="table-body">
+                    <tr>
+                        <td colspan="7" class="empty-state">
+                            <div>加载数据中...</div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        const STATS_STORAGE_KEY = "ielts_vocab_fantasia_stats";
+        let DICT = {};
+        let currentSort = { field: "lastUpdated", order: "desc" };
+        let currentFilter = "all";
+        let searchQuery = "";
+
+        // Load Dictionary
+        fetch("data/dictionary.json")
+            .then(res => res.json())
+            .then(data => {
+                DICT = data;
+                render();
+            })
+            .catch(() => {
+                render();
+            });
+
+        function loadStats() {
+            try {
+                const raw = localStorage.getItem(STATS_STORAGE_KEY);
+                return raw ? JSON.parse(raw) : { summary: { marks: 0, modalOpens: 0, inputSuccess: 0 }, words: {} };
+            } catch (e) {
+                return { summary: { marks: 0, modalOpens: 0, inputSuccess: 0 }, words: {} };
+            }
+        }
+
+        function saveStats(stats) {
+            try {
+                localStorage.setItem(STATS_STORAGE_KEY, JSON.stringify(stats));
+                fetch("http://127.0.0.1:8777/api/stats", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(stats)
+                }).catch(() => {});
+            } catch (e) {}
+        }
+
+        function speakWord(word) {
+            if (!window.speechSynthesis || !word) return;
+            window.speechSynthesis.cancel();
+            const utter = new SpeechSynthesisUtterance(word);
+            utter.lang = "en-US";
+            utter.rate = 0.92;
+            window.speechSynthesis.speak(utter);
+        }
+
+        function formatDate(ts) {
+            if (!ts) return "-";
+            const d = new Date(ts);
+            const y = d.getFullYear();
+            const m = String(d.getMonth() + 1).padStart(2, "0");
+            const day = String(d.getDate()).padStart(2, "0");
+            const h = String(d.getHours()).padStart(2, "0");
+            const min = String(d.getMinutes()).padStart(2, "0");
+            return `${y}-${m}-${day} ${h}:${min}`;
+        }
+
+        function render() {
+            const stats = loadStats();
+            const wordsList = Object.values(stats.words || {});
+            
+            // Calculate KPI
+            let totalMarks = 0;
+            let totalModal = 0;
+            let totalSuccess = 0;
+
+            wordsList.forEach(w => {
+                totalMarks += (w.marks || 0);
+                totalModal += (w.modalOpens || 0);
+                totalSuccess += (w.inputSuccess || 0);
+            });
+
+            document.getElementById("kpi-words").textContent = wordsList.length;
+            document.getElementById("kpi-marks").textContent = totalMarks;
+            document.getElementById("kpi-modal").textContent = totalModal;
+            document.getElementById("kpi-success").textContent = totalSuccess;
+
+            // Filter
+            let filtered = wordsList.filter(item => {
+                const w = item.w || "";
+                const def = (DICT[w.toLowerCase()] && DICT[w.toLowerCase()].d) || "";
+                
+                if (searchQuery) {
+                    const q = searchQuery.toLowerCase();
+                    if (!w.toLowerCase().includes(q) && !def.includes(q)) return false;
+                }
+
+                if (currentFilter === "marks" && !(item.marks > 0)) return false;
+                if (currentFilter === "modal" && !(item.modalOpens > 0)) return false;
+                if (currentFilter === "success" && !(item.inputSuccess > 0)) return false;
+
+                return true;
+            });
+
+            // Sort
+            filtered.sort((a, b) => {
+                let valA = a[currentSort.field];
+                let valB = b[currentSort.field];
+
+                if (currentSort.field === "w") {
+                    valA = (valA || "").toLowerCase();
+                    valB = (valB || "").toLowerCase();
+                    return currentSort.order === "asc" ? valA.localeCompare(valB) : valB.localeCompare(valA);
+                }
+
+                valA = valA || 0;
+                valB = valB || 0;
+                return currentSort.order === "asc" ? valA - valB : valB - valA;
+            });
+
+            // Render Table
+            const tbody = document.getElementById("table-body");
+            if (filtered.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="7" class="empty-state">
+                            <div style="font-size: 15px; margin-bottom: 4px;">📭 暂无打点统计记录</div>
+                            <div style="font-size: 13px; color: #94a3b8;">在任意网页或测试页选中文本点击“标记真经”即可自动记录</div>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = filtered.map((item, idx) => {
+                const dictEntry = DICT[item.w.toLowerCase()];
+                const def = dictEntry ? dictEntry.d : "-";
+
+                return `
+                    <tr>
+                        <td style="color: #94a3b8; font-size: 13px;">${idx + 1}</td>
+                        <td>
+                            <div class="word-cell">
+                                <span>${item.w}</span>
+                                <button class="btn-speak" title="朗读" onclick="speakWord('${item.w}')">🔊</button>
+                            </div>
+                        </td>
+                        <td style="color: #475569;">${def}</td>
+                        <td style="text-align: center;">
+                            <span class="badge ${item.marks > 0 ? 'badge-blue' : 'badge-gray'}">${item.marks || 0}</span>
+                        </td>
+                        <td style="text-align: center;">
+                            <span class="badge ${item.modalOpens > 0 ? 'badge-purple' : 'badge-gray'}">${item.modalOpens || 0}</span>
+                        </td>
+                        <td style="text-align: center;">
+                            <span class="badge ${item.inputSuccess > 0 ? 'badge-green' : 'badge-gray'}">${item.inputSuccess || 0}</span>
+                        </td>
+                        <td class="time-cell">${formatDate(item.lastUpdated)}</td>
+                    </tr>
+                `;
+            }).join("");
+        }
+
+        // Event Listeners
+        document.getElementById("search-input").addEventListener("input", (e) => {
+            searchQuery = e.target.value.trim();
+            render();
+        });
+
+        document.querySelectorAll(".filter-btn").forEach(btn => {
+            btn.addEventListener("click", () => {
+                document.querySelectorAll(".filter-btn").forEach(b => b.classList.remove("active"));
+                btn.classList.add("active");
+                currentFilter = btn.dataset.filter;
+                render();
+            });
+        });
+
+        document.querySelectorAll("thead th[data-sort]").forEach(th => {
+            th.addEventListener("click", () => {
+                const field = th.dataset.sort;
+                if (currentSort.field === field) {
+                    currentSort.order = currentSort.order === "asc" ? "desc" : "asc";
+                } else {
+                    currentSort.field = field;
+                    currentSort.order = "desc";
+                }
+                render();
+            });
+        });
+
+        // Sync from server
+        document.getElementById("btn-sync").addEventListener("click", () => {
+            fetch("http://127.0.0.1:8777/api/stats")
+                .then(res => res.json())
+                .then(serverStats => {
+                    if (serverStats && serverStats.words) {
+                        const local = loadStats();
+                        // Merge server words into local
+                        Object.keys(serverStats.words).forEach(k => {
+                            if (!local.words[k] || (serverStats.words[k].lastUpdated || 0) > (local.words[k].lastUpdated || 0)) {
+                                local.words[k] = serverStats.words[k];
+                            }
+                        });
+                        saveStats(local);
+                        render();
+                        alert("✅ 本地服务器数据已成功同步！");
+                    }
+                })
+                .catch(() => {
+                    alert("⚠️ 无法连接到本地图片/数据服务 (127.0.0.1:8777)，已加载浏览器缓存数据。");
+                });
+        });
+
+        // Export CSV
+        document.getElementById("btn-export-csv").addEventListener("click", () => {
+            const stats = loadStats();
+            const list = Object.values(stats.words || {});
+            if (list.length === 0) return alert("暂无数据可导出");
+
+            let csv = "\\uFEFF序号,单词,释义,标记次数,覆层查看次数,拼写成功次数,最近更新时间\\n";
+            list.forEach((item, i) => {
+                const def = (DICT[item.w.toLowerCase()] && DICT[item.w.toLowerCase()].d) || "";
+                csv += `${i + 1},"${item.w}","${def.replace(/"/g, '""')}",${item.marks||0},${item.modalOpens||0},${item.inputSuccess||0},"${formatDate(item.lastUpdated)}"\\n`;
+            });
+
+            const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = `ielts_vocab_stats_${new Date().toISOString().slice(0,10)}.csv`;
+            a.click();
+            URL.revokeObjectURL(url);
+        });
+
+        // Export JSON
+        document.getElementById("btn-export-json").addEventListener("click", () => {
+            const stats = loadStats();
+            const str = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(stats, null, 2));
+            const a = document.createElement("a");
+            a.href = str;
+            a.download = `ielts_vocab_stats_${new Date().toISOString().slice(0,10)}.json`;
+            a.click();
+        });
+
+        // Clear
+        document.getElementById("btn-clear").addEventListener("click", () => {
+            if (confirm("⚠️ 确定要清空所有单词打点统计数据吗？此操作不可恢复。")) {
+                localStorage.removeItem(STATS_STORAGE_KEY);
+                fetch("http://127.0.0.1:8777/api/stats", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ summary: { marks: 0, modalOpens: 0, inputSuccess: 0 }, words: {} })
+                }).catch(() => {});
+                render();
+            }
+        });
+
+        window.addEventListener("DOMContentLoaded", render);
+    </script>
+</body>
+</html>
+"""
+stats_html_path = TARGET_DIR / "stats.html"
+stats_html_path.write_text(stats_html_content, encoding="utf-8")
+print(f"Generated {stats_html_path}")
+

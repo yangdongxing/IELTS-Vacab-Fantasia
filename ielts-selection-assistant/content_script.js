@@ -222,9 +222,9 @@
     function loadStats() {
         try {
             const raw = localStorage.getItem(STATS_STORAGE_KEY);
-            return raw ? JSON.parse(raw) : { summary: { marks: 0, modalOpens: 0, inputTyped: 0, inputSuccess: 0 }, words: {} };
+            return raw ? JSON.parse(raw) : { summary: { marks: 0, modalOpens: 0, inputSuccess: 0 }, words: {} };
         } catch (e) {
-            return { summary: { marks: 0, modalOpens: 0, inputTyped: 0, inputSuccess: 0 }, words: {} };
+            return { summary: { marks: 0, modalOpens: 0, inputSuccess: 0 }, words: {} };
         }
     }
 
@@ -232,6 +232,13 @@
         try {
             localStorage.setItem(STATS_STORAGE_KEY, JSON.stringify(stats));
             window.dispatchEvent(new CustomEvent("ielts_stats_updated", { detail: stats }));
+            if (typeof fetch === "function") {
+                fetch("http://127.0.0.1:8777/api/stats", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(stats)
+                }).catch(() => {});
+            }
         } catch (e) {}
     }
 
@@ -242,14 +249,13 @@
         const now = Date.now();
 
         if (!stats.words) stats.words = {};
-        if (!stats.summary) stats.summary = { marks: 0, modalOpens: 0, inputTyped: 0, inputSuccess: 0 };
+        if (!stats.summary) stats.summary = { marks: 0, modalOpens: 0, inputSuccess: 0 };
 
         if (!stats.words[key]) {
             stats.words[key] = {
                 w: word,
                 marks: 0,
                 modalOpens: 0,
-                inputTyped: 0,
                 inputSuccess: 0,
                 lastUpdated: now
             };
@@ -264,9 +270,6 @@
         } else if (eventType === "modal_open") {
             entry.modalOpens = (entry.modalOpens || 0) + 1;
             stats.summary.modalOpens = (stats.summary.modalOpens || 0) + 1;
-        } else if (eventType === "input_typed") {
-            entry.inputTyped = (entry.inputTyped || 0) + 1;
-            stats.summary.inputTyped = (stats.summary.inputTyped || 0) + 1;
         } else if (eventType === "input_success") {
             entry.inputSuccess = (entry.inputSuccess || 0) + 1;
             stats.summary.inputSuccess = (stats.summary.inputSuccess || 0) + 1;
@@ -288,6 +291,13 @@
         clearStats: () => {
             localStorage.removeItem(STATS_STORAGE_KEY);
             window.dispatchEvent(new CustomEvent("ielts_stats_updated", { detail: loadStats() }));
+            if (typeof fetch === "function") {
+                fetch("http://127.0.0.1:8777/api/stats", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ summary: { marks: 0, modalOpens: 0, inputSuccess: 0 }, words: {} })
+                }).catch(() => {});
+            }
             console.log("[IELTS Stats] Telemetry data cleared.");
         }
     };
@@ -811,7 +821,6 @@
         resetMemoryAnimation();
 
         if (!typed) return;
-        trackWordEvent(currentMemoryData.w, "input_typed");
 
         if (typed === target) {
             input.classList.add("is-correct");

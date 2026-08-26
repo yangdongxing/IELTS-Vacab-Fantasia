@@ -1,20 +1,23 @@
 #!/usr/bin/env python3
 """
-Local Image Server for IELTS Selection Assistant
-Serves assets/images/ on http://127.0.0.1:8765/ with:
+Local Image & Telemetry Server for IELTS Selection Assistant
+Serves on http://127.0.0.1:8777/ with:
+- Static image streaming (assets/images/)
+- Dedicated stats page & data persistence (data/stats.json)
 - Full CORS support (Access-Control-Allow-Origin: *)
-- Instant memory / direct disk streaming
 - Case-insensitive filename matching (e.g. travel.jpg -> Travel.jpg)
-- Cache-Control headers for instant local loading
 """
+import json
 import os
 import sys
 import urllib.parse
 from http.server import HTTPServer, BaseHTTPRequestHandler
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parent.parent
+SUBPROJECT_DIR = Path(__file__).resolve().parent
+ROOT = SUBPROJECT_DIR.parent
 IMAGES_DIR = ROOT / "assets" / "images"
+STATS_FILE = SUBPROJECT_DIR / "data" / "stats.json"
 PORT = 8777
 
 IMAGE_INDEX = {}
@@ -25,17 +28,43 @@ if IMAGES_DIR.exists():
         if stem not in IMAGE_INDEX:
             IMAGE_INDEX[stem] = fn
 
-class IELTSImageRequestHandler(BaseHTTPRequestHandler):
+class IELTSRequestHandler(BaseHTTPRequestHandler):
     def do_GET(self):
-        req_name = urllib.parse.unquote(self.path.split('?', 1)[0].split('#', 1)[0].lstrip('/'))
+        req_path = self.path.split('?', 1)[0].split('#', 1)[0].lstrip('/')
+        req_name = urllib.parse.unquote(req_path)
+
         if not req_name or req_name == "health":
             self.send_response(200)
             self.send_header("Content-Type", "text/plain; charset=utf-8")
             self.send_header("Access-Control-Allow-Origin", "*")
             self.end_headers()
-            self.wfile.write(f"IELTS Image Server running ({len(IMAGE_INDEX)} indexed images)".encode('utf-8'))
+            self.wfile.write(f"IELTS Assistant Server running ({len(IMAGE_INDEX)} indexed images)".encode('utf-8'))
             return
 
+        # Dedicated stats API
+        if req_name == "api/stats":
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json; charset=utf-8")
+            self.send_header("Access-Control-Allow-Origin", "*")
+            self.end_headers()
+            if STATS_FILE.exists():
+                self.wfile.write(STATS_FILE.read_bytes())
+            else:
+                self.wfile.write(b'{"summary":{"marks":0,"modalOpens":0,"inputSuccess":0},"words":{}}')
+            return
+
+        # Stats HTML page
+        if req_name in ("stats", "stats.html"):
+            stats_html = SUBPROJECT_DIR / "stats.html"
+            if stats_html.exists():
+                self.send_response(200)
+                self.send_header("Content-Type", "text/html; charset=utf-8")
+                self.send_header("Access-Control-Allow-Origin", "*")
+                self.end_headers()
+                self.wfile.write(stats_html.read_bytes())
+                return
+
+        # Static Images
         clean_lower = req_name.lower()
         target_file = None
         if clean_lower in IMAGE_INDEX:
@@ -56,6 +85,32 @@ class IELTSImageRequestHandler(BaseHTTPRequestHandler):
                 return
             except Exception:
                 pass
+
+        self.send_response(404)
+        self.send_header("Access-Control-Allow-Origin", "*")
+        self.end_headers()
+
+    def do_POST(self):
+        req_path = self.path.split('?', 1)[0].split('#', 1)[0].lstrip('/')
+        if req_path == "api/stats":
+            length = int(self.headers.get('Content-Length', 0))
+            body = self.rfile.read(length)
+            try:
+                data = json.loads(body.decode('utf-8'))
+                STATS_FILE.parent.mkdir(parents=True, exist_ok=True)
+                STATS_FILE.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding='utf-8')
+                self.send_response(200)
+                self.send_header("Content-Type", "application/json; charset=utf-8")
+                self.send_header("Access-Control-Allow-Origin", "*")
+                self.end_headers()
+                self.wfile.write(b'{"status":"ok"}')
+                return
+            except Exception as e:
+                self.send_response(400)
+                self.send_header("Access-Control-Allow-Origin", "*")
+                self.end_headers()
+                self.wfile.write(str(e).encode('utf-8'))
+                return
 
         self.send_response(404)
         self.send_header("Access-Control-Allow-Origin", "*")
@@ -85,7 +140,7 @@ class IELTSImageRequestHandler(BaseHTTPRequestHandler):
     def do_OPTIONS(self):
         self.send_response(200)
         self.send_header("Access-Control-Allow-Origin", "*")
-        self.send_header("Access-Control-Allow-Methods", "GET, HEAD, OPTIONS")
+        self.send_header("Access-Control-Allow-Methods", "GET, POST, HEAD, OPTIONS")
         self.send_header("Access-Control-Allow-Headers", "*")
         self.end_headers()
 
@@ -94,17 +149,18 @@ class IELTSImageRequestHandler(BaseHTTPRequestHandler):
 
 def run_server(port=PORT):
     server_address = ('', port)
-    httpd = HTTPServer(server_address, IELTSImageRequestHandler)
+    httpd = HTTPServer(server_address, IELTSRequestHandler)
     print(f"============================================================")
-    print(f"🖼️  IELTS Local Image Server running at:")
-    print(f"   👉 http://127.0.0.1:{port}/")
-    print(f"   📁 Serving: {IMAGES_DIR} ({len(IMAGE_INDEX)} indexed images)")
+    print(f"🖼️  IELTS Selection Assistant Server running at:")
+    print(f"   👉 Images API: http://127.0.0.1:{port}/")
+    print(f"   📊 Stats Page: http://127.0.0.1:{port}/stats")
+    print(f"   💾 Stats Sync: {STATS_FILE}")
     print(f"   🌐 Full CORS enabled for all webpages")
     print(f"============================================================")
     try:
         httpd.serve_forever()
     except KeyboardInterrupt:
-        print("\nStopping image server...")
+        print("\nStopping server...")
         httpd.server_close()
 
 if __name__ == '__main__':

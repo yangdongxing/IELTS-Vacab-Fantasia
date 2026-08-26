@@ -53,21 +53,25 @@ python3 serve_images.py
 
 ---
 
-## 📊 数据统计与打点系统 (Telemetry & Analytics)
+## 📊 独立数据统计与打点管理台 (`stats.html`)
 
-插件与脚本内置了**本地无感持久化打点系统**（基于 `localStorage`），全自动记录用户的学习与复习行为：
+子项目中配备了独立的统计管理后台页面 [`stats.html`](stats.html)，以现代化表格形式完整展示所有单词打点：
 
-1. **正文标记次数 (`marks`)**：记录每个单词在网页中被划词标注的总次数；
-2. **全局覆层弹开次数 (`modalOpens`)**：记录每个单词点击查看高清大图与例句卡片的次数；
-3. **拼写击键次数 (`inputTyped`)**：记录在覆层输入框中练习敲词的击键次数；
-4. **拼写成功次数 (`inputSuccess`)**：记录成功正确拼写单词并通关的次数。
+* **数据持久化**：全自动双重持久化（浏览器 `localStorage` + 本地文件 `data/stats.json` 同步）；
+* **统计指标**：
+  1. **正文标记次数 (`marks`)**：记录每个单词在网页中被划词标注的总次数；
+  2. **全局覆层查看次数 (`modalOpens`)**：记录每个单词点击查看高清大图与例句卡片的次数；
+  3. **拼写成功次数 (`inputSuccess`)**：记录在覆层输入框成功正确拼写的次数。
+* **表格功能**：
+  - 🔍 实时搜索过滤（支持英文单词与中文释义）；
+  - 📑 点击表头多维度排序（按标记次数、覆层次数、成功次数、最近时间等）；
+  - 🔊 点击直接发音朗读单词；
+  - 📥 一键导出 **CSV 表格** 或 **JSON 打点数据**；
+  - 🔄 一键与本地服务数据双向同步；
+  - 🗑️ 支持重置清空数据。
 
-### 开发者 / 调试 API (`window.ieltsVocabStats`)
-在浏览器控制台（Console）中可随时调用：
-- `ieltsVocabStats.getSummary()`：获取总计概览统计指标；
-- `ieltsVocabStats.getTopWords('marks', 10)`：查看被标记次数最高的热词排行榜；
-- `ieltsVocabStats.exportJSON()`：导出完整 JSON 打点统计数据；
-- `ieltsVocabStats.clearStats()`：一键清空打点记录。
+### 快捷访问方式
+在浏览器中直接打开 [`stats.html`](stats.html) 或启动本地服务后访问 `http://127.0.0.1:8777/stats` 即可查看。
 
 ---
 
