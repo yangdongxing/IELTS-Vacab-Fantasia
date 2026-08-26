@@ -184,16 +184,24 @@
 
     function setupImageFallback(imgElement, word) {
         if (!imgElement || !word) return;
+        const capWord = word.charAt(0).toUpperCase() + word.slice(1);
+        const encoded = encodeURIComponent(capWord) + ".jpg";
+
         imgElement.onerror = function() {
             if (imgElement.src.startsWith(LOCAL_IMAGE_BASE)) {
-                // If local server is not running, fallback to remote GitHub CDN
-                const capWord = word.charAt(0).toUpperCase() + word.slice(1);
-                imgElement.src = REMOTE_IMAGE_BASE + encodeURIComponent(capWord) + ".jpg";
+                // Try relative path if testing locally
+                imgElement.src = "../assets/images/" + encoded;
                 imgElement.onerror = function() {
-                    imgElement.style.display = "none";
+                    imgElement.src = REMOTE_IMAGE_BASE + encoded;
+                    imgElement.onerror = function() {
+                        imgElement.style.opacity = "0.2";
+                    };
                 };
-            } else {
-                imgElement.style.display = "none";
+            } else if (imgElement.src.includes("../assets/images/")) {
+                imgElement.src = REMOTE_IMAGE_BASE + encoded;
+                imgElement.onerror = function() {
+                    imgElement.style.opacity = "0.2";
+                };
             }
         };
     }
@@ -339,16 +347,15 @@
         style.textContent = `
             strong.geek-vocab-mark, em.geek-vocab-mark {
                 position: relative !important;
-                display: inline !important;
+                display: inline-block !important;
+                vertical-align: baseline !important;
                 color: inherit !important;
                 font-weight: 600 !important;
                 text-decoration: none !important;
                 background-color: rgba(244, 63, 94, 0.18) !important;
                 border-radius: 3px !important;
-                padding: 1px 3.5px !important;
+                padding: 0 3.5px !important;
                 margin: 0 1px !important;
-                box-decoration-break: clone !important;
-                -webkit-box-decoration-break: clone !important;
                 cursor: pointer !important;
                 transition: background-color 0.15s ease !important;
             }

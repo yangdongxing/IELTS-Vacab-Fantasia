@@ -1,7 +1,7 @@
 {
   "summary": {
-    "marks": 48,
-    "modalOpens": 0,
+    "marks": 68,
+    "modalOpens": 1,
     "inputSuccess": 0
   },
   "words": {
@@ -287,10 +287,66 @@
     },
     "wrong": {
       "w": "wrong",
-      "marks": 1,
+      "marks": 3,
       "modalOpens": 0,
       "inputSuccess": 0,
-      "lastUpdated": 1787716964877
+      "lastUpdated": 1787717587837
+    },
+    "perfect": {
+      "w": "perfect",
+      "marks": 2,
+      "modalOpens": 0,
+      "inputSuccess": 0,
+      "lastUpdated": 1787717587831
+    },
+    "sum": {
+      "w": "sum",
+      "marks": 2,
+      "modalOpens": 0,
+      "inputSuccess": 0,
+      "lastUpdated": 1787717587834
+    },
+    "way": {
+      "w": "way",
+      "marks": 4,
+      "modalOpens": 1,
+      "inputSuccess": 0,
+      "lastUpdated": 1787717587837
+    },
+    "view": {
+      "w": "view",
+      "marks": 2,
+      "modalOpens": 0,
+      "inputSuccess": 0,
+      "lastUpdated": 1787717587835
+    },
+    "habit": {
+      "w": "habit",
+      "marks": 2,
+      "modalOpens": 0,
+      "inputSuccess": 0,
+      "lastUpdated": 1787717587836
+    },
+    "consume": {
+      "w": "consume",
+      "marks": 2,
+      "modalOpens": 0,
+      "inputSuccess": 0,
+      "lastUpdated": 1787717587838
+    },
+    "similar": {
+      "w": "similar",
+      "marks": 2,
+      "modalOpens": 0,
+      "inputSuccess": 0,
+      "lastUpdated": 1787717587838
+    },
+    "content": {
+      "w": "content",
+      "marks": 2,
+      "modalOpens": 0,
+      "inputSuccess": 0,
+      "lastUpdated": 1787717587839
     }
   }
 }
