@@ -11,6 +11,7 @@ import json
 import os
 import sys
 import urllib.parse
+import urllib.request
 from http.server import HTTPServer, BaseHTTPRequestHandler
 from pathlib import Path
 
@@ -66,7 +67,6 @@ class IELTSRequestHandler(BaseHTTPRequestHandler):
                 self.wfile.write(b'{"translation":""}')
                 return
             try:
-                import urllib.request
                 g_url = "https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=zh-CN&dt=t&q=" + urllib.parse.quote(query_text)
                 req = urllib.request.Request(g_url, headers={'User-Agent': 'Mozilla/5.0'})
                 with urllib.request.urlopen(req, timeout=6) as resp:
