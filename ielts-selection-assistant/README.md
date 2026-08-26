@@ -41,10 +41,9 @@ python3 server.py
 ## 📦 安装与使用方式
 
 ### 方式 A：油猴脚本 (Tampermonkey)
-1. 打开浏览器并安装 **Tampermonkey** 扩展。
-2. 打开 Tampermonkey 仪表盘，点击 **新建脚本**。
-3. 复制 [`Tampermonkey.js`](Tampermonkey.js) 中的全部代码并粘贴保存。
-4. 在任意英文网页（BBC、Medium、Wikipedia、知乎等）划选英文即可即时体验！
+1. 确保浏览器已安装 **Tampermonkey** 扩展。
+2. **一键安装/更新**：直接在浏览器中打开 [`tampermonkey.user.js`](tampermonkey.user.js)，Tampermonkey 会自动弹出安装/更新确认弹窗，点击“安装”即可！
+3. 在任意英文网页（BBC、Medium、Wikipedia、知乎等）划选英文即可即时体验！
 
 ### 方式 B：Chrome 扩展程序 (Manifest V3)
 1. 打开 Chrome 浏览器，访问 `chrome://extensions/`。
