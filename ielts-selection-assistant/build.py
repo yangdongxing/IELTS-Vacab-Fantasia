@@ -595,6 +595,70 @@ js_template = """/**
                 to { opacity: 1; transform: scale(1); }
             }
 
+            /* Bilingual Paragraph Translation Block */
+            .isa-paragraph-translation {
+                margin: 12px 0 16px !important;
+                padding: 10px 14px !important;
+                background: #f0f9ff !important;
+                border-left: 3.5px solid #0284c7 !important;
+                border-radius: 6px !important;
+                box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04) !important;
+                font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Segoe UI", Roboto, sans-serif !important;
+                font-size: 13.5px !important;
+                line-height: 1.65 !important;
+                color: #334155 !important;
+                position: relative !important;
+                transition: all 0.2s ease !important;
+                box-sizing: border-box !important;
+            }
+            .isa-trans-header {
+                display: flex !important;
+                justify-content: space-between !important;
+                align-items: center !important;
+                margin-bottom: 6px !important;
+                user-select: none !important;
+            }
+            .isa-trans-title {
+                display: inline-flex !important;
+                align-items: center !important;
+                gap: 5px !important;
+                font-size: 12px !important;
+                font-weight: 600 !important;
+                color: #0284c7 !important;
+            }
+            .isa-trans-tools {
+                display: inline-flex !important;
+                align-items: center !important;
+                gap: 8px !important;
+            }
+            .isa-trans-btn {
+                background: transparent !important;
+                border: none !important;
+                cursor: pointer !important;
+                font-size: 12px !important;
+                color: #64748b !important;
+                padding: 1px 4px !important;
+                border-radius: 3px !important;
+                transition: color 0.15s !important;
+            }
+            .isa-trans-btn:hover {
+                color: #0284c7 !important;
+            }
+            .isa-trans-btn.close:hover {
+                color: #e11d48 !important;
+            }
+            .isa-trans-content {
+                color: #1e293b !important;
+                font-weight: normal !important;
+            }
+            .isa-trans-content.collapsed {
+                display: none !important;
+            }
+            .isa-trans-loading {
+                color: #64748b !important;
+                font-style: italic !important;
+            }
+
             /* Fullscreen Memory Modal Overlay Container */
             #geek-memory-modal {
                 position: fixed !important;
@@ -1140,6 +1204,118 @@ js_template = """/**
     }
 
     // ==========================================
+    // Google Neural Translation & Paragraph Insertion
+    // ==========================================
+    function translateTextGoogle(text) {
+        return new Promise((resolve, reject) => {
+            const cleanText = (text || "").trim();
+            if (!cleanText) return resolve("");
+
+            const googleUrl = "https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=zh-CN&dt=t&q=" + encodeURIComponent(cleanText);
+
+            if (typeof GM_xmlhttpRequest === "function") {
+                GM_xmlhttpRequest({
+                    method: "GET",
+                    url: googleUrl,
+                    onload: function(res) {
+                        try {
+                            const data = JSON.parse(res.responseText);
+                            const translated = (data[0] || []).map(item => item[0]).join("");
+                            resolve(translated);
+                        } catch (e) {
+                            reject(e);
+                        }
+                    },
+                    onerror: reject
+                });
+            } else {
+                fetch(googleUrl)
+                    .then(res => res.json())
+                    .then(data => {
+                        const translated = (data[0] || []).map(item => item[0]).join("");
+                        resolve(translated);
+                    })
+                    .catch(() => {
+                        // Fallback to local server translation proxy if CORS fails
+                        fetch("http://127.0.0.1:8777/api/translate?q=" + encodeURIComponent(cleanText))
+                            .then(r => r.json())
+                            .then(d => resolve(d.translation || ""))
+                            .catch(reject);
+                    });
+            }
+        });
+    }
+
+    function findParagraphContainer(range) {
+        if (!range) return null;
+        let node = range.commonAncestorContainer;
+        if (node.nodeType === Node.TEXT_NODE) node = node.parentElement;
+        if (!node) return null;
+        return node.closest("p, blockquote, li, pre, div.sample-box, article, section") || node;
+    }
+
+    function insertParagraphTranslation(targetParagraph, textToTranslate) {
+        if (!targetParagraph || !textToTranslate) return;
+
+        let transBox = targetParagraph.nextElementSibling;
+        if (!transBox || !transBox.classList.contains("isa-paragraph-translation")) {
+            transBox = document.createElement("div");
+            transBox.className = "isa-paragraph-translation";
+            transBox.innerHTML = `
+                <div class="isa-trans-header">
+                    <span class="isa-trans-title">🌐 段落中文翻译 (Google 神经翻译)</span>
+                    <span class="isa-trans-tools">
+                        <button class="isa-trans-btn toggle" title="折叠/展开">折叠 ▲</button>
+                        <button class="isa-trans-btn close" title="关闭">✕</button>
+                    </span>
+                </div>
+                <div class="isa-trans-content isa-trans-loading">正在翻译段落中...</div>
+            `;
+            targetParagraph.insertAdjacentElement("afterend", transBox);
+
+            const contentEl = transBox.querySelector(".isa-trans-content");
+            const toggleBtn = transBox.querySelector(".isa-trans-btn.toggle");
+            const closeBtn = transBox.querySelector(".isa-trans-btn.close");
+
+            toggleBtn.onclick = (e) => {
+                e.stopPropagation();
+                if (contentEl.classList.contains("collapsed")) {
+                    contentEl.classList.remove("collapsed");
+                    toggleBtn.textContent = "折叠 ▲";
+                } else {
+                    contentEl.classList.add("collapsed");
+                    toggleBtn.textContent = "展开 ▼";
+                }
+            };
+
+            closeBtn.onclick = (e) => {
+                e.stopPropagation();
+                transBox.remove();
+            };
+        } else {
+            const contentEl = transBox.querySelector(".isa-trans-content");
+            contentEl.className = "isa-trans-content isa-trans-loading";
+            contentEl.textContent = "正在更新翻译中...";
+        }
+
+        const contentEl = transBox.querySelector(".isa-trans-content");
+
+        translateTextGoogle(textToTranslate)
+            .then(zhText => {
+                if (!zhText) {
+                    transBox.remove();
+                    return;
+                }
+                contentEl.classList.remove("isa-trans-loading");
+                contentEl.textContent = zhText;
+            })
+            .catch(() => {
+                contentEl.classList.remove("isa-trans-loading");
+                contentEl.textContent = "（翻译请求超时或网络受限，请稍后重试）";
+            });
+    }
+
+    // ==========================================
     // Selection Trigger Button
     // ==========================================
     let currentTriggerBtn = null;
@@ -1173,7 +1349,12 @@ js_template = """/**
         btn.onclick = (e) => {
             e.stopPropagation();
             removeTriggerBtn();
+            const targetParagraph = findParagraphContainer(range);
+            const textToTranslate = range.toString().trim() || (targetParagraph ? targetParagraph.innerText.trim() : "");
             highlightRange(range);
+            if (targetParagraph && textToTranslate) {
+                insertParagraphTranslation(targetParagraph, textToTranslate);
+            }
             window.getSelection().removeAllRanges();
         };
 
@@ -1256,9 +1437,14 @@ final_js_code = js_template.replace("__DICTIONARY_JSON__", dict_json_str).replac
 manifest = {
     "manifest_version": 3,
     "name": "雅思真经划词划划看 (IELTS Selection Assistant)",
-    "version": "1.4.0",
-    "description": "划选任意网页文本，一键在正文中直接标注《雅思词汇真经》核心词汇。Tips气泡与大图例句覆层100%对齐，支持输入单词校验并自动退出。",
+    "version": "1.5.0",
+    "description": "划选任意网页文本，一键在正文中直接标注《雅思词汇真经》核心词汇。Tips气泡与大图例句覆层100%对齐，支持输入单词校验并自动退出，支持段落下自动插入Google神经双语对照翻译。",
     "permissions": ["activeTab"],
+    "host_permissions": [
+        "https://translate.googleapis.com/*",
+        "http://127.0.0.1/*",
+        "http://localhost/*"
+    ],
     "content_scripts": [
         {
             "matches": ["<all_urls>"],
@@ -1280,7 +1466,7 @@ user_script_header = """// ==UserScript==
 // @name         雅思真经划词划划看 (IELTS Selection Assistant)
 // @namespace    https://github.com/yangdongxing/IELTS-Vacab-Fantasia
 // @version      1.5.0
-// @description  划选任意网页文本，一键在正文中直接标注《雅思词汇真经》核心词汇。Tips气泡与大图例句覆层100%对齐，支持输入单词校验并自动退出。
+// @description  划选任意网页文本，一键在正文中直接标注《雅思词汇真经》核心词汇。Tips气泡与大图例句覆层100%对齐，支持输入单词校验并自动退出，支持段落下自动插入Google神经双语对照翻译。
 // @author       极客助手
 // @match        *://*/*
 // @match        file:///*
@@ -1289,6 +1475,7 @@ user_script_header = """// ==UserScript==
 // @grant        GM_xmlhttpRequest
 // @connect      127.0.0.1
 // @connect      localhost
+// @connect      translate.googleapis.com
 // @run-at       document-end
 // ==/UserScript==
 

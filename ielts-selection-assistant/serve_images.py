@@ -53,6 +53,39 @@ class IELTSRequestHandler(BaseHTTPRequestHandler):
                 self.wfile.write(b'{"summary":{"marks":0,"modalOpens":0,"inputSuccess":0},"words":{}}')
             return
 
+        # Translation proxy API
+        if req_path.startswith("api/translate"):
+            parsed = urllib.parse.urlparse(self.path)
+            params = urllib.parse.parse_qs(parsed.query)
+            query_text = params.get('q', [''])[0]
+            if not query_text:
+                self.send_response(200)
+                self.send_header("Content-Type", "application/json; charset=utf-8")
+                self.send_header("Access-Control-Allow-Origin", "*")
+                self.end_headers()
+                self.wfile.write(b'{"translation":""}')
+                return
+            try:
+                import urllib.request
+                g_url = "https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=zh-CN&dt=t&q=" + urllib.parse.quote(query_text)
+                req = urllib.request.Request(g_url, headers={'User-Agent': 'Mozilla/5.0'})
+                with urllib.request.urlopen(req, timeout=6) as resp:
+                    data = json.loads(resp.read().decode('utf-8'))
+                    translated = "".join(item[0] for item in (data[0] or []) if item and item[0])
+                    self.send_response(200)
+                    self.send_header("Content-Type", "application/json; charset=utf-8")
+                    self.send_header("Access-Control-Allow-Origin", "*")
+                    self.end_headers()
+                    self.wfile.write(json.dumps({"translation": translated}, ensure_ascii=False).encode('utf-8'))
+                    return
+            except Exception as e:
+                self.send_response(200)
+                self.send_header("Content-Type", "application/json; charset=utf-8")
+                self.send_header("Access-Control-Allow-Origin", "*")
+                self.end_headers()
+                self.wfile.write(json.dumps({"error": str(e), "translation": ""}).encode('utf-8'))
+                return
+
         # Stats HTML page
         if req_name in ("stats", "stats.html"):
             stats_html = SUBPROJECT_DIR / "stats.html"
