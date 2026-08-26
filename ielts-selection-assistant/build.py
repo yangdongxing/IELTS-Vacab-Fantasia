@@ -304,6 +304,84 @@ js_template = """/**
     }
 
     // ==========================================
+    // Telemetry & Data Tracking (数据统计打点系统)
+    // ==========================================
+    const STATS_STORAGE_KEY = "ielts_vocab_fantasia_stats";
+
+    function loadStats() {
+        try {
+            const raw = localStorage.getItem(STATS_STORAGE_KEY);
+            return raw ? JSON.parse(raw) : { summary: { marks: 0, modalOpens: 0, inputTyped: 0, inputSuccess: 0 }, words: {} };
+        } catch (e) {
+            return { summary: { marks: 0, modalOpens: 0, inputTyped: 0, inputSuccess: 0 }, words: {} };
+        }
+    }
+
+    function saveStats(stats) {
+        try {
+            localStorage.setItem(STATS_STORAGE_KEY, JSON.stringify(stats));
+            window.dispatchEvent(new CustomEvent("ielts_stats_updated", { detail: stats }));
+        } catch (e) {}
+    }
+
+    function trackWordEvent(word, eventType) {
+        if (!word) return;
+        const stats = loadStats();
+        const key = word.toLowerCase().trim();
+        const now = Date.now();
+
+        if (!stats.words) stats.words = {};
+        if (!stats.summary) stats.summary = { marks: 0, modalOpens: 0, inputTyped: 0, inputSuccess: 0 };
+
+        if (!stats.words[key]) {
+            stats.words[key] = {
+                w: word,
+                marks: 0,
+                modalOpens: 0,
+                inputTyped: 0,
+                inputSuccess: 0,
+                lastUpdated: now
+            };
+        }
+
+        const entry = stats.words[key];
+        entry.lastUpdated = now;
+
+        if (eventType === "mark") {
+            entry.marks = (entry.marks || 0) + 1;
+            stats.summary.marks = (stats.summary.marks || 0) + 1;
+        } else if (eventType === "modal_open") {
+            entry.modalOpens = (entry.modalOpens || 0) + 1;
+            stats.summary.modalOpens = (stats.summary.modalOpens || 0) + 1;
+        } else if (eventType === "input_typed") {
+            entry.inputTyped = (entry.inputTyped || 0) + 1;
+            stats.summary.inputTyped = (stats.summary.inputTyped || 0) + 1;
+        } else if (eventType === "input_success") {
+            entry.inputSuccess = (entry.inputSuccess || 0) + 1;
+            stats.summary.inputSuccess = (stats.summary.inputSuccess || 0) + 1;
+        }
+
+        saveStats(stats);
+    }
+
+    window.ieltsVocabStats = {
+        getStats: loadStats,
+        getSummary: () => loadStats().summary,
+        getTopWords: (sortBy = "marks", limit = 10) => {
+            const stats = loadStats();
+            return Object.values(stats.words || {})
+                .sort((a, b) => (b[sortBy] || 0) - (a[sortBy] || 0))
+                .slice(0, limit);
+        },
+        exportJSON: () => JSON.stringify(loadStats(), null, 2),
+        clearStats: () => {
+            localStorage.removeItem(STATS_STORAGE_KEY);
+            window.dispatchEvent(new CustomEvent("ielts_stats_updated", { detail: loadStats() }));
+            console.log("[IELTS Stats] Telemetry data cleared.");
+        }
+    };
+
+    // ==========================================
     // Exact Project CSS Injection
     // ==========================================
     function injectProjectStyles() {
@@ -822,9 +900,11 @@ js_template = """/**
         resetMemoryAnimation();
 
         if (!typed) return;
+        trackWordEvent(currentMemoryData.w, "input_typed");
 
         if (typed === target) {
             input.classList.add("is-correct");
+            trackWordEvent(currentMemoryData.w, "input_success");
             playCorrectMemoryAnimation();
             speakText(currentMemoryData.w);
             // Automatically close modal after 3 seconds upon success
@@ -859,6 +939,7 @@ js_template = """/**
         clearTimeout(autoCloseTimer);
         const refs = createMemoryModal();
         currentMemoryData = entry;
+        trackWordEvent(entry.w, "modal_open");
 
         resetMemoryAnimation();
         refs.word.textContent = entry.w;
@@ -963,6 +1044,8 @@ js_template = """/**
             let lastIndex = 0;
 
             matches.forEach(m => {
+                trackWordEvent(m.entry.w, "mark");
+
                 if (m.start > lastIndex) {
                     fragment.appendChild(document.createTextNode(text.slice(lastIndex, m.start)));
                 }
@@ -1262,14 +1345,84 @@ test_html_content = """<!DOCTYPE html>
         </p>
     </div>
 
-    <div class="sample-box">
-        <h2>测试段落 3：科技与现代生活</h2>
-        <p>
-            With artificial intelligence and computers simplifying complex calculations, scientists can easily predict environmental catastrophes, such as global warming and greenhouse effects caused by excessive carbon dioxide emissions.
-        </p>
+    <div class="sample-box" style="border-left: 4px solid #0284c7; background: #f0f9ff;">
+        <h2 style="color: #0284c7; display: flex; justify-content: space-between; align-items: center;">
+            <span>📊 数据统计与打点面板 (Telemetry Dashboard)</span>
+            <span style="font-size: 13px; font-weight: normal;">
+                <button id="btn-export-stats" style="padding: 3px 8px; border-radius: 4px; border: 1px solid #bae6fd; background: #fff; cursor: pointer; color: #0369a1;">📥 导出 JSON</button>
+                <button id="btn-clear-stats" style="padding: 3px 8px; border-radius: 4px; border: 1px solid #fecdd3; background: #fff; cursor: pointer; color: #e11d48; margin-left: 6px;">🗑️ 清空统计</button>
+            </span>
+        </h2>
+        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin: 16px 0; text-align: center;">
+            <div style="background: #ffffff; padding: 12px; border-radius: 8px; border: 1px solid #e0f2fe;">
+                <div style="font-size: 12px; color: #64748b;">累计标记单词</div>
+                <div id="stat-marks" style="font-size: 24px; font-weight: 700; color: #0284c7;">0</div>
+            </div>
+            <div style="background: #ffffff; padding: 12px; border-radius: 8px; border: 1px solid #e0f2fe;">
+                <div style="font-size: 12px; color: #64748b;">覆层弹开次数</div>
+                <div id="stat-modal" style="font-size: 24px; font-weight: 700; color: #7c3aed;">0</div>
+            </div>
+            <div style="background: #ffffff; padding: 12px; border-radius: 8px; border: 1px solid #e0f2fe;">
+                <div style="font-size: 12px; color: #64748b;">键盘输入击键</div>
+                <div id="stat-typed" style="font-size: 24px; font-weight: 700; color: #d97706;">0</div>
+            </div>
+            <div style="background: #ffffff; padding: 12px; border-radius: 8px; border: 1px solid #e0f2fe;">
+                <div style="font-size: 12px; color: #64748b;">拼写验证成功</div>
+                <div id="stat-success" style="font-size: 24px; font-weight: 700; color: #16a34a;">0</div>
+            </div>
+        </div>
+        <div id="top-words-container" style="font-size: 13px; color: #334155; background: #fff; border-radius: 8px; padding: 12px; border: 1px solid #e0f2fe;">
+            <strong>🏆 高频打点单词 Top 5：</strong>
+            <span id="top-words-list" style="color: #64748b;">暂无打点记录</span>
+        </div>
     </div>
 
     <script src="content_script.js"></script>
+    <script>
+        function renderDashboard() {
+            if (!window.ieltsVocabStats) return;
+            const stats = window.ieltsVocabStats.getStats();
+            const summary = stats.summary || { marks: 0, modalOpens: 0, inputTyped: 0, inputSuccess: 0 };
+            
+            document.getElementById("stat-marks").textContent = summary.marks || 0;
+            document.getElementById("stat-modal").textContent = summary.modalOpens || 0;
+            document.getElementById("stat-typed").textContent = summary.inputTyped || 0;
+            document.getElementById("stat-success").textContent = summary.inputSuccess || 0;
+
+            const top = window.ieltsVocabStats.getTopWords("marks", 5);
+            const listEl = document.getElementById("top-words-list");
+            if (top.length === 0) {
+                listEl.textContent = "暂无打点记录，请先在上方划词标记";
+            } else {
+                listEl.innerHTML = top.map(w => `
+                    <span style="display: inline-block; background: #e0f2fe; color: #0369a1; padding: 2px 8px; border-radius: 12px; margin: 2px 4px; font-size: 12px;">
+                        <strong>${w.w}</strong>: 标记 ${w.marks||0}次 | 覆层 ${w.modalOpens||0}次 | 输入 ${w.inputTyped||0}次
+                    </span>
+                `).join("");
+            }
+        }
+
+        window.addEventListener("ielts_stats_updated", renderDashboard);
+        window.addEventListener("DOMContentLoaded", renderDashboard);
+        setTimeout(renderDashboard, 100);
+
+        document.getElementById("btn-clear-stats").onclick = () => {
+            if (confirm("确定要清空所有单词打点统计数据吗？")) {
+                window.ieltsVocabStats.clearStats();
+                renderDashboard();
+            }
+        };
+
+        document.getElementById("btn-export-stats").onclick = () => {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(window.ieltsVocabStats.exportJSON());
+            const a = document.createElement('a');
+            a.setAttribute("href", dataStr);
+            a.setAttribute("download", "ielts_vocab_stats.json");
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+        };
+    </script>
 </body>
 </html>
 """

@@ -53,8 +53,21 @@ python3 serve_images.py
 
 ---
 
-## 🧪 本地测试与预览
-在浏览器中直接双击打开 [`test.html`](test.html)，划选测试段落并点击按钮即可即时体验完整交互与拼写背词功能！
+## 📊 数据统计与打点系统 (Telemetry & Analytics)
+
+插件与脚本内置了**本地无感持久化打点系统**（基于 `localStorage`），全自动记录用户的学习与复习行为：
+
+1. **正文标记次数 (`marks`)**：记录每个单词在网页中被划词标注的总次数；
+2. **全局覆层弹开次数 (`modalOpens`)**：记录每个单词点击查看高清大图与例句卡片的次数；
+3. **拼写击键次数 (`inputTyped`)**：记录在覆层输入框中练习敲词的击键次数；
+4. **拼写成功次数 (`inputSuccess`)**：记录成功正确拼写单词并通关的次数。
+
+### 开发者 / 调试 API (`window.ieltsVocabStats`)
+在浏览器控制台（Console）中可随时调用：
+- `ieltsVocabStats.getSummary()`：获取总计概览统计指标；
+- `ieltsVocabStats.getTopWords('marks', 10)`：查看被标记次数最高的热词排行榜；
+- `ieltsVocabStats.exportJSON()`：导出完整 JSON 打点统计数据；
+- `ieltsVocabStats.clearStats()`：一键清空打点记录。
 
 ---
 

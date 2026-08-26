@@ -227,6 +227,84 @@
     }
 
     // ==========================================
+    // Telemetry & Data Tracking (数据统计打点系统)
+    // ==========================================
+    const STATS_STORAGE_KEY = "ielts_vocab_fantasia_stats";
+
+    function loadStats() {
+        try {
+            const raw = localStorage.getItem(STATS_STORAGE_KEY);
+            return raw ? JSON.parse(raw) : { summary: { marks: 0, modalOpens: 0, inputTyped: 0, inputSuccess: 0 }, words: {} };
+        } catch (e) {
+            return { summary: { marks: 0, modalOpens: 0, inputTyped: 0, inputSuccess: 0 }, words: {} };
+        }
+    }
+
+    function saveStats(stats) {
+        try {
+            localStorage.setItem(STATS_STORAGE_KEY, JSON.stringify(stats));
+            window.dispatchEvent(new CustomEvent("ielts_stats_updated", { detail: stats }));
+        } catch (e) {}
+    }
+
+    function trackWordEvent(word, eventType) {
+        if (!word) return;
+        const stats = loadStats();
+        const key = word.toLowerCase().trim();
+        const now = Date.now();
+
+        if (!stats.words) stats.words = {};
+        if (!stats.summary) stats.summary = { marks: 0, modalOpens: 0, inputTyped: 0, inputSuccess: 0 };
+
+        if (!stats.words[key]) {
+            stats.words[key] = {
+                w: word,
+                marks: 0,
+                modalOpens: 0,
+                inputTyped: 0,
+                inputSuccess: 0,
+                lastUpdated: now
+            };
+        }
+
+        const entry = stats.words[key];
+        entry.lastUpdated = now;
+
+        if (eventType === "mark") {
+            entry.marks = (entry.marks || 0) + 1;
+            stats.summary.marks = (stats.summary.marks || 0) + 1;
+        } else if (eventType === "modal_open") {
+            entry.modalOpens = (entry.modalOpens || 0) + 1;
+            stats.summary.modalOpens = (stats.summary.modalOpens || 0) + 1;
+        } else if (eventType === "input_typed") {
+            entry.inputTyped = (entry.inputTyped || 0) + 1;
+            stats.summary.inputTyped = (stats.summary.inputTyped || 0) + 1;
+        } else if (eventType === "input_success") {
+            entry.inputSuccess = (entry.inputSuccess || 0) + 1;
+            stats.summary.inputSuccess = (stats.summary.inputSuccess || 0) + 1;
+        }
+
+        saveStats(stats);
+    }
+
+    window.ieltsVocabStats = {
+        getStats: loadStats,
+        getSummary: () => loadStats().summary,
+        getTopWords: (sortBy = "marks", limit = 10) => {
+            const stats = loadStats();
+            return Object.values(stats.words || {})
+                .sort((a, b) => (b[sortBy] || 0) - (a[sortBy] || 0))
+                .slice(0, limit);
+        },
+        exportJSON: () => JSON.stringify(loadStats(), null, 2),
+        clearStats: () => {
+            localStorage.removeItem(STATS_STORAGE_KEY);
+            window.dispatchEvent(new CustomEvent("ielts_stats_updated", { detail: loadStats() }));
+            console.log("[IELTS Stats] Telemetry data cleared.");
+        }
+    };
+
+    // ==========================================
     // Exact Project CSS Injection
     // ==========================================
     function injectProjectStyles() {
@@ -745,9 +823,11 @@
         resetMemoryAnimation();
 
         if (!typed) return;
+        trackWordEvent(currentMemoryData.w, "input_typed");
 
         if (typed === target) {
             input.classList.add("is-correct");
+            trackWordEvent(currentMemoryData.w, "input_success");
             playCorrectMemoryAnimation();
             speakText(currentMemoryData.w);
             // Automatically close modal after 3 seconds upon success
@@ -782,6 +862,7 @@
         clearTimeout(autoCloseTimer);
         const refs = createMemoryModal();
         currentMemoryData = entry;
+        trackWordEvent(entry.w, "modal_open");
 
         resetMemoryAnimation();
         refs.word.textContent = entry.w;
@@ -886,6 +967,8 @@
             let lastIndex = 0;
 
             matches.forEach(m => {
+                trackWordEvent(m.entry.w, "mark");
+
                 if (m.start > lastIndex) {
                     fragment.appendChild(document.createTextNode(text.slice(lastIndex, m.start)));
                 }
