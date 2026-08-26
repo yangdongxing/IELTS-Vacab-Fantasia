@@ -181,13 +181,51 @@
         return null;
     }
 
-    function speakText(text) {
+    function speakText(text, lang = "en-US") {
         if (!window.speechSynthesis || !text) return;
-        window.speechSynthesis.cancel();
-        const utter = new SpeechSynthesisUtterance(text);
-        utter.lang = "en-US";
-        utter.rate = 0.92;
-        window.speechSynthesis.speak(utter);
+        try {
+            window.speechSynthesis.cancel();
+            const utter = new SpeechSynthesisUtterance(text);
+            utter.lang = lang;
+            utter.rate = lang.startsWith("zh") ? 0.95 : 0.92;
+            window.speechSynthesis.speak(utter);
+        } catch (e) {}
+    }
+
+    function speakBilingualExample(enText, zhText) {
+        if (!window.speechSynthesis || (!enText && !zhText)) return;
+        try {
+            window.speechSynthesis.cancel();
+            if (enText && zhText) {
+                const utterEn = new SpeechSynthesisUtterance(enText);
+                utterEn.lang = "en-US";
+                utterEn.rate = 0.92;
+
+                const utterZh = new SpeechSynthesisUtterance(zhText);
+                utterZh.lang = "zh-CN";
+                utterZh.rate = 0.95;
+
+                utterEn.onend = () => {
+                    try {
+                        if (isMemoryModalOpen()) {
+                            window.speechSynthesis.speak(utterZh);
+                        }
+                    } catch (e) {}
+                };
+                utterEn.onerror = () => {
+                    try {
+                        if (isMemoryModalOpen()) {
+                            window.speechSynthesis.speak(utterZh);
+                        }
+                    } catch (e) {}
+                };
+                window.speechSynthesis.speak(utterEn);
+            } else if (enText) {
+                speakText(enText, "en-US");
+            } else if (zhText) {
+                speakText(zhText, "zh-CN");
+            }
+        } catch (e) {}
     }
 
     const LOCAL_IMAGE_BASE = "http://127.0.0.1:8777/";
@@ -858,8 +896,8 @@
         });
 
         memoryModalRefs.exampleEnglish.addEventListener("click", () => {
-            if (currentMemoryData && currentMemoryData.sp && currentMemoryData.sp.en) {
-                speakText(currentMemoryData.sp.en);
+            if (currentMemoryData && currentMemoryData.sp) {
+                speakBilingualExample(currentMemoryData.sp.en || "", currentMemoryData.sp.zh || "");
             }
             requestAnimationFrame(focusMemoryAnswer);
         });
@@ -993,10 +1031,19 @@
 
         refs.modal.classList.add("open");
         focusMemoryAnswer();
+
+        // Auto-play bilingual example sentences on modal open
+        const spoken = entry.sp || {};
+        if (spoken.en || spoken.zh) {
+            speakBilingualExample(spoken.en || "", spoken.zh || "");
+        }
     }
 
     function closeMemoryModal() {
         clearTimeout(autoCloseTimer);
+        if (window.speechSynthesis) {
+            try { window.speechSynthesis.cancel(); } catch (e) {}
+        }
         if (memoryModalRefs && memoryModalRefs.modal) {
             memoryModalRefs.modal.classList.remove("open");
             if (memoryModalRefs.answer) memoryModalRefs.answer.blur();
