@@ -220,26 +220,53 @@
     const STATS_STORAGE_KEY = "ielts_vocab_fantasia_stats";
 
     function loadStats() {
-        try {
-            const raw = localStorage.getItem(STATS_STORAGE_KEY);
-            return raw ? JSON.parse(raw) : { summary: { marks: 0, modalOpens: 0, inputSuccess: 0 }, words: {} };
-        } catch (e) {
-            return { summary: { marks: 0, modalOpens: 0, inputSuccess: 0 }, words: {} };
+        let stats = null;
+        if (typeof GM_getValue === "function") {
+            try {
+                const gmData = GM_getValue(STATS_STORAGE_KEY, null);
+                if (gmData) stats = (typeof gmData === "string") ? JSON.parse(gmData) : gmData;
+            } catch (e) {}
         }
+        if (!stats) {
+            try {
+                const raw = localStorage.getItem(STATS_STORAGE_KEY);
+                if (raw) stats = JSON.parse(raw);
+            } catch (e) {}
+        }
+        return stats || { summary: { marks: 0, modalOpens: 0, inputSuccess: 0 }, words: {} };
     }
 
     function saveStats(stats) {
+        if (typeof GM_setValue === "function") {
+            try {
+                GM_setValue(STATS_STORAGE_KEY, stats);
+            } catch (e) {}
+        }
         try {
             localStorage.setItem(STATS_STORAGE_KEY, JSON.stringify(stats));
-            window.dispatchEvent(new CustomEvent("ielts_stats_updated", { detail: stats }));
-            if (typeof fetch === "function") {
-                fetch("http://127.0.0.1:8777/api/stats", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(stats)
-                }).catch(() => {});
-            }
         } catch (e) {}
+
+        window.dispatchEvent(new CustomEvent("ielts_stats_updated", { detail: stats }));
+
+        // Cross-domain background sync to local server data/stats.json
+        const payload = JSON.stringify(stats);
+        if (typeof GM_xmlhttpRequest === "function") {
+            try {
+                GM_xmlhttpRequest({
+                    method: "POST",
+                    url: "http://127.0.0.1:8777/api/stats",
+                    headers: { "Content-Type": "application/json" },
+                    data: payload
+                });
+            } catch (e) {}
+        } else if (typeof fetch === "function") {
+            fetch("http://127.0.0.1:8777/api/stats", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: payload,
+                mode: "cors"
+            }).catch(() => {});
+        }
     }
 
     function trackWordEvent(word, eventType) {

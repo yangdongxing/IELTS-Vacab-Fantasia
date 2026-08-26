@@ -309,26 +309,53 @@ js_template = """/**
     const STATS_STORAGE_KEY = "ielts_vocab_fantasia_stats";
 
     function loadStats() {
-        try {
-            const raw = localStorage.getItem(STATS_STORAGE_KEY);
-            return raw ? JSON.parse(raw) : { summary: { marks: 0, modalOpens: 0, inputSuccess: 0 }, words: {} };
-        } catch (e) {
-            return { summary: { marks: 0, modalOpens: 0, inputSuccess: 0 }, words: {} };
+        let stats = null;
+        if (typeof GM_getValue === "function") {
+            try {
+                const gmData = GM_getValue(STATS_STORAGE_KEY, null);
+                if (gmData) stats = (typeof gmData === "string") ? JSON.parse(gmData) : gmData;
+            } catch (e) {}
         }
+        if (!stats) {
+            try {
+                const raw = localStorage.getItem(STATS_STORAGE_KEY);
+                if (raw) stats = JSON.parse(raw);
+            } catch (e) {}
+        }
+        return stats || { summary: { marks: 0, modalOpens: 0, inputSuccess: 0 }, words: {} };
     }
 
     function saveStats(stats) {
+        if (typeof GM_setValue === "function") {
+            try {
+                GM_setValue(STATS_STORAGE_KEY, stats);
+            } catch (e) {}
+        }
         try {
             localStorage.setItem(STATS_STORAGE_KEY, JSON.stringify(stats));
-            window.dispatchEvent(new CustomEvent("ielts_stats_updated", { detail: stats }));
-            if (typeof fetch === "function") {
-                fetch("http://127.0.0.1:8777/api/stats", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(stats)
-                }).catch(() => {});
-            }
         } catch (e) {}
+
+        window.dispatchEvent(new CustomEvent("ielts_stats_updated", { detail: stats }));
+
+        // Cross-domain background sync to local server data/stats.json
+        const payload = JSON.stringify(stats);
+        if (typeof GM_xmlhttpRequest === "function") {
+            try {
+                GM_xmlhttpRequest({
+                    method: "POST",
+                    url: "http://127.0.0.1:8777/api/stats",
+                    headers: { "Content-Type": "application/json" },
+                    data: payload
+                });
+            } catch (e) {}
+        } else if (typeof fetch === "function") {
+            fetch("http://127.0.0.1:8777/api/stats", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: payload,
+                mode: "cors"
+            }).catch(() => {});
+        }
     }
 
     function trackWordEvent(word, eventType) {
@@ -1252,12 +1279,16 @@ print(f"Generated {content_script_path}")
 user_script_header = """// ==UserScript==
 // @name         雅思真经划词划划看 (IELTS Selection Assistant)
 // @namespace    https://github.com/yangdongxing/IELTS-Vacab-Fantasia
-// @version      1.4.0
+// @version      1.5.0
 // @description  划选任意网页文本，一键在正文中直接标注《雅思词汇真经》核心词汇。Tips气泡与大图例句覆层100%对齐，支持输入单词校验并自动退出。
 // @author       极客助手
 // @match        *://*/*
 // @match        file:///*
-// @grant        none
+// @grant        GM_setValue
+// @grant        GM_getValue
+// @grant        GM_xmlhttpRequest
+// @connect      127.0.0.1
+// @connect      localhost
 // @run-at       document-end
 // ==/UserScript==
 
@@ -1924,28 +1955,33 @@ stats_html_content = """<!DOCTYPE html>
             });
         });
 
-        // Sync from server
-        document.getElementById("btn-sync").addEventListener("click", () => {
+        function syncFromServer(silent = false) {
             fetch("http://127.0.0.1:8777/api/stats")
                 .then(res => res.json())
                 .then(serverStats => {
                     if (serverStats && serverStats.words) {
                         const local = loadStats();
-                        // Merge server words into local
+                        let changed = false;
                         Object.keys(serverStats.words).forEach(k => {
-                            if (!local.words[k] || (serverStats.words[k].lastUpdated || 0) > (local.words[k].lastUpdated || 0)) {
+                            if (!local.words[k] || (serverStats.words[k].lastUpdated || 0) >= (local.words[k].lastUpdated || 0)) {
                                 local.words[k] = serverStats.words[k];
+                                changed = true;
                             }
                         });
-                        saveStats(local);
+                        if (changed) {
+                            saveStats(local);
+                        }
                         render();
-                        alert("✅ 本地服务器数据已成功同步！");
+                        if (!silent) alert("✅ 本地服务器数据已成功同步！");
                     }
                 })
                 .catch(() => {
-                    alert("⚠️ 无法连接到本地图片/数据服务 (127.0.0.1:8777)，已加载浏览器缓存数据。");
+                    if (!silent) alert("⚠️ 无法连接到本地图片/数据服务 (127.0.0.1:8777)，已加载浏览器缓存数据。");
                 });
-        });
+        }
+
+        // Sync from server button
+        document.getElementById("btn-sync").addEventListener("click", () => syncFromServer(false));
 
         // Export CSV
         document.getElementById("btn-export-csv").addEventListener("click", () => {
@@ -1982,6 +2018,9 @@ stats_html_content = """<!DOCTYPE html>
         document.getElementById("btn-clear").addEventListener("click", () => {
             if (confirm("⚠️ 确定要清空所有单词打点统计数据吗？此操作不可恢复。")) {
                 localStorage.removeItem(STATS_STORAGE_KEY);
+                if (typeof GM_setValue === "function") {
+                    try { GM_setValue(STATS_STORAGE_KEY, null); } catch (e) {}
+                }
                 fetch("http://127.0.0.1:8777/api/stats", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
@@ -1991,7 +2030,21 @@ stats_html_content = """<!DOCTYPE html>
             }
         });
 
-        window.addEventListener("DOMContentLoaded", render);
+        // Automatic synchronization on load and tab focus
+        window.addEventListener("DOMContentLoaded", () => {
+            render();
+            syncFromServer(true);
+        });
+        window.addEventListener("focus", () => {
+            render();
+            syncFromServer(true);
+        });
+        document.addEventListener("visibilitychange", () => {
+            if (document.visibilityState === "visible") {
+                render();
+                syncFromServer(true);
+            }
+        });
     </script>
 </body>
 </html>

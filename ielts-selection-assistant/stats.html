@@ -505,28 +505,33 @@
             });
         });
 
-        // Sync from server
-        document.getElementById("btn-sync").addEventListener("click", () => {
+        function syncFromServer(silent = false) {
             fetch("http://127.0.0.1:8777/api/stats")
                 .then(res => res.json())
                 .then(serverStats => {
                     if (serverStats && serverStats.words) {
                         const local = loadStats();
-                        // Merge server words into local
+                        let changed = false;
                         Object.keys(serverStats.words).forEach(k => {
-                            if (!local.words[k] || (serverStats.words[k].lastUpdated || 0) > (local.words[k].lastUpdated || 0)) {
+                            if (!local.words[k] || (serverStats.words[k].lastUpdated || 0) >= (local.words[k].lastUpdated || 0)) {
                                 local.words[k] = serverStats.words[k];
+                                changed = true;
                             }
                         });
-                        saveStats(local);
+                        if (changed) {
+                            saveStats(local);
+                        }
                         render();
-                        alert("✅ 本地服务器数据已成功同步！");
+                        if (!silent) alert("✅ 本地服务器数据已成功同步！");
                     }
                 })
                 .catch(() => {
-                    alert("⚠️ 无法连接到本地图片/数据服务 (127.0.0.1:8777)，已加载浏览器缓存数据。");
+                    if (!silent) alert("⚠️ 无法连接到本地图片/数据服务 (127.0.0.1:8777)，已加载浏览器缓存数据。");
                 });
-        });
+        }
+
+        // Sync from server button
+        document.getElementById("btn-sync").addEventListener("click", () => syncFromServer(false));
 
         // Export CSV
         document.getElementById("btn-export-csv").addEventListener("click", () => {
@@ -563,6 +568,9 @@
         document.getElementById("btn-clear").addEventListener("click", () => {
             if (confirm("⚠️ 确定要清空所有单词打点统计数据吗？此操作不可恢复。")) {
                 localStorage.removeItem(STATS_STORAGE_KEY);
+                if (typeof GM_setValue === "function") {
+                    try { GM_setValue(STATS_STORAGE_KEY, null); } catch (e) {}
+                }
                 fetch("http://127.0.0.1:8777/api/stats", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
@@ -572,7 +580,21 @@
             }
         });
 
-        window.addEventListener("DOMContentLoaded", render);
+        // Automatic synchronization on load and tab focus
+        window.addEventListener("DOMContentLoaded", () => {
+            render();
+            syncFromServer(true);
+        });
+        window.addEventListener("focus", () => {
+            render();
+            syncFromServer(true);
+        });
+        document.addEventListener("visibilitychange", () => {
+            if (document.visibilityState === "visible") {
+                render();
+                syncFromServer(true);
+            }
+        });
     </script>
 </body>
 </html>
