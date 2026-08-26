@@ -1,8 +1,8 @@
 {
   "summary": {
-    "marks": 106,
-    "modalOpens": 2,
-    "inputSuccess": 0
+    "marks": 160,
+    "modalOpens": 7,
+    "inputSuccess": 3
   },
   "words": {
     "matter": {
@@ -350,129 +350,129 @@
     },
     "altitude": {
       "w": "altitude",
-      "marks": 1,
+      "marks": 4,
       "modalOpens": 0,
       "inputSuccess": 0,
-      "lastUpdated": 1787717741277
+      "lastUpdated": 1787718795442
     },
     "plateau": {
       "w": "plateau",
-      "marks": 1,
-      "modalOpens": 0,
-      "inputSuccess": 0,
-      "lastUpdated": 1787717741280
+      "marks": 4,
+      "modalOpens": 1,
+      "inputSuccess": 1,
+      "lastUpdated": 1787718795445
     },
     "observe": {
       "w": "observe",
-      "marks": 1,
-      "modalOpens": 0,
+      "marks": 4,
+      "modalOpens": 2,
       "inputSuccess": 0,
-      "lastUpdated": 1787717741282
+      "lastUpdated": 1787718844506
     },
     "horizon": {
       "w": "horizon",
-      "marks": 1,
-      "modalOpens": 0,
-      "inputSuccess": 0,
-      "lastUpdated": 1787717741283
+      "marks": 4,
+      "modalOpens": 1,
+      "inputSuccess": 1,
+      "lastUpdated": 1787718815394
     },
     "crust": {
       "w": "crust",
-      "marks": 1,
+      "marks": 4,
       "modalOpens": 0,
       "inputSuccess": 0,
-      "lastUpdated": 1787717741284
+      "lastUpdated": 1787718795449
     },
     "lithosphere": {
       "w": "lithosphere",
-      "marks": 1,
+      "marks": 4,
       "modalOpens": 0,
       "inputSuccess": 0,
-      "lastUpdated": 1787717741285
+      "lastUpdated": 1787718795450
     },
     "experience": {
       "w": "experience",
-      "marks": 1,
+      "marks": 4,
       "modalOpens": 0,
       "inputSuccess": 0,
-      "lastUpdated": 1787717741286
+      "lastUpdated": 1787718795451
     },
     "dramatic": {
       "w": "dramatic",
-      "marks": 1,
+      "marks": 4,
       "modalOpens": 0,
       "inputSuccess": 0,
-      "lastUpdated": 1787717741287
+      "lastUpdated": 1787718795452
     },
     "discharge": {
       "w": "discharge",
-      "marks": 1,
+      "marks": 4,
       "modalOpens": 0,
       "inputSuccess": 0,
-      "lastUpdated": 1787717741288
+      "lastUpdated": 1787718795453
     },
     "magma": {
       "w": "magma",
-      "marks": 1,
+      "marks": 4,
       "modalOpens": 0,
       "inputSuccess": 0,
-      "lastUpdated": 1787717741292
+      "lastUpdated": 1787718795454
     },
     "ash": {
       "w": "ash",
-      "marks": 1,
+      "marks": 4,
       "modalOpens": 0,
       "inputSuccess": 0,
-      "lastUpdated": 1787717741292
+      "lastUpdated": 1787718795457
     },
     "toxic": {
       "w": "toxic",
-      "marks": 1,
+      "marks": 4,
       "modalOpens": 0,
       "inputSuccess": 0,
-      "lastUpdated": 1787717741293
+      "lastUpdated": 1787718795458
     },
     "gas": {
       "w": "gas",
-      "marks": 1,
+      "marks": 4,
       "modalOpens": 0,
       "inputSuccess": 0,
-      "lastUpdated": 1787717741294
+      "lastUpdated": 1787718795459
     },
     "atmosphere": {
       "w": "atmosphere",
-      "marks": 1,
+      "marks": 4,
       "modalOpens": 0,
       "inputSuccess": 0,
-      "lastUpdated": 1787717741295
+      "lastUpdated": 1787718795460
     },
     "rainfall": {
       "w": "rainfall",
-      "marks": 1,
-      "modalOpens": 0,
-      "inputSuccess": 0,
-      "lastUpdated": 1787717741296
+      "marks": 4,
+      "modalOpens": 1,
+      "inputSuccess": 1,
+      "lastUpdated": 1787718795460
     },
     "cause": {
       "w": "cause",
-      "marks": 1,
+      "marks": 4,
       "modalOpens": 0,
       "inputSuccess": 0,
-      "lastUpdated": 1787717741297
+      "lastUpdated": 1787718795462
     },
     "devastate": {
       "w": "devastate",
-      "marks": 1,
+      "marks": 4,
       "modalOpens": 0,
       "inputSuccess": 0,
-      "lastUpdated": 1787717741298
+      "lastUpdated": 1787718795462
     },
     "continent": {
       "w": "continent",
-      "marks": 1,
+      "marks": 4,
       "modalOpens": 0,
       "inputSuccess": 0,
-      "lastUpdated": 1787717741298
+      "lastUpdated": 1787718795463
     }
   }
 }

@@ -976,7 +976,6 @@
 
         refs.modal.classList.add("open");
         focusMemoryAnswer();
-        speakText(entry.w);
     }
 
     function closeMemoryModal() {
