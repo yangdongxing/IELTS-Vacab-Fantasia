@@ -1472,7 +1472,7 @@ content_script_path = TARGET_DIR / "content_script.js"
 content_script_path.write_text(final_js_code, encoding="utf-8")
 print(f"Generated {content_script_path}")
 
-# 5. Generate Tampermonkey Userscript (ielts-selection.user.js)
+# 5. Generate Tampermonkey Userscript (Tampermonkey.js)
 user_script_header = """// ==UserScript==
 // @name         雅思真经划词划划看 (IELTS Selection Assistant)
 // @namespace    https://github.com/yangdongxing/IELTS-Vacab-Fantasia
@@ -1491,7 +1491,7 @@ user_script_header = """// ==UserScript==
 // ==/UserScript==
 
 """
-user_script_path = TARGET_DIR / "ielts-selection.user.js"
+user_script_path = TARGET_DIR / "Tampermonkey.js"
 user_script_path.write_text(user_script_header + final_js_code, encoding="utf-8")
 print(f"Generated {user_script_path}")
 

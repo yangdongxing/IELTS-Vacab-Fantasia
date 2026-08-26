@@ -43,7 +43,7 @@ python3 server.py
 ### 方式 A：油猴脚本 (Tampermonkey)
 1. 打开浏览器并安装 **Tampermonkey** 扩展。
 2. 打开 Tampermonkey 仪表盘，点击 **新建脚本**。
-3. 复制 [`ielts-selection.user.js`](ielts-selection.user.js) 中的全部代码并粘贴保存。
+3. 复制 [`Tampermonkey.js`](Tampermonkey.js) 中的全部代码并粘贴保存。
 4. 在任意英文网页（BBC、Medium、Wikipedia、知乎等）划选英文即可即时体验！
 
 ### 方式 B：Chrome 扩展程序 (Manifest V3)
