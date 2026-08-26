@@ -1105,7 +1105,6 @@ js_template = """/**
         focusMemoryAnswer();
 
         // Auto-play bilingual example sentences on modal open
-        const spoken = entry.sp || {};
         if (spoken.en || spoken.zh) {
             speakBilingualExample(spoken.en || "", spoken.zh || "");
         }
