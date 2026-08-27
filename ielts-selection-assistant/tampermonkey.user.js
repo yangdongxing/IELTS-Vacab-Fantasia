@@ -1224,7 +1224,9 @@
 
                 const textSpan = document.createElement("span");
                 textSpan.className = "geek-bubble-text";
-                textSpan.textContent = `(${m.entry.d})`;
+                const origWord = m.entry.w;
+                const isInflected = m.token.toLowerCase() !== origWord.toLowerCase();
+                textSpan.textContent = isInflected ? `${origWord} (${m.entry.d})` : `(${m.entry.d})`;
                 textSpan.style.cursor = "pointer";
                 textSpan.addEventListener("click", (e) => {
                     e.stopPropagation();
