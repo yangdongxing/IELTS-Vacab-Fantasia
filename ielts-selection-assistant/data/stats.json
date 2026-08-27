@@ -1,8 +1,8 @@
 {
   "summary": {
-    "marks": 0,
-    "modalOpens": 0,
-    "inputSuccess": 0
+    "marks": 225,
+    "modalOpens": 12,
+    "inputSuccess": 5
   },
   "words": {
     "matter": {
@@ -154,10 +154,10 @@
     },
     "learn": {
       "w": "learn",
-      "marks": 2,
+      "marks": 4,
       "modalOpens": 0,
       "inputSuccess": 0,
-      "lastUpdated": 1787716290911
+      "lastUpdated": 1787805462506
     },
     "data": {
       "w": "data",
@@ -294,10 +294,10 @@
     },
     "perfect": {
       "w": "perfect",
-      "marks": 4,
+      "marks": 5,
       "modalOpens": 0,
       "inputSuccess": 0,
-      "lastUpdated": 1787717852476
+      "lastUpdated": 1787747055860
     },
     "sum": {
       "w": "sum",
@@ -343,10 +343,10 @@
     },
     "content": {
       "w": "content",
-      "marks": 5,
+      "marks": 6,
       "modalOpens": 0,
       "inputSuccess": 0,
-      "lastUpdated": 1787730995218
+      "lastUpdated": 1787805462505
     },
     "altitude": {
       "w": "altitude",
@@ -518,10 +518,10 @@
     },
     "even": {
       "w": "even",
-      "marks": 1,
+      "marks": 3,
       "modalOpens": 0,
       "inputSuccess": 0,
-      "lastUpdated": 1787719125096
+      "lastUpdated": 1787805462512
     },
     "detail": {
       "w": "detail",
@@ -609,10 +609,10 @@
     },
     "focus": {
       "w": "focus",
-      "marks": 1,
+      "marks": 2,
       "modalOpens": 0,
       "inputSuccess": 0,
-      "lastUpdated": 1787724090513
+      "lastUpdated": 1787805462500
     },
     "improve": {
       "w": "improve",
@@ -630,10 +630,10 @@
     },
     "consistent": {
       "w": "consistent",
-      "marks": 1,
+      "marks": 2,
       "modalOpens": 0,
       "inputSuccess": 0,
-      "lastUpdated": 1787724090517
+      "lastUpdated": 1787805462512
     },
     "finish": {
       "w": "finish",
@@ -672,10 +672,10 @@
     },
     "feel": {
       "w": "feel",
-      "marks": 2,
+      "marks": 3,
       "modalOpens": 0,
       "inputSuccess": 0,
-      "lastUpdated": 1787730995223
+      "lastUpdated": 1787805462514
     },
     "desperate": {
       "w": "desperate",
@@ -697,6 +697,97 @@
       "modalOpens": 0,
       "inputSuccess": 0,
       "lastUpdated": 1787730995222
+    },
+    "landscape": {
+      "w": "landscape",
+      "marks": 1,
+      "modalOpens": 0,
+      "inputSuccess": 0,
+      "lastUpdated": 1787747055856
+    },
+    "opinion": {
+      "w": "opinion",
+      "marks": 1,
+      "modalOpens": 0,
+      "inputSuccess": 0,
+      "lastUpdated": 1787747055859
+    },
+    "engineer": {
+      "w": "engineer",
+      "marks": 1,
+      "modalOpens": 1,
+      "inputSuccess": 1,
+      "lastUpdated": 1787747079351
+    },
+    "compete": {
+      "w": "compete",
+      "marks": 1,
+      "modalOpens": 0,
+      "inputSuccess": 0,
+      "lastUpdated": 1787747055862
+    },
+    "mind": {
+      "w": "mind",
+      "marks": 1,
+      "modalOpens": 0,
+      "inputSuccess": 0,
+      "lastUpdated": 1787747055863
+    },
+    "language": {
+      "w": "language",
+      "marks": 1,
+      "modalOpens": 0,
+      "inputSuccess": 0,
+      "lastUpdated": 1787805462496
+    },
+    "general": {
+      "w": "general",
+      "marks": 1,
+      "modalOpens": 0,
+      "inputSuccess": 0,
+      "lastUpdated": 1787805462498
+    },
+    "understand": {
+      "w": "understand",
+      "marks": 1,
+      "modalOpens": 0,
+      "inputSuccess": 0,
+      "lastUpdated": 1787805462502
+    },
+    "native": {
+      "w": "native",
+      "marks": 1,
+      "modalOpens": 0,
+      "inputSuccess": 0,
+      "lastUpdated": 1787805462503
+    },
+    "demand": {
+      "w": "demand",
+      "marks": 1,
+      "modalOpens": 0,
+      "inputSuccess": 0,
+      "lastUpdated": 1787805462508
+    },
+    "single": {
+      "w": "single",
+      "marks": 1,
+      "modalOpens": 0,
+      "inputSuccess": 0,
+      "lastUpdated": 1787805462509
+    },
+    "progress": {
+      "w": "progress",
+      "marks": 1,
+      "modalOpens": 0,
+      "inputSuccess": 0,
+      "lastUpdated": 1787805462513
+    },
+    "invisible": {
+      "w": "invisible",
+      "marks": 1,
+      "modalOpens": 1,
+      "inputSuccess": 0,
+      "lastUpdated": 1787805477924
     }
   }
 }

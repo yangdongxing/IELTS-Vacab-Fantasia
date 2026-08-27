@@ -164,13 +164,78 @@
         return null;
     }
 
+    // ==========================================
+    // Smart Voice Selection & Speech
+    // ==========================================
+    const _voiceCache = { en: null, zh: null, ready: false };
+
+    function _initVoices() {
+        if (_voiceCache.ready) return;
+        const voices = window.speechSynthesis ? window.speechSynthesis.getVoices() : [];
+        if (!voices.length) return;
+
+        // English: prefer natural/premium voices
+        const enPref = [
+            "Samantha (Enhanced)", "Samantha (Premium)", "Samantha",
+            "Karen (Enhanced)", "Karen (Premium)", "Karen",
+            "Daniel (Enhanced)", "Daniel (Premium)", "Daniel",
+            "Moira (Enhanced)", "Moira",
+            "Google US English", "Google UK English Female",
+        ];
+        const enVoices = voices.filter(v => v.lang && (v.lang.startsWith("en-US") || v.lang.startsWith("en-GB") || v.lang === "en_US" || v.lang === "en_GB"));
+        for (const name of enPref) {
+            const found = enVoices.find(v => v.name === name);
+            if (found) { _voiceCache.en = found; break; }
+        }
+        // fallback: any en voice with "enhanced" or "premium" in name
+        if (!_voiceCache.en) {
+            _voiceCache.en = enVoices.find(v => /premium|enhanced|natural/i.test(v.name)) || enVoices[0] || null;
+        }
+
+        // Chinese: prefer natural/premium voices
+        const zhPref = [
+            "Tingting (Enhanced)", "Tingting (Premium)", "Tingting",
+            "Sinji (Enhanced)", "Sinji (Premium)", "Sinji",
+            "Google 普通话（中国大陆）", "Google 中文（普通话）",
+        ];
+        const zhVoices = voices.filter(v => v.lang && (v.lang.startsWith("zh-CN") || v.lang.startsWith("zh_CN") || v.lang === "zh-CN"));
+        for (const name of zhPref) {
+            const found = zhVoices.find(v => v.name === name);
+            if (found) { _voiceCache.zh = found; break; }
+        }
+        if (!_voiceCache.zh) {
+            _voiceCache.zh = zhVoices.find(v => /premium|enhanced|natural/i.test(v.name)) || zhVoices[0] || null;
+        }
+
+        _voiceCache.ready = voices.length > 0;
+        if (_voiceCache.en || _voiceCache.zh) {
+            console.log("[ISA] Voices selected — EN:", _voiceCache.en?.name || "default", "| ZH:", _voiceCache.zh?.name || "default");
+        }
+    }
+
+    // Chrome loads voices async — listen for the event
+    if (window.speechSynthesis) {
+        _initVoices();
+        window.speechSynthesis.onvoiceschanged = _initVoices;
+    }
+
+    function _applyVoice(utter, lang) {
+        _initVoices();
+        const isZh = lang.startsWith("zh");
+        const cached = isZh ? _voiceCache.zh : _voiceCache.en;
+        if (cached) {
+            utter.voice = cached;
+        }
+        utter.lang = lang;
+        utter.rate = isZh ? 0.95 : 0.92;
+    }
+
     function speakText(text, lang = "en-US") {
         if (!window.speechSynthesis || !text) return;
         try {
             window.speechSynthesis.cancel();
             const utter = new SpeechSynthesisUtterance(text);
-            utter.lang = lang;
-            utter.rate = lang.startsWith("zh") ? 0.95 : 0.92;
+            _applyVoice(utter, lang);
             window.speechSynthesis.speak(utter);
         } catch (e) {}
     }
@@ -181,12 +246,10 @@
             window.speechSynthesis.cancel();
             if (enText && zhText) {
                 const utterEn = new SpeechSynthesisUtterance(enText);
-                utterEn.lang = "en-US";
-                utterEn.rate = 0.92;
+                _applyVoice(utterEn, "en-US");
 
                 const utterZh = new SpeechSynthesisUtterance(zhText);
-                utterZh.lang = "zh-CN";
-                utterZh.rate = 0.95;
+                _applyVoice(utterZh, "zh-CN");
 
                 utterEn.onend = () => {
                     try {
