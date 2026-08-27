@@ -1310,10 +1310,15 @@ js_template = """/**
                 mark.addEventListener("mouseenter", () => {
                     requestAnimationFrame(() => placeBubble(bubble));
                 });
+                let _clickTimer = null;
                 mark.addEventListener("click", (e) => {
-                    speakText(m.entry.w);
+                    clearTimeout(_clickTimer);
+                    _clickTimer = setTimeout(() => {
+                        speakText(m.entry.w);
+                    }, 250);
                 });
                 mark.addEventListener("dblclick", (e) => {
+                    clearTimeout(_clickTimer);
                     e.preventDefault();
                     e.stopPropagation();
                     openMemoryModal(m.entry);
