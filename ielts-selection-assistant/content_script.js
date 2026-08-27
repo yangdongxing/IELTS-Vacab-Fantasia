@@ -1204,11 +1204,6 @@
                 image.draggable = false;
                 setupImageFallback(image, m.entry.w);
                 image.addEventListener("load", () => placeBubble(bubble));
-                image.addEventListener("click", (e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    openMemoryModal(m.entry);
-                });
 
                 const textSpan = document.createElement("span");
                 textSpan.className = "geek-bubble-text";
@@ -1228,6 +1223,11 @@
                 });
                 mark.addEventListener("click", (e) => {
                     speakText(m.entry.w);
+                });
+                mark.addEventListener("dblclick", (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    openMemoryModal(m.entry);
                 });
 
                 fragment.appendChild(mark);
