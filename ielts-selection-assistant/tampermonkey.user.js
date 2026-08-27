@@ -191,6 +191,9 @@
         const voices = window.speechSynthesis ? window.speechSynthesis.getVoices() : [];
         if (!voices.length) return;
 
+        console.log("[ISA] Available voices (" + voices.length + "):",
+            voices.map(v => v.name + " [" + v.lang + "]").join(", "));
+
         // English: prefer natural/premium voices
         const enPref = [
             "Samantha (Enhanced)", "Samantha (Premium)", "Samantha",
@@ -204,7 +207,6 @@
             const found = enVoices.find(v => v.name === name);
             if (found) { _voiceCache.en = found; break; }
         }
-        // fallback: any en voice with "enhanced" or "premium" in name
         if (!_voiceCache.en) {
             _voiceCache.en = enVoices.find(v => /premium|enhanced|natural/i.test(v.name)) || enVoices[0] || null;
         }
@@ -215,7 +217,7 @@
             "Sinji (Enhanced)", "Sinji (Premium)", "Sinji",
             "Google 普通话（中国大陆）", "Google 中文（普通话）",
         ];
-        const zhVoices = voices.filter(v => v.lang && (v.lang.startsWith("zh-CN") || v.lang.startsWith("zh_CN") || v.lang === "zh-CN"));
+        const zhVoices = voices.filter(v => v.lang && (v.lang.startsWith("zh-CN") || v.lang.startsWith("zh_CN") || v.lang.startsWith("zh-TW") || v.lang === "zh-CN"));
         for (const name of zhPref) {
             const found = zhVoices.find(v => v.name === name);
             if (found) { _voiceCache.zh = found; break; }
@@ -224,16 +226,17 @@
             _voiceCache.zh = zhVoices.find(v => /premium|enhanced|natural/i.test(v.name)) || zhVoices[0] || null;
         }
 
-        _voiceCache.ready = voices.length > 0;
-        if (_voiceCache.en || _voiceCache.zh) {
-            console.log("[ISA] Voices selected — EN:", _voiceCache.en?.name || "default", "| ZH:", _voiceCache.zh?.name || "default");
-        }
+        _voiceCache.ready = true;
+        console.log("[ISA] Voices selected — EN:", _voiceCache.en ? _voiceCache.en.name : "(default)", "| ZH:", _voiceCache.zh ? _voiceCache.zh.name : "(default)");
     }
 
     // Chrome loads voices async — listen for the event
     if (window.speechSynthesis) {
         _initVoices();
-        window.speechSynthesis.onvoiceschanged = _initVoices;
+        window.speechSynthesis.onvoiceschanged = () => {
+            _voiceCache.ready = false;
+            _initVoices();
+        };
     }
 
     function _applyVoice(utter, lang) {
@@ -247,14 +250,18 @@
         utter.rate = isZh ? 0.95 : 0.92;
     }
 
+    // Chrome bug: cancel() then immediate speak() silently fails.
+    // Must add a short delay after cancel().
     function speakText(text, lang = "en-US") {
         if (!window.speechSynthesis || !text) return;
         try {
             window.speechSynthesis.cancel();
             const utter = new SpeechSynthesisUtterance(text);
             _applyVoice(utter, lang);
-            window.speechSynthesis.speak(utter);
-        } catch (e) {}
+            setTimeout(() => {
+                window.speechSynthesis.speak(utter);
+            }, 50);
+        } catch (e) { console.warn("[ISA] speakText error:", e); }
     }
 
     function speakBilingualExample(enText, zhText) {
@@ -275,20 +282,24 @@
                         }
                     } catch (e) {}
                 };
-                utterEn.onerror = () => {
+                utterEn.onerror = (ev) => {
+                    console.warn("[ISA] EN utterance error:", ev.error);
                     try {
                         if (isMemoryModalOpen()) {
                             window.speechSynthesis.speak(utterZh);
                         }
                     } catch (e) {}
                 };
-                window.speechSynthesis.speak(utterEn);
+                // Delay speak after cancel to avoid Chrome silent failure
+                setTimeout(() => {
+                    window.speechSynthesis.speak(utterEn);
+                }, 50);
             } else if (enText) {
                 speakText(enText, "en-US");
             } else if (zhText) {
                 speakText(zhText, "zh-CN");
             }
-        } catch (e) {}
+        } catch (e) { console.warn("[ISA] speakBilingual error:", e); }
     }
 
     const LOCAL_IMAGE_BASE = "http://127.0.0.1:8777/";

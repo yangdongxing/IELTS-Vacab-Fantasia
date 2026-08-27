@@ -1,7 +1,7 @@
 {
   "summary": {
-    "marks": 225,
-    "modalOpens": 12,
+    "marks": 242,
+    "modalOpens": 16,
     "inputSuccess": 5
   },
   "words": {
@@ -735,10 +735,10 @@
     },
     "language": {
       "w": "language",
-      "marks": 1,
+      "marks": 2,
       "modalOpens": 0,
       "inputSuccess": 0,
-      "lastUpdated": 1787805462496
+      "lastUpdated": 1787805812368
     },
     "general": {
       "w": "general",
@@ -749,10 +749,10 @@
     },
     "understand": {
       "w": "understand",
-      "marks": 1,
+      "marks": 2,
       "modalOpens": 0,
       "inputSuccess": 0,
-      "lastUpdated": 1787805462502
+      "lastUpdated": 1787805812351
     },
     "native": {
       "w": "native",
@@ -763,17 +763,17 @@
     },
     "demand": {
       "w": "demand",
-      "marks": 1,
+      "marks": 2,
       "modalOpens": 0,
       "inputSuccess": 0,
-      "lastUpdated": 1787805462508
+      "lastUpdated": 1787805812375
     },
     "single": {
       "w": "single",
-      "marks": 1,
+      "marks": 2,
       "modalOpens": 0,
       "inputSuccess": 0,
-      "lastUpdated": 1787805462509
+      "lastUpdated": 1787805812356
     },
     "progress": {
       "w": "progress",
@@ -788,6 +788,97 @@
       "modalOpens": 1,
       "inputSuccess": 0,
       "lastUpdated": 1787805477924
+    },
+    "phrase": {
+      "w": "phrase",
+      "marks": 1,
+      "modalOpens": 0,
+      "inputSuccess": 0,
+      "lastUpdated": 1787805812358
+    },
+    "sentence": {
+      "w": "sentence",
+      "marks": 1,
+      "modalOpens": 0,
+      "inputSuccess": 0,
+      "lastUpdated": 1787805812359
+    },
+    "sound": {
+      "w": "sound",
+      "marks": 1,
+      "modalOpens": 0,
+      "inputSuccess": 0,
+      "lastUpdated": 1787805812361
+    },
+    "natural": {
+      "w": "natural",
+      "marks": 1,
+      "modalOpens": 1,
+      "inputSuccess": 0,
+      "lastUpdated": 1787805868431
+    },
+    "revise": {
+      "w": "revise",
+      "marks": 1,
+      "modalOpens": 1,
+      "inputSuccess": 0,
+      "lastUpdated": 1787805849050
+    },
+    "vocabulary": {
+      "w": "vocabulary",
+      "marks": 1,
+      "modalOpens": 0,
+      "inputSuccess": 0,
+      "lastUpdated": 1787805812365
+    },
+    "finally": {
+      "w": "finally",
+      "marks": 1,
+      "modalOpens": 0,
+      "inputSuccess": 0,
+      "lastUpdated": 1787805812367
+    },
+    "challenge": {
+      "w": "challenge",
+      "marks": 1,
+      "modalOpens": 0,
+      "inputSuccess": 0,
+      "lastUpdated": 1787805812369
+    },
+    "spanish": {
+      "w": "Spanish",
+      "marks": 1,
+      "modalOpens": 0,
+      "inputSuccess": 0,
+      "lastUpdated": 1787805812371
+    },
+    "test": {
+      "w": "test",
+      "marks": 1,
+      "modalOpens": 0,
+      "inputSuccess": 0,
+      "lastUpdated": 1787805812372
+    },
+    "skill": {
+      "w": "skill",
+      "marks": 1,
+      "modalOpens": 1,
+      "inputSuccess": 0,
+      "lastUpdated": 1787805951646
+    },
+    "fear": {
+      "w": "fear",
+      "marks": 1,
+      "modalOpens": 0,
+      "inputSuccess": 0,
+      "lastUpdated": 1787805812374
+    },
+    "discipline": {
+      "w": "discipline",
+      "marks": 1,
+      "modalOpens": 1,
+      "inputSuccess": 0,
+      "lastUpdated": 1787805977129
     }
   }
 }
