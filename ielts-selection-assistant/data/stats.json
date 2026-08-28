@@ -1,8 +1,8 @@
 {
   "summary": {
-    "marks": 427,
-    "modalOpens": 31,
-    "inputSuccess": 14
+    "marks": 0,
+    "modalOpens": 0,
+    "inputSuccess": 0
   },
   "words": {
     "matter": {
@@ -14,10 +14,10 @@
     },
     "divide": {
       "w": "divide",
-      "marks": 1,
+      "marks": 2,
       "modalOpens": 0,
       "inputSuccess": 0,
-      "lastUpdated": 1787715618391
+      "lastUpdated": 1787814339538
     },
     "inspire": {
       "w": "inspire",
@@ -42,10 +42,10 @@
     },
     "build": {
       "w": "build",
-      "marks": 5,
+      "marks": 6,
       "modalOpens": 1,
       "inputSuccess": 1,
-      "lastUpdated": 1787808066756
+      "lastUpdated": 1787898916627
     },
     "system": {
       "w": "system",
@@ -70,10 +70,10 @@
     },
     "spend": {
       "w": "spend",
-      "marks": 2,
+      "marks": 3,
       "modalOpens": 0,
       "inputSuccess": 0,
-      "lastUpdated": 1787814045536
+      "lastUpdated": 1787814339532
     },
     "thoughtful": {
       "w": "thoughtful",
@@ -154,10 +154,10 @@
     },
     "learn": {
       "w": "learn",
-      "marks": 8,
+      "marks": 10,
       "modalOpens": 0,
       "inputSuccess": 0,
-      "lastUpdated": 1787813633540
+      "lastUpdated": 1787899152019
     },
     "data": {
       "w": "data",
@@ -329,10 +329,10 @@
     },
     "consume": {
       "w": "consume",
-      "marks": 5,
+      "marks": 6,
       "modalOpens": 1,
       "inputSuccess": 0,
-      "lastUpdated": 1787730995217
+      "lastUpdated": 1787928857496
     },
     "similar": {
       "w": "similar",
@@ -609,10 +609,10 @@
     },
     "focus": {
       "w": "focus",
-      "marks": 2,
+      "marks": 3,
       "modalOpens": 0,
       "inputSuccess": 0,
-      "lastUpdated": 1787805462500
+      "lastUpdated": 1787814339530
     },
     "improve": {
       "w": "improve",
@@ -672,10 +672,10 @@
     },
     "feel": {
       "w": "feel",
-      "marks": 7,
+      "marks": 8,
       "modalOpens": 0,
       "inputSuccess": 0,
-      "lastUpdated": 1787807829521
+      "lastUpdated": 1787898916611
     },
     "desperate": {
       "w": "desperate",
@@ -735,10 +735,10 @@
     },
     "language": {
       "w": "language",
-      "marks": 10,
+      "marks": 11,
       "modalOpens": 0,
       "inputSuccess": 0,
-      "lastUpdated": 1787814045550
+      "lastUpdated": 1787928953251
     },
     "general": {
       "w": "general",
@@ -770,17 +770,17 @@
     },
     "single": {
       "w": "single",
-      "marks": 3,
+      "marks": 4,
       "modalOpens": 0,
       "inputSuccess": 0,
-      "lastUpdated": 1787806295842
+      "lastUpdated": 1787814339534
     },
     "progress": {
       "w": "progress",
-      "marks": 4,
+      "marks": 5,
       "modalOpens": 1,
       "inputSuccess": 1,
-      "lastUpdated": 1787814045548
+      "lastUpdated": 1787898916609
     },
     "invisible": {
       "w": "invisible",
@@ -826,10 +826,10 @@
     },
     "vocabulary": {
       "w": "vocabulary",
-      "marks": 8,
+      "marks": 10,
       "modalOpens": 0,
       "inputSuccess": 0,
-      "lastUpdated": 1787813771348
+      "lastUpdated": 1787898916615
     },
     "finally": {
       "w": "finally",
@@ -861,10 +861,10 @@
     },
     "skill": {
       "w": "skill",
-      "marks": 1,
+      "marks": 3,
       "modalOpens": 1,
       "inputSuccess": 0,
-      "lastUpdated": 1787805951646
+      "lastUpdated": 1787814339551
     },
     "fear": {
       "w": "fear",
@@ -945,17 +945,17 @@
     },
     "journey": {
       "w": "journey",
-      "marks": 4,
+      "marks": 5,
       "modalOpens": 0,
       "inputSuccess": 0,
-      "lastUpdated": 1787814045547
+      "lastUpdated": 1787898916606
     },
     "effective": {
       "w": "effective",
-      "marks": 2,
+      "marks": 4,
       "modalOpens": 0,
       "inputSuccess": 0,
-      "lastUpdated": 1787809033400
+      "lastUpdated": 1787928857494
     },
     "cultivate": {
       "w": "cultivate",
@@ -1085,10 +1085,10 @@
     },
     "structure": {
       "w": "structure",
-      "marks": 2,
+      "marks": 3,
       "modalOpens": 0,
       "inputSuccess": 0,
-      "lastUpdated": 1787813771352
+      "lastUpdated": 1787898916620
     },
     "daily": {
       "w": "daily",
@@ -1099,10 +1099,10 @@
     },
     "study": {
       "w": "study",
-      "marks": 2,
+      "marks": 3,
       "modalOpens": 0,
       "inputSuccess": 0,
-      "lastUpdated": 1787813633521
+      "lastUpdated": 1787814339545
     },
     "pause": {
       "w": "pause",
@@ -1127,10 +1127,10 @@
     },
     "sense": {
       "w": "sense",
-      "marks": 1,
+      "marks": 2,
       "modalOpens": 0,
       "inputSuccess": 0,
-      "lastUpdated": 1787807226369
+      "lastUpdated": 1787898916629
     },
     "frustrating": {
       "w": "frustrating",
@@ -1190,10 +1190,10 @@
     },
     "grammar": {
       "w": "grammar",
-      "marks": 3,
+      "marks": 5,
       "modalOpens": 0,
       "inputSuccess": 0,
-      "lastUpdated": 1787807829519
+      "lastUpdated": 1787899152013
     },
     "pattern": {
       "w": "pattern",
@@ -1309,10 +1309,10 @@
     },
     "recall": {
       "w": "recall",
-      "marks": 2,
+      "marks": 3,
       "modalOpens": 0,
       "inputSuccess": 0,
-      "lastUpdated": 1787809033399
+      "lastUpdated": 1787898916619
     },
     "switch": {
       "w": "switch",
@@ -1386,10 +1386,10 @@
     },
     "reinforce": {
       "w": "reinforce",
-      "marks": 1,
+      "marks": 2,
       "modalOpens": 0,
       "inputSuccess": 0,
-      "lastUpdated": 1787813633534
+      "lastUpdated": 1787814339552
     },
     "restrict": {
       "w": "restrict",
@@ -1442,10 +1442,10 @@
     },
     "mistake": {
       "w": "mistake",
-      "marks": 1,
+      "marks": 2,
       "modalOpens": 0,
       "inputSuccess": 0,
-      "lastUpdated": 1787813902706
+      "lastUpdated": 1787928953235
     },
     "common": {
       "w": "common",
@@ -1474,6 +1474,188 @@
       "modalOpens": 0,
       "inputSuccess": 0,
       "lastUpdated": 1787814045544
+    },
+    "burst": {
+      "w": "burst",
+      "marks": 1,
+      "modalOpens": 0,
+      "inputSuccess": 0,
+      "lastUpdated": 1787814339523
+    },
+    "commit": {
+      "w": "commit",
+      "marks": 1,
+      "modalOpens": 0,
+      "inputSuccess": 0,
+      "lastUpdated": 1787814339527
+    },
+    "rotate": {
+      "w": "rotate",
+      "marks": 1,
+      "modalOpens": 1,
+      "inputSuccess": 0,
+      "lastUpdated": 1787814379386
+    },
+    "session": {
+      "w": "session",
+      "marks": 1,
+      "modalOpens": 0,
+      "inputSuccess": 0,
+      "lastUpdated": 1787814339547
+    },
+    "allow": {
+      "w": "allow",
+      "marks": 1,
+      "modalOpens": 0,
+      "inputSuccess": 0,
+      "lastUpdated": 1787814339548
+    },
+    "each": {
+      "w": "each",
+      "marks": 2,
+      "modalOpens": 0,
+      "inputSuccess": 0,
+      "lastUpdated": 1787898916625
+    },
+    "follow": {
+      "w": "follow",
+      "marks": 1,
+      "modalOpens": 0,
+      "inputSuccess": 0,
+      "lastUpdated": 1787898916598
+    },
+    "approach": {
+      "w": "approach",
+      "marks": 1,
+      "modalOpens": 0,
+      "inputSuccess": 0,
+      "lastUpdated": 1787898916601
+    },
+    "result": {
+      "w": "result",
+      "marks": 1,
+      "modalOpens": 0,
+      "inputSuccess": 0,
+      "lastUpdated": 1787898916613
+    },
+    "ease": {
+      "w": "ease",
+      "marks": 1,
+      "modalOpens": 0,
+      "inputSuccess": 0,
+      "lastUpdated": 1787898916622
+    },
+    "passage": {
+      "w": "passage",
+      "marks": 1,
+      "modalOpens": 0,
+      "inputSuccess": 0,
+      "lastUpdated": 1787898916623
+    },
+    "effort": {
+      "w": "effort",
+      "marks": 1,
+      "modalOpens": 0,
+      "inputSuccess": 0,
+      "lastUpdated": 1787898916626
+    },
+    "steady": {
+      "w": "steady",
+      "marks": 1,
+      "modalOpens": 0,
+      "inputSuccess": 0,
+      "lastUpdated": 1787898916628
+    },
+    "lesson": {
+      "w": "lesson",
+      "marks": 1,
+      "modalOpens": 0,
+      "inputSuccess": 0,
+      "lastUpdated": 1787899152007
+    },
+    "collect": {
+      "w": "collect",
+      "marks": 1,
+      "modalOpens": 0,
+      "inputSuccess": 0,
+      "lastUpdated": 1787899152011
+    },
+    "accelerate": {
+      "w": "accelerate",
+      "marks": 1,
+      "modalOpens": 0,
+      "inputSuccess": 0,
+      "lastUpdated": 1787899152016
+    },
+    "scatter": {
+      "w": "scatter",
+      "marks": 1,
+      "modalOpens": 0,
+      "inputSuccess": 0,
+      "lastUpdated": 1787899152021
+    },
+    "master": {
+      "w": "master",
+      "marks": 1,
+      "modalOpens": 0,
+      "inputSuccess": 0,
+      "lastUpdated": 1787928857488
+    },
+    "reliable": {
+      "w": "reliable",
+      "marks": 1,
+      "modalOpens": 0,
+      "inputSuccess": 0,
+      "lastUpdated": 1787928857491
+    },
+    "material": {
+      "w": "material",
+      "marks": 1,
+      "modalOpens": 0,
+      "inputSuccess": 0,
+      "lastUpdated": 1787928857498
+    },
+    "external": {
+      "w": "external",
+      "marks": 1,
+      "modalOpens": 0,
+      "inputSuccess": 0,
+      "lastUpdated": 1787928953238
+    },
+    "course": {
+      "w": "course",
+      "marks": 1,
+      "modalOpens": 0,
+      "inputSuccess": 0,
+      "lastUpdated": 1787928953240
+    },
+    "tutor": {
+      "w": "tutor",
+      "marks": 1,
+      "modalOpens": 0,
+      "inputSuccess": 0,
+      "lastUpdated": 1787928953242
+    },
+    "provide": {
+      "w": "provide",
+      "marks": 1,
+      "modalOpens": 0,
+      "inputSuccess": 0,
+      "lastUpdated": 1787928953244
+    },
+    "excellent": {
+      "w": "excellent",
+      "marks": 1,
+      "modalOpens": 0,
+      "inputSuccess": 0,
+      "lastUpdated": 1787928953246
+    },
+    "replace": {
+      "w": "replace",
+      "marks": 1,
+      "modalOpens": 0,
+      "inputSuccess": 0,
+      "lastUpdated": 1787928953249
     }
   }
 }
