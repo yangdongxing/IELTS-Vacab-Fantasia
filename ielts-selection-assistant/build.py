@@ -456,26 +456,6 @@ js_template = """/**
         } catch (e) {}
 
         window.dispatchEvent(new CustomEvent("ielts_stats_updated", { detail: stats }));
-
-        // Cross-domain background sync to local server data/stats.json
-        const payload = JSON.stringify(stats);
-        if (typeof GM_xmlhttpRequest === "function") {
-            try {
-                GM_xmlhttpRequest({
-                    method: "POST",
-                    url: "http://127.0.0.1:8777/api/stats",
-                    headers: { "Content-Type": "application/json" },
-                    data: payload
-                });
-            } catch (e) {}
-        } else if (typeof fetch === "function") {
-            fetch("http://127.0.0.1:8777/api/stats", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: payload,
-                mode: "cors"
-            }).catch(() => {});
-        }
     }
 
     function trackWordEvent(word, eventType) {
@@ -2036,7 +2016,6 @@ stats_html_content = """<!DOCTYPE html>
                 <p>记录网页正文划词标记、全局覆层弹开、拼写验证等全流程学习轨迹</p>
             </div>
             <div class="action-buttons">
-                <button id="btn-sync" class="btn btn-outline" title="从本地服务器同步数据">🔄 同步本地数据</button>
                 <button id="btn-export-csv" class="btn btn-outline">📥 导出 CSV</button>
                 <button id="btn-export-json" class="btn btn-outline">📥 导出 JSON</button>
                 <button id="btn-clear" class="btn btn-danger">🗑️ 清空统计</button>
@@ -2139,11 +2118,6 @@ stats_html_content = """<!DOCTYPE html>
         function saveStats(stats) {
             try {
                 localStorage.setItem(STATS_STORAGE_KEY, JSON.stringify(stats));
-                fetch("http://127.0.0.1:8777/api/stats", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(stats)
-                }).catch(() => {});
             } catch (e) {}
         }
 
@@ -2290,34 +2264,6 @@ stats_html_content = """<!DOCTYPE html>
             });
         });
 
-        function syncFromServer(silent = false) {
-            fetch("http://127.0.0.1:8777/api/stats")
-                .then(res => res.json())
-                .then(serverStats => {
-                    if (serverStats && serverStats.words) {
-                        const local = loadStats();
-                        let changed = false;
-                        Object.keys(serverStats.words).forEach(k => {
-                            if (!local.words[k] || (serverStats.words[k].lastUpdated || 0) >= (local.words[k].lastUpdated || 0)) {
-                                local.words[k] = serverStats.words[k];
-                                changed = true;
-                            }
-                        });
-                        if (changed) {
-                            saveStats(local);
-                        }
-                        render();
-                        if (!silent) alert("✅ 本地服务器数据已成功同步！");
-                    }
-                })
-                .catch(() => {
-                    if (!silent) alert("⚠️ 无法连接到本地图片/数据服务 (127.0.0.1:8777)，已加载浏览器缓存数据。");
-                });
-        }
-
-        // Sync from server button
-        document.getElementById("btn-sync").addEventListener("click", () => syncFromServer(false));
-
         // Export CSV
         document.getElementById("btn-export-csv").addEventListener("click", () => {
             const stats = loadStats();
@@ -2356,28 +2302,16 @@ stats_html_content = """<!DOCTYPE html>
                 if (typeof GM_setValue === "function") {
                     try { GM_setValue(STATS_STORAGE_KEY, null); } catch (e) {}
                 }
-                fetch("http://127.0.0.1:8777/api/stats", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ summary: { marks: 0, modalOpens: 0, inputSuccess: 0 }, words: {} })
-                }).catch(() => {});
                 render();
             }
         });
 
-        // Automatic synchronization on load and tab focus
-        window.addEventListener("DOMContentLoaded", () => {
-            render();
-            syncFromServer(true);
-        });
-        window.addEventListener("focus", () => {
-            render();
-            syncFromServer(true);
-        });
+        // Render on load and tab focus
+        window.addEventListener("DOMContentLoaded", render);
+        window.addEventListener("focus", render);
         document.addEventListener("visibilitychange", () => {
             if (document.visibilityState === "visible") {
                 render();
-                syncFromServer(true);
             }
         });
     </script>
