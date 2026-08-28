@@ -384,6 +384,26 @@
         } catch (e) {}
 
         window.dispatchEvent(new CustomEvent("ielts_stats_updated", { detail: stats }));
+
+        // Cross-domain silent sync to local server so stats.html can aggregate data from Medium, BBC, etc.
+        const payload = JSON.stringify(stats);
+        if (typeof GM_xmlhttpRequest === "function") {
+            try {
+                GM_xmlhttpRequest({
+                    method: "POST",
+                    url: "http://127.0.0.1:8777/api/stats",
+                    headers: { "Content-Type": "application/json" },
+                    data: payload
+                });
+            } catch (e) {}
+        } else if (typeof fetch === "function") {
+            fetch("http://127.0.0.1:8777/api/stats", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: payload,
+                mode: "cors"
+            }).catch(() => {});
+        }
     }
 
     function trackWordEvent(word, eventType) {

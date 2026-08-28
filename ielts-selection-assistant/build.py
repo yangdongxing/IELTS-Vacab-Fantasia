@@ -456,6 +456,26 @@ js_template = """/**
         } catch (e) {}
 
         window.dispatchEvent(new CustomEvent("ielts_stats_updated", { detail: stats }));
+
+        // Cross-domain silent sync to local server so stats.html can aggregate data from Medium, BBC, etc.
+        const payload = JSON.stringify(stats);
+        if (typeof GM_xmlhttpRequest === "function") {
+            try {
+                GM_xmlhttpRequest({
+                    method: "POST",
+                    url: "http://127.0.0.1:8777/api/stats",
+                    headers: { "Content-Type": "application/json" },
+                    data: payload
+                });
+            } catch (e) {}
+        } else if (typeof fetch === "function") {
+            fetch("http://127.0.0.1:8777/api/stats", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: payload,
+                mode: "cors"
+            }).catch(() => {});
+        }
     }
 
     function trackWordEvent(word, eventType) {
@@ -2107,6 +2127,12 @@ stats_html_content = """<!DOCTYPE html>
         }
 
         function loadStats() {
+            if (window.ieltsVocabStats && typeof window.ieltsVocabStats.getStats === "function") {
+                try {
+                    const s = window.ieltsVocabStats.getStats();
+                    if (s && s.words && Object.keys(s.words).length > 0) return s;
+                } catch (e) {}
+            }
             try {
                 const raw = localStorage.getItem(STATS_STORAGE_KEY);
                 return raw ? JSON.parse(raw) : { summary: { marks: 0, modalOpens: 0, inputSuccess: 0 }, words: {} };
@@ -2236,6 +2262,30 @@ stats_html_content = """<!DOCTYPE html>
             }).join("");
         }
 
+        // Silent server sync to aggregate data across all websites (Medium, BBC, test.html, etc.)
+        function syncAndRender() {
+            render();
+            fetch("http://127.0.0.1:8777/api/stats")
+                .then(res => res.json())
+                .then(serverStats => {
+                    if (serverStats && serverStats.words) {
+                        const local = loadStats();
+                        let changed = false;
+                        Object.keys(serverStats.words).forEach(k => {
+                            if (!local.words[k] || (serverStats.words[k].lastUpdated || 0) > (local.words[k].lastUpdated || 0)) {
+                                local.words[k] = serverStats.words[k];
+                                changed = true;
+                            }
+                        });
+                        if (changed || Object.keys(serverStats.words).length !== Object.keys(local.words).length) {
+                            saveStats(local);
+                            render();
+                        }
+                    }
+                })
+                .catch(() => {});
+        }
+
         // Event Listeners
         document.getElementById("search-input").addEventListener("input", (e) => {
             searchQuery = e.target.value.trim();
@@ -2302,16 +2352,21 @@ stats_html_content = """<!DOCTYPE html>
                 if (typeof GM_setValue === "function") {
                     try { GM_setValue(STATS_STORAGE_KEY, null); } catch (e) {}
                 }
+                fetch("http://127.0.0.1:8777/api/stats", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ summary: { marks: 0, modalOpens: 0, inputSuccess: 0 }, words: {} })
+                }).catch(() => {});
                 render();
             }
         });
 
-        // Render on load and tab focus
-        window.addEventListener("DOMContentLoaded", render);
-        window.addEventListener("focus", render);
+        // Auto live render on load, focus and visibility change
+        window.addEventListener("DOMContentLoaded", syncAndRender);
+        window.addEventListener("focus", syncAndRender);
         document.addEventListener("visibilitychange", () => {
             if (document.visibilityState === "visible") {
-                render();
+                syncAndRender();
             }
         });
     </script>

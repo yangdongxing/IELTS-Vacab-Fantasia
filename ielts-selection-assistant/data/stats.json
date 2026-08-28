@@ -1,8 +1,8 @@
 {
   "summary": {
-    "marks": 0,
-    "modalOpens": 0,
-    "inputSuccess": 0
+    "marks": 493,
+    "modalOpens": 35,
+    "inputSuccess": 17
   },
   "words": {
     "matter": {
@@ -70,10 +70,10 @@
     },
     "spend": {
       "w": "spend",
-      "marks": 3,
+      "marks": 4,
       "modalOpens": 0,
       "inputSuccess": 0,
-      "lastUpdated": 1787814339532
+      "lastUpdated": 1787929613040
     },
     "thoughtful": {
       "w": "thoughtful",
@@ -819,17 +819,17 @@
     },
     "revise": {
       "w": "revise",
-      "marks": 3,
+      "marks": 4,
       "modalOpens": 2,
       "inputSuccess": 1,
-      "lastUpdated": 1787808066758
+      "lastUpdated": 1787929613048
     },
     "vocabulary": {
       "w": "vocabulary",
-      "marks": 10,
+      "marks": 11,
       "modalOpens": 0,
       "inputSuccess": 0,
-      "lastUpdated": 1787898916615
+      "lastUpdated": 1787929613050
     },
     "finally": {
       "w": "finally",
@@ -966,10 +966,10 @@
     },
     "struggle": {
       "w": "struggle",
-      "marks": 3,
-      "modalOpens": 0,
-      "inputSuccess": 0,
-      "lastUpdated": 1787809698875
+      "marks": 4,
+      "modalOpens": 1,
+      "inputSuccess": 1,
+      "lastUpdated": 1787929761102
     },
     "turn": {
       "w": "turn",
@@ -1085,10 +1085,10 @@
     },
     "structure": {
       "w": "structure",
-      "marks": 3,
-      "modalOpens": 0,
-      "inputSuccess": 0,
-      "lastUpdated": 1787898916620
+      "marks": 4,
+      "modalOpens": 1,
+      "inputSuccess": 1,
+      "lastUpdated": 1787929749174
     },
     "daily": {
       "w": "daily",
@@ -1148,10 +1148,10 @@
     },
     "exercise": {
       "w": "exercise",
-      "marks": 2,
+      "marks": 3,
       "modalOpens": 0,
       "inputSuccess": 0,
-      "lastUpdated": 1787807549134
+      "lastUpdated": 1787929613057
     },
     "imitate": {
       "w": "imitate",
@@ -1190,10 +1190,10 @@
     },
     "grammar": {
       "w": "grammar",
-      "marks": 5,
+      "marks": 6,
       "modalOpens": 0,
       "inputSuccess": 0,
-      "lastUpdated": 1787899152013
+      "lastUpdated": 1787929613055
     },
     "pattern": {
       "w": "pattern",
@@ -1225,10 +1225,10 @@
     },
     "conscious": {
       "w": "conscious",
-      "marks": 1,
+      "marks": 2,
       "modalOpens": 0,
       "inputSuccess": 0,
-      "lastUpdated": 1787807829510
+      "lastUpdated": 1787929613059
     },
     "enrich": {
       "w": "enrich",
@@ -1442,10 +1442,10 @@
     },
     "mistake": {
       "w": "mistake",
-      "marks": 2,
+      "marks": 3,
       "modalOpens": 0,
       "inputSuccess": 0,
-      "lastUpdated": 1787928953235
+      "lastUpdated": 1787929613060
     },
     "common": {
       "w": "common",
@@ -1498,10 +1498,10 @@
     },
     "session": {
       "w": "session",
-      "marks": 1,
-      "modalOpens": 0,
-      "inputSuccess": 0,
-      "lastUpdated": 1787814339547
+      "marks": 2,
+      "modalOpens": 1,
+      "inputSuccess": 1,
+      "lastUpdated": 1787929785597
     },
     "allow": {
       "w": "allow",
@@ -1568,10 +1568,10 @@
     },
     "lesson": {
       "w": "lesson",
-      "marks": 1,
+      "marks": 2,
       "modalOpens": 0,
       "inputSuccess": 0,
-      "lastUpdated": 1787899152007
+      "lastUpdated": 1787929613046
     },
     "collect": {
       "w": "collect",
@@ -1656,6 +1656,20 @@
       "modalOpens": 0,
       "inputSuccess": 0,
       "lastUpdated": 1787928953249
+    },
+    "attend": {
+      "w": "attend",
+      "marks": 1,
+      "modalOpens": 0,
+      "inputSuccess": 0,
+      "lastUpdated": 1787929613043
+    },
+    "solve": {
+      "w": "solve",
+      "marks": 1,
+      "modalOpens": 0,
+      "inputSuccess": 0,
+      "lastUpdated": 1787929613052
     }
   }
 }
