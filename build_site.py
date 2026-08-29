@@ -525,7 +525,6 @@ def index_section(relative: Path) -> tuple[int, str]:
         "ielts/vocabulary-notebooks": (30, "IELTS 生词本"),
         "ielts/phrase-notebooks": (40, "IELTS 词伙与短语"),
         "writing": (50, "IELTS 写作词伙"),
-        "junior-high": (60, "初中英语"),
     }
     return sections.get(parent, (100, parent or "其他内容"))
 

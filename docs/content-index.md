@@ -25,11 +25,6 @@
 - 路径：`content/writing/`
 - 输出：`dist/writing/`
 
-## 初中英语
-
-- 路径：`content/junior-high/`
-- 输出：`dist/junior-high/`
-
 ## 图片资源
 
 - 唯一图片库：`assets/images/*.jpg`

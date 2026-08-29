@@ -70,8 +70,7 @@ IELTS-Vacab-Fantasia/
 │   │   ├── vocabulary-notebooks/ # 生词本与复习材料
 │   │   ├── phrase-notebooks/     # 词伙与短语材料
 │   │   └── vocabulary-list.md    # 雅思词汇真经总表
-│   ├── writing/                  # IELTS 写作词伙
-│   └── junior-high/              # 初中英语内容
+│   └── writing/                  # IELTS 写作词伙
 ├── assets/                       # 唯一静态资源库
 │   ├── branding/                 # 项目 logo、icon 与 README 截图
 │   ├── css/                      # 页面样式

@@ -12,7 +12,6 @@
 - `content/ielts/phrase-notebooks/`：词伙和短语材料。
 - `content/ielts/vocabulary-list.md`：雅思词汇真经总表。
 - `content/writing/`：IELTS 写作词伙。
-- `content/junior-high/`：初中阶段英语内容。
 
 除 `index.md` 外，Markdown 在 `dist/` 中保持相同相对结构并改为 `.html` 扩展名。
 
