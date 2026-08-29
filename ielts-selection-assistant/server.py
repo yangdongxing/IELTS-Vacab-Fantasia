@@ -18,6 +18,11 @@ from pathlib import Path
 SUBPROJECT_DIR = Path(__file__).resolve().parent
 ROOT = SUBPROJECT_DIR.parent
 IMAGES_DIR = ROOT / "assets" / "images"
+if not IMAGES_DIR.exists():
+    ALT_DIR = ROOT.parent / "IELTS-Vacab-Fantasia-Images" / "images"
+    if ALT_DIR.exists():
+        IMAGES_DIR = ALT_DIR
+
 STATS_FILE = SUBPROJECT_DIR / "data" / "stats.json"
 PORT = 8777
 
