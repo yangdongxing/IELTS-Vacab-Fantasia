@@ -374,13 +374,13 @@ js_template = """/**
         } catch (e) { console.warn("[ISA] speakBilingual error:", e); }
     }
 
-    const LOCAL_IMAGE_BASE = "http://127.0.0.1:8777/";
     const REMOTE_IMAGE_BASE = "__CDN_IMAGE_BASE__";
+    const LOCAL_IMAGE_BASE = "http://127.0.0.1:8777/";
 
     function getImageUrl(word) {
         if (!word) return "";
         const capWord = word.charAt(0).toUpperCase() + word.slice(1);
-        return LOCAL_IMAGE_BASE + encodeURIComponent(capWord) + ".jpg";
+        return REMOTE_IMAGE_BASE + encodeURIComponent(capWord) + ".jpg";
     }
 
     function setupImageFallback(imgElement, word) {
@@ -389,17 +389,9 @@ js_template = """/**
         const encoded = encodeURIComponent(capWord) + ".jpg";
 
         imgElement.onerror = function() {
-            if (imgElement.src.startsWith(LOCAL_IMAGE_BASE)) {
-                // Try relative path if testing locally
-                imgElement.src = "../assets/images/" + encoded;
-                imgElement.onerror = function() {
-                    imgElement.src = REMOTE_IMAGE_BASE + encoded;
-                    imgElement.onerror = function() {
-                        imgElement.style.opacity = "0.2";
-                    };
-                };
-            } else if (imgElement.src.includes("../assets/images/")) {
-                imgElement.src = REMOTE_IMAGE_BASE + encoded;
+            if (imgElement.src.startsWith(REMOTE_IMAGE_BASE)) {
+                // Try local server if offline or developing locally
+                imgElement.src = LOCAL_IMAGE_BASE + encoded;
                 imgElement.onerror = function() {
                     imgElement.style.opacity = "0.2";
                 };
