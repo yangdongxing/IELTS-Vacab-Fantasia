@@ -9,6 +9,7 @@
 // @grant        GM_setValue
 // @grant        GM_getValue
 // @grant        GM_xmlhttpRequest
+// @grant        unsafeWindow
 // @connect      127.0.0.1
 // @connect      localhost
 // @connect      translate.googleapis.com
@@ -434,7 +435,8 @@
         saveStats(stats);
     }
 
-    window.ieltsVocabStats = {
+    const rootWin = typeof unsafeWindow !== "undefined" ? unsafeWindow : window;
+    rootWin.ieltsVocabStats = {
         getStats: loadStats,
         getSummary: () => loadStats().summary,
         getTopWords: (sortBy = "marks", limit = 10) => {
@@ -445,7 +447,10 @@
         },
         exportJSON: () => JSON.stringify(loadStats(), null, 2),
         clearStats: () => {
-            localStorage.removeItem(STATS_STORAGE_KEY);
+            if (typeof GM_setValue === "function") {
+                try { GM_setValue(STATS_STORAGE_KEY, null); } catch (e) {}
+            }
+            try { localStorage.removeItem(STATS_STORAGE_KEY); } catch (e) {}
             window.dispatchEvent(new CustomEvent("ielts_stats_updated", { detail: loadStats() }));
             if (typeof fetch === "function") {
                 fetch("http://127.0.0.1:8777/api/stats", {
@@ -457,6 +462,17 @@
             console.log("[IELTS Stats] Telemetry data cleared.");
         }
     };
+
+    // If opening a stats page (file://, localhost, or GitHub Pages), sync Tampermonkey storage to the page
+    if (window.location.href.includes("stats.html")) {
+        try {
+            const s = loadStats();
+            if (s && s.words) {
+                localStorage.setItem(STATS_STORAGE_KEY, JSON.stringify(s));
+                window.dispatchEvent(new CustomEvent("ielts_stats_loaded_from_tampermonkey", { detail: s }));
+            }
+        } catch (e) {}
+    }
 
     // ==========================================
     // Exact Project CSS Injection

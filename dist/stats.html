@@ -586,9 +586,11 @@
             }
         });
 
-        // Auto live render on load, focus and visibility change
+        // Auto live render on load, focus, visibility change, and Tampermonkey sync events
         window.addEventListener("DOMContentLoaded", syncAndRender);
         window.addEventListener("focus", syncAndRender);
+        window.addEventListener("ielts_stats_loaded_from_tampermonkey", render);
+        window.addEventListener("ielts_stats_updated", render);
         document.addEventListener("visibilitychange", () => {
             if (document.visibilityState === "visible") {
                 syncAndRender();
