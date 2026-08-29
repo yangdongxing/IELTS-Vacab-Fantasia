@@ -343,30 +343,54 @@ def load_vocabulary_aliases() -> dict[str, set[str]]:
     return aliases
 
 
+CDN_IMAGE_BASE = "https://ielts-vacab-fantasia-images.yangdongxing.workers.dev/"
+
+
 def build_word_image_manifest() -> dict[str, list[dict[str, object]]]:
     entries: dict[str, list[dict[str, object]]] = {}
     spoken_usage = load_spoken_usage()
     vocabulary_aliases = load_vocabulary_aliases()
-    if IMAGE_DIR.exists():
-        for path in sorted(IMAGE_DIR.glob("*.jpg")):
-            key = image_key(path.name)
-            entry: dict[str, object] = {
-                "word": path.stem,
-                "topic": "",
-                "url": image_url(path),
-            }
-            spoken = (
-                spoken_usage.get(key)
-                or spoken_usage.get(key.replace("-", " "))
-                or spoken_usage.get(re.sub(r"\s+", "-", key))
-            )
-            if spoken and spoken["en"] and spoken["zh"]:
-                entry["spoken"] = spoken
-            entry_aliases = set(image_key_aliases(key))
-            for vocabulary_alias in vocabulary_aliases.get(key, set()):
-                entry_aliases.update(image_key_aliases(vocabulary_alias))
-            for alias in sorted(entry_aliases):
-                entries.setdefault(alias, []).append(entry)
+
+    words_set = set()
+    alt_images_dir = ROOT.parent / "IELTS-Vacab-Fantasia-Images" / "images"
+    if alt_images_dir.exists():
+        for path in alt_images_dir.glob("*.jpg"):
+            words_set.add(path.stem)
+    elif IMAGE_DIR.exists():
+        for path in IMAGE_DIR.glob("*.jpg"):
+            words_set.add(path.stem)
+
+    dict_path = ROOT / "ielts-selection-assistant" / "data" / "dictionary.json"
+    if dict_path.exists():
+        try:
+            d_data = json.loads(dict_path.read_text(encoding="utf-8"))
+            for w in d_data.keys():
+                words_set.add(w.capitalize())
+        except Exception:
+            pass
+
+    for word_stem in sorted(words_set):
+        key = image_key(word_stem)
+        encoded_filename = quote(word_stem + ".jpg", safe="")
+        img_url = f"{CDN_IMAGE_BASE}{encoded_filename}"
+        entry: dict[str, object] = {
+            "word": word_stem,
+            "topic": "",
+            "url": img_url,
+        }
+        spoken = (
+            spoken_usage.get(key)
+            or spoken_usage.get(key.replace("-", " "))
+            or spoken_usage.get(re.sub(r"\s+", "-", key))
+        )
+        if spoken and spoken["en"] and spoken["zh"]:
+            entry["spoken"] = spoken
+        entry_aliases = set(image_key_aliases(key))
+        for vocabulary_alias in vocabulary_aliases.get(key, set()):
+            entry_aliases.update(image_key_aliases(vocabulary_alias))
+        for alias in sorted(entry_aliases):
+            entries.setdefault(alias, []).append(entry)
+
     return entries
 
 
