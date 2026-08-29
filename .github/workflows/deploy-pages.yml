@@ -9,7 +9,8 @@ on:
       - assets/**
       - build_site.py
       - content/**
-      - data/spoken-usage.jsonl
+      - data/**
+      - ielts-selection-assistant/**
       - dist/**
   workflow_dispatch:
 
@@ -33,6 +34,10 @@ jobs:
         uses: actions/setup-python@v6
         with:
           python-version: "3.12"
+
+      - name: Build selection assistant assets
+        run: |
+          cd ielts-selection-assistant && python3 build.py && cd ..
 
       - name: Build static site
         run: python3 build_site.py build

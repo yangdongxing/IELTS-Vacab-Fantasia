@@ -615,6 +615,13 @@ def build_site() -> tuple[int, int, int, int]:
     asset_count += int(remove_path(DIST_DIR / ".DS_Store"))
     asset_count += int(remove_path(DIST_DIR / "images"))
     asset_count += int(ensure_directory_link(ASSET_DIR, DIST_DIR / "assets"))
+
+    assistant_dir = ROOT / "ielts-selection-assistant"
+    for extra_file in ("stats.html", "tampermonkey.user.js", "test.html"):
+        src_file = assistant_dir / extra_file
+        if src_file.exists():
+            asset_count += int(write_bytes_if_changed(DIST_DIR / extra_file, src_file.read_bytes()))
+
     prune_empty_dist_directories()
 
     state = {
