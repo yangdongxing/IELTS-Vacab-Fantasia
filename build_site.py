@@ -459,15 +459,12 @@ def ensure_directory_link(source_dir: Path, dist_link: Path) -> bool:
     if not source_dir.is_dir():
         raise FileNotFoundError(f"Source directory not found: {source_dir}")
 
-    expected_target = Path(os.path.relpath(source_dir, dist_link.parent))
-    if dist_link.is_symlink() and Path(os.readlink(dist_link)) == expected_target:
-        return False
-
-    if dist_link.is_symlink() or dist_link.is_file():
+    if dist_link.is_symlink():
         dist_link.unlink()
-    elif dist_link.exists():
+    if dist_link.exists():
         shutil.rmtree(dist_link)
-    dist_link.symlink_to(expected_target, target_is_directory=True)
+
+    shutil.copytree(source_dir, dist_link, ignore=shutil.ignore_patterns("images", ".DS_Store"))
     return True
 
 

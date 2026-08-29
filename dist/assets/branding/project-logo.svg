@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1800 420" role="img" aria-labelledby="title desc">
+  <title id="title">IELTS-Vacab-Fantasia logo</title>
+  <desc id="desc">A flat visual-and-speech memory mark followed by the project name.</desc>
+  <defs>
+    <clipPath id="memory-card-logo">
+      <path d="M282 190h460c83 0 150 67 150 150v270c0 83-67 150-150 150H614L512 854 410 760H282c-83 0-150-67-150-150V340c0-83 67-150 150-150Z"/>
+    </clipPath>
+  </defs>
+  <g transform="translate(32 32) scale(.34765625)">
+    <rect width="1024" height="1024" rx="224" fill="#F7F8FC"/>
+    <g clip-path="url(#memory-card-logo)">
+      <rect x="132" y="190" width="380" height="664" fill="#FF5268"/>
+      <rect x="512" y="190" width="380" height="664" fill="#1687FF"/>
+    </g>
+    <circle cx="292" cy="380" r="42" fill="#FFC928"/>
+    <path d="M206 610 326 456l73 83 57-67 56 70v68H206Z" fill="#FFFFFF"/>
+    <rect x="596" y="408" width="44" height="134" rx="22" fill="#FFFFFF"/>
+    <rect x="668" y="344" width="44" height="262" rx="22" fill="#FFFFFF"/>
+    <rect x="740" y="382" width="44" height="186" rx="22" fill="#FFFFFF"/>
+    <rect x="812" y="440" width="44" height="70" rx="22" fill="#FFFFFF"/>
+  </g>
+  <text x="436" y="250" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', Arial, sans-serif" font-size="104" font-weight="750" letter-spacing="0">
+    <tspan fill="#181A20">IELTS</tspan><tspan fill="#596171">-</tspan><tspan fill="#1687FF">Vacab</tspan><tspan fill="#596171">-</tspan><tspan fill="#FF5268">Fantasia</tspan>
+  </text>
+</svg>
