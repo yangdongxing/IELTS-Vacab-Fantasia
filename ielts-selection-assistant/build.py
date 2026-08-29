@@ -84,7 +84,7 @@ dict_json_path = DATA_DIR / "dictionary.json"
 dict_json_path.write_text(dict_json_str, encoding="utf-8")
 print(f"Generated {dict_json_path} with {len(unified_dict)} words.")
 
-CDN_IMAGE_BASE = "https://raw.githubusercontent.com/yangdongxing/IELTS-Vacab-Fantasia/main/assets/images/"
+CDN_IMAGE_BASE = "https://ielts-vacab-fantasia-images.yangdongxing.workers.dev/"
 
 # Core JavaScript code with placeholders
 js_template = """/**
