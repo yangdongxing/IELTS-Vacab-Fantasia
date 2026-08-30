@@ -653,6 +653,22 @@ js_template = """/**
                 }
             }
 
+            /* Clicked / Pinned Bubble State */
+            strong.geek-vocab-mark.geek-bubble-open .translation-bubble,
+            em.geek-vocab-mark.geek-bubble-open .translation-bubble,
+            .translation-bubble.force-show {
+                opacity: 1 !important;
+                transform: translateX(-50%) scale(1) !important;
+                background-color: #172033 !important;
+                pointer-events: auto !important;
+                z-index: 100000 !important;
+            }
+            strong.geek-vocab-mark.geek-bubble-open .translation-bubble.geek-has-word-image .geek-bubble-image,
+            em.geek-vocab-mark.geek-bubble-open .translation-bubble.geek-has-word-image .geek-bubble-image,
+            .translation-bubble.force-show .geek-bubble-image {
+                pointer-events: auto !important;
+            }
+
             .geek-bubble-image {
                 display: block !important;
                 width: 100% !important;
@@ -662,8 +678,8 @@ js_template = """/**
                 background: rgba(255,255,255,0.14) !important;
                 margin: 0 0 7px !important;
                 box-shadow: inset 0 0 0 1px rgba(255,255,255,0.16) !important;
-                cursor: zoom-in !important;
-                pointer-events: none !important;
+                cursor: pointer !important;
+                pointer-events: auto !important;
                 transition: transform 0.15s ease, filter 0.15s ease !important;
             }
             .geek-bubble-image:hover {
@@ -807,6 +823,19 @@ js_template = """/**
         document.head.appendChild(style);
     }
     injectProjectStyles();
+
+    // ==========================================
+    // Bubble Open / Pin State Management
+    // ==========================================
+    function closeAllOpenedBubbles(exceptMark = null) {
+        document.querySelectorAll(".geek-vocab-mark.geek-bubble-open").forEach(el => {
+            if (el !== exceptMark) {
+                el.classList.remove("geek-bubble-open");
+                const b = el.querySelector(".translation-bubble");
+                if (b) b.classList.remove("force-show", "geek-bubble-below");
+            }
+        });
+    }
 
     // ==========================================
     // Bubble Auto-Placement Logic (geek-bubble-below)
@@ -1300,6 +1329,11 @@ js_template = """/**
                 image.draggable = false;
                 setupImageFallback(image, m.entry.w);
                 image.addEventListener("load", () => placeBubble(bubble));
+                image.addEventListener("click", (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    openMemoryModal(m.entry);
+                });
 
                 const textSpan = document.createElement("span");
                 textSpan.className = "geek-bubble-text";
@@ -1319,18 +1353,16 @@ js_template = """/**
                 mark.addEventListener("mouseenter", () => {
                     requestAnimationFrame(() => placeBubble(bubble));
                 });
-                let _clickTimer = null;
                 mark.addEventListener("click", (e) => {
-                    clearTimeout(_clickTimer);
-                    _clickTimer = setTimeout(() => {
-                        speakText(m.entry.w);
-                    }, 250);
-                });
-                mark.addEventListener("dblclick", (e) => {
-                    clearTimeout(_clickTimer);
-                    e.preventDefault();
+                    if (e.target.closest(".geek-bubble-image")) {
+                        return;
+                    }
                     e.stopPropagation();
-                    openMemoryModal(m.entry);
+                    closeAllOpenedBubbles(mark);
+                    mark.classList.add("geek-bubble-open");
+                    bubble.classList.add("force-show");
+                    requestAnimationFrame(() => placeBubble(bubble));
+                    speakText(m.entry.w);
                 });
 
                 fragment.appendChild(mark);
@@ -1562,9 +1594,17 @@ js_template = """/**
         }
     });
 
+    document.addEventListener("click", (event) => {
+        const clickedMark = event.target.closest(".geek-vocab-mark");
+        if (!clickedMark) {
+            closeAllOpenedBubbles(null);
+        }
+    });
+
     document.addEventListener("keydown", (event) => {
         if (event.key === "Escape") {
             closeMemoryModal();
+            closeAllOpenedBubbles(null);
             removeTriggerBtn();
             return;
         }
@@ -1697,8 +1737,8 @@ test_html_content = """<!DOCTYPE html>
         💡 <strong>操作测试步骤：</strong><br>
         1. 鼠标选中下方一段英文；<br>
         2. 点击弹出的 <strong>【📖 标记真经 (N)】</strong> 按钮；<br>
-        3. 鼠标 <strong>Hover</strong> 到加粗单词上弹出 Tips 气泡；<br>
-        4. <strong>点击 Tips 中的微缩图片</strong>打开全屏居中大图卡片；<br>
+        3. 鼠标 <strong>Hover</strong> 到加粗单词上预览 Tips 气泡，<strong>单击匹配词</strong>后 Tips 持续显示（点击非当前 Tips 区域时消失）；<br>
+        4. <strong>点击 Tips 中的微缩图片</strong>打开全屏居中大图卡片覆层；<br>
         5. 在底部输入框敲入单词（例如输入 <code>plateau</code>、<code>horizon</code> 等）：<br>
         &nbsp;&nbsp;• <strong>输入正确时</strong>：立即触发绿色对钩反馈与单词下落动画，播放发音，并<strong>等待 3 秒后自动平滑关闭覆层</strong>！<br>
         &nbsp;&nbsp;• 也可以随时按 <code>ESC</code> 键退出。
