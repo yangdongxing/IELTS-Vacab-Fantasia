@@ -518,8 +518,9 @@
                 white-space: nowrap !important;
                 box-shadow: 0 4px 15px rgba(0,0,0,0.2) !important;
                 opacity: 0 !important;
+                visibility: hidden !important;
                 pointer-events: none !important;
-                transition: opacity 0.2s ease, transform 0.2s ease !important;
+                transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s ease !important;
                 z-index: 99999 !important;
             }
             .translation-bubble::after {
@@ -566,18 +567,23 @@
                 strong.geek-vocab-mark:hover .translation-bubble,
                 em.geek-vocab-mark:hover .translation-bubble {
                     opacity: 1 !important;
+                    visibility: visible !important;
                     transform: translateX(-50%) scale(1) !important;
                     background-color: #e74c3c !important;
+                    pointer-events: auto !important;
                 }
                 strong.geek-vocab-mark:hover .translation-bubble.geek-has-word-image,
                 em.geek-vocab-mark:hover .translation-bubble.geek-has-word-image {
                     opacity: 1 !important;
+                    visibility: visible !important;
                     transform: translateX(-50%) scale(1) !important;
                     background-color: #172033 !important;
                     pointer-events: auto !important;
                 }
-                strong.geek-vocab-mark:hover .translation-bubble.geek-has-word-image .geek-bubble-image,
-                em.geek-vocab-mark:hover .translation-bubble.geek-has-word-image .geek-bubble-image {
+                strong.geek-vocab-mark:hover .translation-bubble .geek-bubble-image,
+                em.geek-vocab-mark:hover .translation-bubble .geek-bubble-image,
+                strong.geek-vocab-mark:hover .translation-bubble .geek-bubble-text,
+                em.geek-vocab-mark:hover .translation-bubble .geek-bubble-text {
                     pointer-events: auto !important;
                 }
             }
@@ -587,14 +593,18 @@
             em.geek-vocab-mark.geek-bubble-open .translation-bubble,
             .translation-bubble.force-show {
                 opacity: 1 !important;
+                visibility: visible !important;
                 transform: translateX(-50%) scale(1) !important;
                 background-color: #172033 !important;
                 pointer-events: auto !important;
                 z-index: 100000 !important;
             }
-            strong.geek-vocab-mark.geek-bubble-open .translation-bubble.geek-has-word-image .geek-bubble-image,
-            em.geek-vocab-mark.geek-bubble-open .translation-bubble.geek-has-word-image .geek-bubble-image,
-            .translation-bubble.force-show .geek-bubble-image {
+            strong.geek-vocab-mark.geek-bubble-open .translation-bubble .geek-bubble-image,
+            em.geek-vocab-mark.geek-bubble-open .translation-bubble .geek-bubble-image,
+            .translation-bubble.force-show .geek-bubble-image,
+            strong.geek-vocab-mark.geek-bubble-open .translation-bubble .geek-bubble-text,
+            em.geek-vocab-mark.geek-bubble-open .translation-bubble .geek-bubble-text,
+            .translation-bubble.force-show .geek-bubble-text {
                 pointer-events: auto !important;
             }
 
@@ -608,7 +618,7 @@
                 margin: 0 0 7px !important;
                 box-shadow: inset 0 0 0 1px rgba(255,255,255,0.16) !important;
                 cursor: pointer !important;
-                pointer-events: auto !important;
+                pointer-events: none !important;
                 transition: transform 0.15s ease, filter 0.15s ease !important;
             }
             .geek-bubble-image:hover {
@@ -623,6 +633,7 @@
                 line-height: 1.35 !important;
                 text-align: center !important;
                 overflow-wrap: anywhere !important;
+                pointer-events: none !important;
             }
 
             /* Floating Trigger Button */
