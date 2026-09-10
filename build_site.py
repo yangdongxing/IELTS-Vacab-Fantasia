@@ -47,6 +47,15 @@ def inline_markdown(text: str) -> str:
         escaped,
     )
     escaped = re.sub(
+        r"!\[([^\]]*)\]\(([^)]+)\)",
+        lambda m: (
+            f'<img src="{html.escape(m.group(2), quote=True)}" '
+            f'alt="{html.escape(m.group(1), quote=True)}" '
+            f'style="width: 100%; max-width: 960px; border-radius: 12px; display: block; margin: 16px auto;">'
+        ),
+        escaped,
+    )
+    escaped = re.sub(
         r"\[([^\]]+)\]\(([^)]+)\)",
         lambda m: (
             f'<a href="{html.escape(local_html_link(m.group(2)), quote=True)}">'
