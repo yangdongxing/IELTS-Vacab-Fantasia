@@ -39,6 +39,10 @@ IELTS-Vacab-Fantasia 不把单词停留在孤立的“英文—中文”对照�
 
 ## 📖 推荐学习路径与方法
 
+<p align="center">
+  <img src="assets/branding/learning-path.svg" alt="IELTS-Vacab-Fantasia 推荐学习路径与闭环方法" width="880">
+</p>
+
 为了让 3600+ 雅思核心词汇真正从“死记硬背”转化为“听说读写可用”，建议遵循以下**循序渐进、闭环实践**的学习路径：
 
 1. **第一阶段：语境建立 —— IELTS 章节串记**

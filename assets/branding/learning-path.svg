@@ -1,0 +1,141 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 310" width="100%" height="100%" style="background: transparent;">
+  <defs>
+    <linearGradient id="cardGrad1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0284c7"/>
+      <stop offset="100%" stop-color="#0369a1"/>
+    </linearGradient>
+    <linearGradient id="cardGrad2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#8b5cf6"/>
+      <stop offset="100%" stop-color="#6d28d9"/>
+    </linearGradient>
+    <linearGradient id="cardGrad3" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f59e0b"/>
+      <stop offset="100%" stop-color="#d97706"/>
+    </linearGradient>
+    <linearGradient id="cardGrad4" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#10b981"/>
+      <stop offset="100%" stop-color="#059669"/>
+    </linearGradient>
+    
+    <filter id="cardShadow" x="-10%" y="-10%" width="125%" height="130%">
+      <feDropShadow dx="0" dy="6" stdDeviation="10" flood-color="#0f172a" flood-opacity="0.10"/>
+    </filter>
+
+    <marker id="arrow" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#94a3b8"/>
+    </marker>
+  </defs>
+
+  <!-- Step 1 Card -->
+  <g transform="translate(20, 35)">
+    <rect width="208" height="235" rx="14" fill="#ffffff" stroke="#e2e8f0" stroke-width="1.5" filter="url(#cardShadow)"/>
+    <rect width="208" height="52" rx="14" fill="url(#cardGrad1)"/>
+    <rect y="36" width="208" height="16" fill="url(#cardGrad1)"/>
+    
+    <circle cx="28" cy="26" r="13" fill="#ffffff" fill-opacity="0.2"/>
+    <text x="28" y="31" fill="#ffffff" font-size="13" font-weight="800" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif">1</text>
+    <text x="48" y="32" fill="#ffffff" font-size="14" font-weight="700" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif">IELTS 章节串记</text>
+
+    <!-- Subtitle / Tag -->
+    <rect x="14" y="64" width="76" height="20" rx="4" fill="#e0f2fe"/>
+    <text x="52" y="78" fill="#0369a1" font-size="11" font-weight="600" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif">音形义初识</text>
+    
+    <!-- Body Text -->
+    <text x="14" y="110" fill="#334155" font-size="12" line-height="1.6" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif">
+      <tspan x="14" dy="0">• 核心词汇按主题归类</tspan>
+      <tspan x="14" dy="23">• 真实高清照片联想</tspan>
+      <tspan x="14" dy="23">• 地道英美音朗读输入</tspan>
+      <tspan x="14" dy="23">• 精选口语搭配与例句</tspan>
+    </text>
+
+    <rect x="14" y="198" width="180" height="24" rx="6" fill="#f8fafc" stroke="#e2e8f0"/>
+    <text x="104" y="214" fill="#64748b" font-size="11" font-weight="600" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif">建立基础视听感知 🎧</text>
+  </g>
+
+  <!-- Arrow 1 -> 2 -->
+  <path d="M 235 152 L 258 152" stroke="#94a3b8" stroke-width="2.5" stroke-dasharray="4,3" marker-end="url(#arrow)"/>
+
+  <!-- Step 2 Card -->
+  <g transform="translate(265, 35)">
+    <rect width="208" height="235" rx="14" fill="#ffffff" stroke="#c4b5fd" stroke-width="2" filter="url(#cardShadow)"/>
+    <rect width="208" height="52" rx="14" fill="url(#cardGrad2)"/>
+    <rect y="36" width="208" height="16" fill="url(#cardGrad2)"/>
+    
+    <circle cx="28" cy="26" r="13" fill="#ffffff" fill-opacity="0.2"/>
+    <text x="28" y="31" fill="#ffffff" font-size="13" font-weight="800" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif">2</text>
+    <text x="48" y="32" fill="#ffffff" font-size="13.5" font-weight="700" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif">40篇故事串记 / 原版</text>
+
+    <!-- Subtitle / Tag -->
+    <rect x="14" y="64" width="92" height="20" rx="4" fill="#f3e8ff"/>
+    <text x="60" y="78" fill="#7c3aed" font-size="11" font-weight="600" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif">多轮循环沉浸</text>
+    
+    <!-- Body Text -->
+    <text x="14" y="110" fill="#334155" font-size="12" line-height="1.6" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif">
+      <tspan x="14" dy="0">• 连续趣味双语故事语境</tspan>
+      <tspan x="14" dy="23">• 上下文自然还原词义</tspan>
+      <tspan x="14" dy="23">• 循环精读 2 ~ 3 遍</tspan>
+      <tspan x="14" dy="23">• 快速建立记忆自信</tspan>
+    </text>
+
+    <rect x="14" y="198" width="180" height="24" rx="6" fill="#fdf4ff" stroke="#e9d5ff"/>
+    <text x="104" y="214" fill="#7c3aed" font-size="11" font-weight="600" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif">语境沉浸 · 循环巩固 🔄</text>
+  </g>
+
+  <!-- Arrow 2 -> 3 -->
+  <path d="M 480 152 L 503 152" stroke="#94a3b8" stroke-width="2.5" marker-end="url(#arrow)"/>
+
+  <!-- Step 3 Card -->
+  <g transform="translate(510, 35)">
+    <rect width="208" height="235" rx="14" fill="#ffffff" stroke="#e2e8f0" stroke-width="1.5" filter="url(#cardShadow)"/>
+    <rect width="208" height="52" rx="14" fill="url(#cardGrad3)"/>
+    <rect y="36" width="208" height="16" fill="url(#cardGrad3)"/>
+    
+    <circle cx="28" cy="26" r="13" fill="#ffffff" fill-opacity="0.2"/>
+    <text x="28" y="31" fill="#ffffff" font-size="13" font-weight="800" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif">3</text>
+    <text x="48" y="32" fill="#ffffff" font-size="14" font-weight="700" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif">IELTS 词汇总表</text>
+
+    <!-- Subtitle / Tag -->
+    <rect x="14" y="64" width="76" height="20" rx="4" fill="#fef3c7"/>
+    <text x="52" y="78" fill="#b45309" font-size="11" font-weight="600" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif">查缺与补漏</text>
+    
+    <!-- Body Text -->
+    <text x="14" y="110" fill="#334155" font-size="12" line-height="1.6" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif">
+      <tspan x="14" dy="0">• 3600+ 核心词全量自测</tspan>
+      <tspan x="14" dy="23">• 快速标记生疏词条</tspan>
+      <tspan x="14" dy="23">• 高密度扫除记忆死角</tspan>
+      <tspan x="14" dy="23">• 考前高效总复习</tspan>
+    </text>
+
+    <rect x="14" y="198" width="180" height="24" rx="6" fill="#fffbeb" stroke="#fde68a"/>
+    <text x="104" y="214" fill="#b45309" font-size="11" font-weight="600" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif">全量自测 · 高效复习 🎯</text>
+  </g>
+
+  <!-- Arrow 3 -> 4 -->
+  <path d="M 725 152 L 748 152" stroke="#94a3b8" stroke-width="2.5" marker-end="url(#arrow)"/>
+
+  <!-- Step 4 Card -->
+  <g transform="translate(755, 35)">
+    <rect width="185" height="235" rx="14" fill="#ffffff" stroke="#e2e8f0" stroke-width="1.5" filter="url(#cardShadow)"/>
+    <rect width="185" height="52" rx="14" fill="url(#cardGrad4)"/>
+    <rect y="36" width="185" height="16" fill="url(#cardGrad4)"/>
+    
+    <circle cx="26" cy="26" r="13" fill="#ffffff" fill-opacity="0.2"/>
+    <text x="26" y="31" fill="#ffffff" font-size="13" font-weight="800" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif">4</text>
+    <text x="44" y="32" fill="#ffffff" font-size="14" font-weight="700" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif">Chrome 插件实战</text>
+
+    <!-- Subtitle / Tag -->
+    <rect x="12" y="64" width="76" height="20" rx="4" fill="#d1fae5"/>
+    <text x="50" y="78" fill="#047857" font-size="11" font-weight="600" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif">外刊实战内化</text>
+    
+    <!-- Body Text -->
+    <text x="12" y="110" fill="#334155" font-size="12" line-height="1.6" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif">
+      <tspan x="12" dy="0">• BBC/外刊原版边读边划</tspan>
+      <tspan x="12" dy="23">• 悬停 Tips 即时释义</tspan>
+      <tspan x="12" dy="23">• 点击微缩图唤起记忆卡</tspan>
+      <tspan x="12" dy="23">• 敲词拼写自测内化</tspan>
+    </text>
+
+    <rect x="12" y="198" width="161" height="24" rx="6" fill="#ecfdf5" stroke="#a7f3d0"/>
+    <text x="92" y="214" fill="#047857" font-size="11" font-weight="600" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif">在真实应用中掌握 🚀</text>
+  </g>
+</svg>
