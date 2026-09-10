@@ -119,6 +119,15 @@ def render_markdown(markdown_text: str) -> str:
             out.append(f"<h{level}>{inline_markdown(heading.group(2).strip())}</h{level}>")
             continue
 
+        standalone_image = re.match(r"^\s*!\[([^\]]*)\]\(([^)]+)\)\s*$", line)
+        if standalone_image:
+            close_paragraph()
+            close_list()
+            alt = html.escape(standalone_image.group(1), quote=True)
+            src = html.escape(standalone_image.group(2), quote=True)
+            out.append(f'<div style="width: 100%; margin: 1.5rem 0;"><img src="{src}" alt="{alt}" style="width: 100%; height: auto; display: block; border-radius: 12px; box-sizing: border-box;"></div>')
+            continue
+
         unordered = re.match(r"^\s*[-+*]\s+(.+)$", line)
         ordered = re.match(r"^\s*\d+\.\s+(.+)$", line)
         if unordered or ordered:
