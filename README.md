@@ -37,6 +37,13 @@ IELTS-Vacab-Fantasia 不把单词停留在孤立的“英文—中文”对照�
   <sub>短篇剧场：单词保留在连续语境中，点击即可调出对应的视觉记忆。</sub>
 </p>
 
+<p align="center">
+  <video src="assets/branding/fantasia-sample1.mp4" controls="controls" width="820" style="max-width: 100%; border-radius: 10px;">
+  </video>
+  <br>
+  <sub>功能实操录屏：划词标记、Tips 气泡预览、发音朗读与大图记忆卡敲词自测。</sub>
+</p>
+
 ## 📖 推荐学习路径与方法
 
 <p align="center">
