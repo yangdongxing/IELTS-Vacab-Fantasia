@@ -42,7 +42,7 @@ IELTS-Vacab-Fantasia 不把单词停留在孤立的“英文—中文”对照�
 </p>
 
 <p align="center">
-  <video src="assets/branding/fantasia-sample1.mp4" controls="controls" width="820" style="max-width: 100%; border-radius: 10px;">
+  <video src="https://github.com/user-attachments/assets/55816e4e-22de-4dfd-841b-1fccad0dc931" controls="controls" width="100%">
   </video>
   <br>
   <sub>功能实操录屏：划词标记、Tips 气泡预览、发音朗读与大图记忆卡敲词自测。</sub>
