@@ -268,6 +268,7 @@ js_template = """/**
 
         // English: prefer natural/premium voices (including Mac default say voices)
         const enPref = [
+            "Siri (Voice 1)", "Siri (Voice 2)", "Siri (Voice 3)", "Siri (Voice 4)", "Siri (Voice 5)",
             "Samantha (Enhanced)", "Samantha (Premium)", "Samantha",
             "Alex",
             "Daniel (Enhanced)", "Daniel (Premium)", "Daniel",
@@ -276,7 +277,7 @@ js_template = """/**
             "Fred", "Victoria",
             "Google US English", "Google UK English Female",
         ];
-        const enVoices = voices.filter(v => v.lang && (v.lang.startsWith("en-US") || v.lang.startsWith("en-GB") || v.lang === "en_US" || v.lang === "en_GB"));
+        const enVoices = voices.filter(v => v.lang && v.lang.startsWith("en"));
         for (const name of enPref) {
             const found = enVoices.find(v => v.name === name);
             if (found) { _voiceCache.en = found; break; }
@@ -1505,7 +1506,7 @@ js_template = """/**
                 try {
                     window.speechSynthesis.cancel();
                     const utter = new SpeechSynthesisUtterance(currentText);
-                    utter.lang = "en-US";  // use system default voice (same as browser right-click Speech)
+                    _applyVoice(utter, "en-US");
 
                     utter.onstart = () => {
                         isSpeaking = true;
