@@ -195,12 +195,14 @@
         console.log("[ISA] Available voices (" + voices.length + "):",
             voices.map(v => v.name + " [" + v.lang + "]").join(", "));
 
-        // English: prefer natural/premium voices
+        // English: prefer natural/premium voices (including Mac default say voices)
         const enPref = [
             "Samantha (Enhanced)", "Samantha (Premium)", "Samantha",
-            "Karen (Enhanced)", "Karen (Premium)", "Karen",
+            "Alex",
             "Daniel (Enhanced)", "Daniel (Premium)", "Daniel",
+            "Karen (Enhanced)", "Karen (Premium)", "Karen",
             "Moira (Enhanced)", "Moira",
+            "Fred", "Victoria",
             "Google US English", "Google UK English Female",
         ];
         const enVoices = voices.filter(v => v.lang && (v.lang.startsWith("en-US") || v.lang.startsWith("en-GB") || v.lang === "en_US" || v.lang === "en_GB"));
@@ -719,12 +721,28 @@
                 cursor: pointer !important;
                 font-size: 12px !important;
                 color: #64748b !important;
-                padding: 1px 4px !important;
-                border-radius: 3px !important;
-                transition: color 0.15s !important;
+                padding: 1px 5px !important;
+                border-radius: 4px !important;
+                transition: color 0.15s, background-color 0.15s !important;
             }
-            .isa-trans-btn:hover {
+            .isa-trans-btn.speak {
+                display: inline-flex !important;
+                align-items: center !important;
+                gap: 3px !important;
                 color: #0284c7 !important;
+                font-weight: 500 !important;
+                background: rgba(2, 132, 199, 0.08) !important;
+                padding: 2px 7px !important;
+                border-radius: 4px !important;
+            }
+            .isa-trans-btn.speak:hover {
+                background: rgba(2, 132, 199, 0.18) !important;
+                color: #0369a1 !important;
+            }
+            .isa-trans-btn.speak.speaking {
+                background: #e0f2fe !important;
+                color: #0369a1 !important;
+                font-weight: 600 !important;
             }
             .isa-trans-btn.close:hover {
                 color: #e11d48 !important;
@@ -732,9 +750,6 @@
             .isa-trans-content {
                 color: #1e293b !important;
                 font-weight: normal !important;
-            }
-            .isa-trans-content.collapsed {
-                display: none !important;
             }
             .isa-trans-loading {
                 color: #64748b !important;
@@ -1382,7 +1397,7 @@
                 <div class="isa-trans-header">
                     <span class="isa-trans-title">🌐 段落中文翻译 (Google 神经翻译)</span>
                     <span class="isa-trans-tools">
-                        <button class="isa-trans-btn toggle" title="折叠/展开">折叠 ▲</button>
+                        <button class="isa-trans-btn speak" title="朗读当前英文段落">🔊 朗读英文</button>
                         <button class="isa-trans-btn close" title="关闭">✕</button>
                     </span>
                 </div>
@@ -1391,22 +1406,67 @@
             targetParagraph.insertAdjacentElement("afterend", transBox);
 
             const contentEl = transBox.querySelector(".isa-trans-content");
-            const toggleBtn = transBox.querySelector(".isa-trans-btn.toggle");
+            const speakBtn = transBox.querySelector(".isa-trans-btn.speak");
             const closeBtn = transBox.querySelector(".isa-trans-btn.close");
 
-            toggleBtn.onclick = (e) => {
+            let isSpeaking = false;
+
+            const stopSpeaking = () => {
+                if (isSpeaking) {
+                    try { window.speechSynthesis.cancel(); } catch (e) {}
+                    isSpeaking = false;
+                    speakBtn.classList.remove("speaking");
+                    speakBtn.textContent = "🔊 朗读英文";
+                }
+            };
+
+            speakBtn.onclick = (e) => {
                 e.stopPropagation();
-                if (contentEl.classList.contains("collapsed")) {
-                    contentEl.classList.remove("collapsed");
-                    toggleBtn.textContent = "折叠 ▲";
-                } else {
-                    contentEl.classList.add("collapsed");
-                    toggleBtn.textContent = "展开 ▼";
+                if (isSpeaking) {
+                    stopSpeaking();
+                    return;
+                }
+
+                if (!window.speechSynthesis) return;
+                const currentText = transBox._currentEnglishText || textToTranslate;
+                if (!currentText) return;
+
+                try {
+                    window.speechSynthesis.cancel();
+                    const utter = new SpeechSynthesisUtterance(currentText);
+                    _applyVoice(utter, "en-US");
+                    utter.rate = 0.92;
+
+                    utter.onstart = () => {
+                        isSpeaking = true;
+                        speakBtn.classList.add("speaking");
+                        speakBtn.textContent = "⏹ 停止朗读";
+                    };
+
+                    utter.onend = () => {
+                        isSpeaking = false;
+                        speakBtn.classList.remove("speaking");
+                        speakBtn.textContent = "🔊 朗读英文";
+                    };
+
+                    utter.onerror = () => {
+                        isSpeaking = false;
+                        speakBtn.classList.remove("speaking");
+                        speakBtn.textContent = "🔊 朗读英文";
+                    };
+
+                    setTimeout(() => {
+                        window.speechSynthesis.speak(utter);
+                    }, 50);
+                } catch (err) {
+                    console.warn("[ISA] Paragraph speech error:", err);
+                    stopSpeaking();
                 }
             };
 
             closeBtn.onclick = (e) => {
                 e.stopPropagation();
+                stopSpeaking();
                 transBox.remove();
             };
         } else {
@@ -1415,6 +1475,7 @@
             contentEl.textContent = "正在更新翻译中...";
         }
 
+        transBox._currentEnglishText = textToTranslate;
         const contentEl = transBox.querySelector(".isa-trans-content");
 
         translateTextGoogle(textToTranslate)
