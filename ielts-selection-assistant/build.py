@@ -1505,8 +1505,7 @@ js_template = """/**
                 try {
                     window.speechSynthesis.cancel();
                     const utter = new SpeechSynthesisUtterance(currentText);
-                    _applyVoice(utter, "en-US");
-                    utter.rate = 0.92;
+                    utter.lang = "en-US";  // use system default voice (same as browser right-click Speech)
 
                     utter.onstart = () => {
                         isSpeaking = true;
