@@ -1154,6 +1154,7 @@
 
         resetMemoryAnimation();
         refs.word.textContent = entry.w;
+        refs.image.style.opacity = "";  // reset from any previous load failure
         refs.image.src = getImageUrl(entry.w);
         refs.image.alt = `${entry.w} image`;
         setupImageFallback(refs.image, entry.w);
