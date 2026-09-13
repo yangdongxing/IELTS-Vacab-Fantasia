@@ -79,8 +79,8 @@ IELTS-Vacab-Fantasia 不把单词停留在孤立的“英文—中文”对照�
    - 💡 **循环多轮**：建议将章节与 40 篇故事**循环学习 2~3 遍**，直到对大部分词汇产生稳定、直观的反应速度与记忆自信。
 3. **第三阶段：查缺补漏 —— IELTS 词汇总表**
    - 在建立了一定的词汇量与自信后，使用总表进行全量扫盲与查漏补缺，快速标记生疏词条，实现高密度、高效率的冲刺复习。
-4. **第四阶段：实战内化 —— Chrome 划词助手插件 / 油猴脚本**
-   - 安装配套的 `ielts-selection-assistant`（Chrome 扩展或 Tampermonkey 油猴脚本），在日常浏览英文原版外刊（如 BBC、Medium、The Economist 等）时**边读边练**；
+4. **第四阶段：实战内化 —— [Chrome 划词助手插件 / 油猴脚本](https://github.com/yangdongxing/IELTS-Vacab-Fantasia-Assistant)**
+   - 安装配套的 **[IELTS-Vacab-Fantasia-Assistant](https://github.com/yangdongxing/IELTS-Vacab-Fantasia-Assistant)**（Chrome 扩展或 Tampermonkey 油猴脚本），在日常浏览英文原版外刊（如 BBC、Medium、The Economist 等）时**边读边练**；
    - 随时一键标注真经词汇、悬停/点击查看 Tips 气泡、点击微缩图片唤起记忆大图卡片并敲词自测，真正实现在**真实英文语境与实践中掌握单词**！
 
 ---
@@ -191,3 +191,9 @@ python3 build_site.py build
 - [项目结构](docs/project-structure.md)
 - [内容索引](docs/content-index.md)
 - [维护说明](docs/maintenance.md)
+
+## 🔗 关联项目
+
+| 项目 | 说明 |
+|------|------|
+| **[IELTS-Vacab-Fantasia-Assistant](https://github.com/yangdongxing/IELTS-Vacab-Fantasia-Assistant)** | 配套浏览器划词工具（Chrome 扩展 + 油猴脚本），在任意网页上实战练词。独立部署，clone 即用。 |
