@@ -378,7 +378,7 @@ def build_word_image_manifest() -> dict[str, list[dict[str, object]]]:
         for path in IMAGE_DIR.glob("*.jpg"):
             words_set.add(path.stem)
 
-    dict_path = ROOT / "ielts-selection-assistant" / "data" / "dictionary.json"
+    dict_path = ROOT.parent / "IELTS-Vacab-Fantasia-Assistant" / "chrome-extension" / "data" / "dictionary.json"
     if dict_path.exists():
         try:
             d_data = json.loads(dict_path.read_text(encoding="utf-8"))
@@ -657,11 +657,15 @@ def build_site() -> tuple[int, int, int, int]:
     asset_count += int(remove_path(DIST_DIR / "images"))
     asset_count += int(ensure_directory_link(ASSET_DIR, DIST_DIR / "assets"))
 
-    assistant_dir = ROOT / "ielts-selection-assistant"
-    for extra_file in ("stats.html", "tampermonkey.user.js", "test.html"):
-        src_file = assistant_dir / extra_file
+    assistant_dir = ROOT.parent / "IELTS-Vacab-Fantasia-Assistant"
+    assistant_copy_map = {
+        "stats.html": assistant_dir / "tampermonkey" / "stats.html",
+        "tampermonkey.user.js": assistant_dir / "tampermonkey" / "tampermonkey.user.js",
+        "test.html": assistant_dir / "tampermonkey" / "test.html",
+    }
+    for dest_name, src_file in assistant_copy_map.items():
         if src_file.exists():
-            asset_count += int(write_bytes_if_changed(DIST_DIR / extra_file, src_file.read_bytes()))
+            asset_count += int(write_bytes_if_changed(DIST_DIR / dest_name, src_file.read_bytes()))
 
     prune_empty_dist_directories()
 

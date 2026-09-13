@@ -12,8 +12,12 @@ import re
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-TARGET_DIR = Path(__file__).resolve().parent
-DATA_DIR = TARGET_DIR / "data"
+ASSISTANT_DIR = ROOT.parent / "IELTS-Vacab-Fantasia-Assistant"
+CHROME_EXT_DIR = ASSISTANT_DIR / "chrome-extension"
+TAMPERMONKEY_DIR = ASSISTANT_DIR / "tampermonkey"
+DATA_DIR = CHROME_EXT_DIR / "data"
+CHROME_EXT_DIR.mkdir(parents=True, exist_ok=True)
+TAMPERMONKEY_DIR.mkdir(parents=True, exist_ok=True)
 DATA_DIR.mkdir(parents=True, exist_ok=True)
 
 # 1. Parse vocabulary-list.md
@@ -1711,11 +1715,11 @@ manifest = {
         }
     ]
 }
-manifest_path = TARGET_DIR / "manifest.json"
+manifest_path = CHROME_EXT_DIR / "manifest.json"
 manifest_path.write_text(json.dumps(manifest, indent=2, ensure_ascii=False), encoding="utf-8")
 print(f"Generated {manifest_path}")
 
-content_script_path = TARGET_DIR / "content_script.js"
+content_script_path = CHROME_EXT_DIR / "content_script.js"
 content_script_path.write_text(final_js_code, encoding="utf-8")
 print(f"Generated {content_script_path}")
 
@@ -1739,7 +1743,7 @@ user_script_header = """// ==UserScript==
 // ==/UserScript==
 
 """
-user_script_path = TARGET_DIR / "tampermonkey.user.js"
+user_script_path = TAMPERMONKEY_DIR / "tampermonkey.user.js"
 user_script_path.write_text(user_script_header + final_js_code, encoding="utf-8")
 print(f"Generated {user_script_path}")
 
@@ -1889,7 +1893,7 @@ test_html_content = """<!DOCTYPE html>
 </body>
 </html>
 """
-test_html_path = TARGET_DIR / "test.html"
+test_html_path = TAMPERMONKEY_DIR / "test.html"
 test_html_path.write_text(test_html_content, encoding="utf-8")
 print(f"Generated {test_html_path}")
 
@@ -2496,7 +2500,7 @@ stats_html_content = """<!DOCTYPE html>
 </body>
 </html>
 """
-stats_html_path = TARGET_DIR / "stats.html"
+stats_html_path = TAMPERMONKEY_DIR / "stats.html"
 stats_html_final = stats_html_content.replace("__DICTIONARY_JSON__", dict_json_str)
 stats_html_path.write_text(stats_html_final, encoding="utf-8")
 print(f"Generated {stats_html_path}")
