@@ -951,9 +951,9 @@
 
             /* Sentence Chunk Breakdown (AI) */
             .isa-breakdown-container {
-                margin-top: 12px !important;
-                padding-top: 10px !important;
-                border-top: 1px dashed #cbd5e1 !important;
+                margin-top: 8px !important;
+                padding-top: 0 !important;
+                border-top: none !important;
                 font-size: 13.5px !important;
                 line-height: 1.65 !important;
             }
@@ -1992,8 +1992,8 @@
                     </span>
                 </div>
                 <div class="isa-trans-content isa-trans-loading">正在翻译段落中...</div>
-                <div class="isa-breakdown-container">
-                    <div class="isa-breakdown-content isa-breakdown-loading">正在智能解析长难句核心语块...</div>
+                <div class="isa-breakdown-container" style="display:none;">
+                    <div class="isa-breakdown-content"></div>
                 </div>
             `;
             targetParagraph.insertAdjacentElement("afterend", transBox);
@@ -2173,50 +2173,47 @@
                 });
         }
 
+        const breakdownContainerEl = transBox.querySelector(".isa-breakdown-container");
         const breakdownContentEl = transBox.querySelector(".isa-breakdown-content");
 
         function fetchBreakdown() {
             if (!breakdownContentEl) return;
-            breakdownContentEl.className = "isa-breakdown-content isa-breakdown-loading";
-            breakdownContentEl.textContent = "正在智能解析长难句核心语块...";
+            if (breakdownContainerEl) breakdownContainerEl.style.display = "none";
+            breakdownContentEl.className = "isa-breakdown-content";
+            breakdownContentEl.innerHTML = "";
 
             analyzeSentenceChunks(textToTranslate)
                 .then(res => {
-                    if (!res) {
-                        breakdownContentEl.className = "isa-breakdown-content isa-breakdown-error";
-                        breakdownContentEl.textContent = "（暂未能解析语块）";
+                    if (!res || !Array.isArray(res) || res.length === 0) {
                         return;
                     }
 
-                    let html = "";
-                    if (Array.isArray(res) && res.length > 0) {
-                        html += `<ul class="isa-breakdown-list">`;
-                        res.forEach(c => {
-                            const enPart = (c.en || c.chunk || "").trim();
-                            const zhPart = (c.zh || "").trim();
-                            const expPart = (c.exp || c.explanation || "").trim();
-                            
-                            let termHtml = enPart;
-                            if (zhPart) {
-                                termHtml += `（${zhPart}）`;
-                            }
+                    let html = `<ul class="isa-breakdown-list">`;
+                    res.forEach(c => {
+                        const enPart = (c.en || c.chunk || "").trim();
+                        const zhPart = (c.zh || "").trim();
+                        const expPart = (c.exp || c.explanation || "").trim();
+                        
+                        let termHtml = enPart;
+                        if (zhPart) {
+                            termHtml += `（${zhPart}）`;
+                        }
 
-                            html += `
-                                <li class="isa-breakdown-item">
-                                    <strong class="isa-breakdown-term">${termHtml}：</strong><span class="isa-breakdown-desc">${expPart}</span>
-                                </li>
-                            `;
-                        });
-                        html += `</ul>`;
-                    }
+                        html += `
+                            <li class="isa-breakdown-item">
+                                <strong class="isa-breakdown-term">${termHtml}：</strong><span class="isa-breakdown-desc">${expPart}</span>
+                            </li>
+                        `;
+                    });
+                    html += `</ul>`;
 
                     breakdownContentEl.className = "isa-breakdown-content";
-                    breakdownContentEl.innerHTML = html || "（解析结果为空）";
+                    breakdownContentEl.innerHTML = html;
+                    if (breakdownContainerEl) breakdownContainerEl.style.display = "block";
                 })
                 .catch(err => {
                     console.warn("[ISA] Breakdown error:", err);
-                    breakdownContentEl.className = "isa-breakdown-content isa-breakdown-error";
-                    breakdownContentEl.textContent = `（语块解析暂时受阻: ${err.message || "请求失败"}）`;
+                    if (breakdownContainerEl) breakdownContainerEl.style.display = "none";
                 });
         }
 
