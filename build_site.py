@@ -343,6 +343,8 @@ def load_spoken_usage() -> dict[str, dict[str, str]]:
             if not focus or focus.casefold() not in english.casefold():
                 raise ValueError(f"Spoken focus is not in its sentence on line {line_number}: {item_key}")
             spoken["focus"] = focus
+        if "focus_zh" in item and item.get("focus_zh"):
+            spoken["focus_zh"] = str(item.get("focus_zh", "")).strip()
         usage[item_key] = spoken
     return usage
 
@@ -378,7 +380,9 @@ def build_word_image_manifest() -> dict[str, list[dict[str, object]]]:
         for path in IMAGE_DIR.glob("*.jpg"):
             words_set.add(path.stem)
 
-    dict_path = ROOT.parent / "IELTS-Vacab-Fantasia-Assistant" / "chrome-extension" / "data" / "dictionary.json"
+    dict_path = ROOT.parent / "IELTS-Vacab-Fantasia-Assistant" / "data" / "dictionary.json"
+    if not dict_path.exists():
+        dict_path = ROOT.parent / "IELTS-Vacab-Fantasia-Assistant" / "chrome-extension" / "data" / "dictionary.json"
     if dict_path.exists():
         try:
             d_data = json.loads(dict_path.read_text(encoding="utf-8"))

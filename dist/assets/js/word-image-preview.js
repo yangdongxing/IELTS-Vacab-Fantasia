@@ -726,6 +726,24 @@
                 .geek-memory-example[hidden] {
                     display: none;
                 }
+                .geek-memory-focus-badge {
+                    display: inline-flex;
+                    align-items: center;
+                    gap: 5px;
+                    margin: 0 auto 8px;
+                    padding: 3px 12px;
+                    border-radius: 999px;
+                    background: rgba(254, 240, 138, 0.15);
+                    border: 1px solid rgba(253, 230, 138, 0.35);
+                    color: #fde68a;
+                    font-size: 13px;
+                    font-weight: 700;
+                    letter-spacing: 0.2px;
+                    line-height: 1.4;
+                }
+                .geek-memory-focus-badge[hidden] {
+                    display: none;
+                }
                 .geek-memory-example-en {
                     margin: 0;
                     color: #f8fafc;
@@ -962,6 +980,7 @@
                 <img class="geek-memory-image" id="geek-memory-image" alt="" draggable="false">
                 <p class="geek-memory-translation" id="geek-memory-translation"></p>
                 <div class="geek-memory-example" id="geek-memory-example" hidden>
+                  <div class="geek-memory-focus-badge" id="geek-memory-focus-badge" hidden></div>
                   <p class="geek-memory-example-en" id="geek-memory-example-en" title="点击朗读例句"></p>
                   <p class="geek-memory-example-zh" id="geek-memory-example-zh"></p>
                 </div>
@@ -994,6 +1013,7 @@
             image: shadow.getElementById("geek-memory-image"),
             translation: shadow.getElementById("geek-memory-translation"),
             example: shadow.getElementById("geek-memory-example"),
+            focusBadge: shadow.getElementById("geek-memory-focus-badge"),
             exampleEnglish: shadow.getElementById("geek-memory-example-en"),
             exampleChinese: shadow.getElementById("geek-memory-example-zh"),
             context: shadow.getElementById("geek-memory-context"),
@@ -1152,7 +1172,7 @@
         if (isSameOpenCard && !options.force) return;
 
         currentMemoryData = data;
-        const { word, image, translation, example, exampleEnglish, exampleChinese, context, answer } = memoryModalRefs;
+        const { word, image, translation, example, focusBadge, exampleEnglish, exampleChinese, context, answer } = memoryModalRefs;
 
         resetParagraphCompletion();
         resetMemoryAnimation();
@@ -1167,6 +1187,17 @@
         translation.textContent = data.translationText;
         const spoken = data.entry.spoken || {};
         example.hidden = !(spoken.en && spoken.zh);
+        if (focusBadge) {
+            if (spoken.focus_zh) {
+                focusBadge.textContent = `🎯 核心搭配：${spoken.focus}（${spoken.focus_zh}）`;
+                focusBadge.hidden = false;
+            } else if (spoken.focus) {
+                focusBadge.textContent = `🎯 核心搭配：${spoken.focus}`;
+                focusBadge.hidden = false;
+            } else {
+                focusBadge.hidden = true;
+            }
+        }
         renderFocusedExample(exampleEnglish, spoken.en || "", spoken.focus || "");
         exampleChinese.textContent = spoken.zh || "";
         renderContextText(context, data.contextText, data.displayWord || data.entry.word);

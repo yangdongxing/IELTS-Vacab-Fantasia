@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="ielts-vocab-disable-plugin" content="true">
     <title>雅思真经打点与学习统计 · 数据管理台</title>
     <style>
         :root {
@@ -79,6 +80,16 @@
         .kpi-card.purple .value { color: var(--purple); }
         .kpi-card.green .value { color: var(--green); }
         .kpi-card.rose .value { color: var(--rose); }
+        .kpi-sub {
+            font-size: 12px;
+            color: var(--text-muted);
+            font-weight: 400;
+        }
+        .kpi-value-row {
+            display: flex;
+            align-items: baseline;
+            gap: 6px;
+        }
 
         .toolbar {
             background: var(--surface);
@@ -251,6 +262,108 @@
             color: #cbd5e1;
             margin-bottom: 12px;
         }
+        .word-cell .word-text {
+            cursor: pointer;
+            transition: color 0.15s, text-decoration 0.15s;
+        }
+        .word-cell .word-text:hover {
+            color: var(--primary);
+            text-decoration: underline;
+        }
+
+        /* Hover Thumbnail Bubble Tips (Matches main plugin) */
+        .stats-hover-bubble {
+            position: fixed;
+            z-index: 99990;
+            background-color: #172033;
+            width: 240px;
+            max-width: min(240px, calc(100vw - 32px));
+            padding: 8px;
+            border-radius: 8px;
+            box-shadow: 0 8px 28px rgba(0, 0, 0, 0.45);
+            box-sizing: border-box;
+            pointer-events: none;
+            opacity: 0;
+            visibility: hidden;
+            transform: scale(0.92);
+            transition: opacity 0.16s ease, transform 0.16s ease, visibility 0.16s ease;
+        }
+        .stats-hover-bubble.is-visible {
+            opacity: 1;
+            visibility: visible;
+            transform: scale(1);
+            pointer-events: auto;
+        }
+        .stats-hover-bubble::after {
+            content: "";
+            position: absolute;
+            left: var(--arrow-left, 50%);
+            transform: translateX(-50%);
+            border-width: 6px;
+            border-style: solid;
+        }
+        .stats-hover-bubble.placement-above {
+            transform-origin: var(--arrow-left, 50%) 100%;
+        }
+        .stats-hover-bubble.placement-above::after {
+            top: 100%;
+            border-color: #172033 transparent transparent transparent;
+        }
+        .stats-hover-bubble.placement-below {
+            transform-origin: var(--arrow-left, 50%) 0%;
+        }
+        .stats-hover-bubble.placement-below::after {
+            bottom: 100%;
+            border-color: transparent transparent #172033 transparent;
+        }
+        .stats-hover-bubble .geek-bubble-image {
+            display: block;
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            object-fit: cover;
+            border-radius: 5px;
+            background: rgba(255, 255, 255, 0.14);
+            margin: 0 0 7px;
+            box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.16);
+            cursor: pointer;
+            transition: transform 0.15s ease, filter 0.15s ease;
+        }
+        .stats-hover-bubble .geek-bubble-image:hover {
+            transform: scale(1.02);
+            filter: brightness(1.08);
+        }
+        .stats-hover-bubble .geek-bubble-text {
+            display: block;
+            color: #fff;
+            font-size: 13px;
+            line-height: 1.35;
+            text-align: center;
+            overflow-wrap: anywhere;
+            cursor: pointer;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+        .stats-hover-bubble .geek-bubble-text:hover {
+            color: #7dd3fc;
+        }
+
+        /* Fullscreen Memory Modal Overlay Container */
+        #geek-memory-modal {
+            position: fixed !important;
+            inset: 0 !important;
+            display: none !important;
+            align-items: center !important;
+            justify-content: center !important;
+            padding: 24px !important;
+            background: rgba(2, 6, 23, 0.76) !important;
+            backdrop-filter: blur(4px) !important;
+            -webkit-backdrop-filter: blur(4px) !important;
+            z-index: 100001 !important;
+            box-sizing: border-box !important;
+            pointer-events: auto !important;
+        }
+        #geek-memory-modal.open {
+            display: flex !important;
+        }
     </style>
 </head>
 <body>
@@ -261,8 +374,9 @@
                 <p>记录网页正文划词标记、全局覆层弹开、拼写验证等全流程学习轨迹</p>
             </div>
             <div class="action-buttons">
-                <button id="btn-export-csv" class="btn btn-outline">📥 导出 CSV</button>
-                <button id="btn-export-json" class="btn btn-outline">📥 导出 JSON</button>
+                <input type="file" id="input-import-json" accept=".json,application/json" style="display: none;">
+                <button id="btn-import-json" class="btn btn-outline" title="导入 JSON 数据">📤 Import</button>
+                <button id="btn-export-json" class="btn btn-outline" title="导出 JSON 数据">📥 Export</button>
                 <button id="btn-clear" class="btn btn-danger">🗑️ 清空统计</button>
             </div>
         </header>
@@ -270,7 +384,10 @@
         <section class="kpi-grid">
             <div class="kpi-card blue">
                 <span class="label">📘 累计打点单词数</span>
-                <span class="value" id="kpi-words">0</span>
+                <div class="kpi-value-row">
+                    <span class="value" id="kpi-words">0</span>
+                    <span class="kpi-sub" id="kpi-words-detail"></span>
+                </div>
             </div>
             <div class="kpi-card rose">
                 <span class="label">🔖 网页正文标记总次数</span>
@@ -291,10 +408,11 @@
                 <input type="text" id="search-input" placeholder="🔍 搜索单词或中文释义...">
             </div>
             <div class="filter-buttons">
-                <button class="filter-btn active" data-filter="all">全部</button>
+                <button class="filter-btn active" data-filter="all">全部记录</button>
                 <button class="filter-btn" data-filter="marks">已标记词</button>
                 <button class="filter-btn" data-filter="modal">已查看大图</button>
                 <button class="filter-btn" data-filter="success">已拼写成功</button>
+                <button class="filter-btn" data-filter="unmarked">未标记词</button>
             </div>
         </div>
 
@@ -302,7 +420,7 @@
             <table>
                 <thead>
                     <tr>
-                        <th style="width: 60px;">#</th>
+                        <th data-sort="length" style="width: 60px;" title="点击按单词字母长度排序"># ⇅</th>
                         <th data-sort="w">单词 (Word) ⇅</th>
                         <th>释义 (Definition)</th>
                         <th data-sort="marks" style="text-align: center;">标记次数 ⇅</th>
@@ -351,34 +469,949 @@
             return "-";
         }
 
+        function lookupEntry(w) {
+            if (!w) return null;
+            const key = w.toLowerCase().trim();
+            if (DICT[key]) return DICT[key];
+            const candidates = [
+                key,
+                key.replace(/s$/, ""),
+                key.replace(/es$/, ""),
+                key.replace(/ies$/, "y"),
+                key.replace(/d$/, ""),
+                key.replace(/ed$/, ""),
+                key.replace(/ed$/, "e"),
+                key.replace(/ing$/, ""),
+                key.replace(/ing$/, "e"),
+                key.replace(/ly$/, "")
+            ];
+            for (const cand of candidates) {
+                if (DICT[cand]) return DICT[cand];
+            }
+            return { w: w, d: lookupDef(w), sp: {} };
+        }
+
         function loadStats() {
+            let gmStats = null;
             if (window.ieltsVocabStats && typeof window.ieltsVocabStats.getStats === "function") {
                 try {
                     const s = window.ieltsVocabStats.getStats();
-                    if (s && s.words && Object.keys(s.words).length > 0) return s;
+                    if (s && s.words) gmStats = s;
                 } catch (e) {}
             }
+            let localStats = null;
             try {
                 const raw = localStorage.getItem(STATS_STORAGE_KEY);
-                return raw ? JSON.parse(raw) : { summary: { marks: 0, modalOpens: 0, inputSuccess: 0 }, words: {} };
+                if (raw) localStats = JSON.parse(raw);
             } catch (e) {
+                localStats = null;
+            }
+
+            if (!gmStats && !localStats) {
                 return { summary: { marks: 0, modalOpens: 0, inputSuccess: 0 }, words: {} };
             }
+            if (!gmStats) return localStats;
+            if (!localStats) return gmStats;
+
+            // Merge GM stats and local storage stats seamlessly
+            const merged = {
+                summary: { marks: 0, modalOpens: 0, inputSuccess: 0 },
+                words: { ...(gmStats.words || {}) }
+            };
+            Object.keys(localStats.words || {}).forEach(k => {
+                const incoming = localStats.words[k];
+                const existing = merged.words[k];
+                if (!existing || (incoming.lastUpdated || 0) >= (existing.lastUpdated || 0)) {
+                    merged.words[k] = incoming;
+                } else {
+                    existing.marks = Math.max(existing.marks || 0, incoming.marks || 0);
+                    existing.modalOpens = Math.max(existing.modalOpens || 0, incoming.modalOpens || 0);
+                    existing.inputSuccess = Math.max(existing.inputSuccess || 0, incoming.inputSuccess || 0);
+                }
+            });
+
+            let totalMarks = 0, totalModal = 0, totalSuccess = 0;
+            Object.values(merged.words).forEach(w => {
+                totalMarks += (w.marks || 0);
+                totalModal += (w.modalOpens || 0);
+                totalSuccess += (w.inputSuccess || 0);
+            });
+            merged.summary = { marks: totalMarks, modalOpens: totalModal, inputSuccess: totalSuccess };
+            return merged;
         }
 
         function saveStats(stats) {
             try {
                 localStorage.setItem(STATS_STORAGE_KEY, JSON.stringify(stats));
             } catch (e) {}
+            if (window.ieltsVocabStats && typeof window.ieltsVocabStats.setStats === "function") {
+                try { window.ieltsVocabStats.setStats(stats); } catch (e) {}
+            }
+            try {
+                window.dispatchEvent(new CustomEvent("ielts_stats_save_request", { detail: stats }));
+            } catch (e) {}
+        }
+
+        function trackWordEvent(word, eventType) {
+            if (!word) return;
+            const stats = loadStats();
+            const key = word.toLowerCase().trim();
+            const now = Date.now();
+
+            if (!stats.words) stats.words = {};
+            if (!stats.summary) stats.summary = { marks: 0, modalOpens: 0, inputSuccess: 0 };
+
+            if (!stats.words[key]) {
+                stats.words[key] = {
+                    w: word,
+                    marks: 0,
+                    modalOpens: 0,
+                    inputSuccess: 0,
+                    lastUpdated: now
+                };
+            }
+
+            const entry = stats.words[key];
+            entry.lastUpdated = now;
+
+            if (eventType === "mark") {
+                entry.marks = (entry.marks || 0) + 1;
+                stats.summary.marks = (stats.summary.marks || 0) + 1;
+            } else if (eventType === "modal_open") {
+                entry.modalOpens = (entry.modalOpens || 0) + 1;
+                stats.summary.modalOpens = (stats.summary.modalOpens || 0) + 1;
+            } else if (eventType === "input_success") {
+                entry.inputSuccess = (entry.inputSuccess || 0) + 1;
+                stats.summary.inputSuccess = (stats.summary.inputSuccess || 0) + 1;
+            }
+
+            saveStats(stats);
+            if (typeof GM_setValue === "function") {
+                try { GM_setValue(STATS_STORAGE_KEY, stats); } catch (e) {}
+            }
+            fetch("http://127.0.0.1:8777/api/stats", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(stats)
+            }).catch(() => {});
+
+            render();
+        }
+
+        // ==========================================
+        // Voice Synthesis Engine
+        // ==========================================
+        const _voiceCache = { en: null, zh: null, ready: false };
+
+        function _initVoices() {
+            if (_voiceCache.ready) return;
+            const voices = window.speechSynthesis ? window.speechSynthesis.getVoices() : [];
+            if (!voices.length) return;
+
+            const isEdge = typeof navigator !== "undefined" && (/Edg\//i.test(navigator.userAgent) || /Edge\//i.test(navigator.userAgent));
+            const enVoices = voices.filter(v => v.lang && v.lang.startsWith("en"));
+            const zhVoices = voices.filter(v => v.lang && (v.lang.startsWith("zh-CN") || v.lang.startsWith("zh_CN") || v.lang.startsWith("zh-TW") || v.lang === "zh-CN"));
+
+            // Microsoft Edge: prioritize Microsoft Natural neural voices (Aria/Jenny/Xiaoxiao/Yunxi)
+            if (isEdge) {
+                const edgeEnPref = [
+                    "Microsoft Aria Online (Natural) - English (United States)",
+                    "Microsoft Jenny Online (Natural) - English (United States)",
+                    "Microsoft Guy Online (Natural) - English (United States)",
+                    "Microsoft Christopher Online (Natural) - English (United States)",
+                    "Microsoft Eric Online (Natural) - English (United States)",
+                    "Microsoft Sonia Online (Natural) - English (United Kingdom)",
+                    "Microsoft Ryan Online (Natural) - English (United Kingdom)",
+                    "Microsoft Libby Online (Natural) - English (United Kingdom)",
+                    "Microsoft Aria (Natural) - English (United States)",
+                    "Microsoft Jenny (Natural) - English (United States)",
+                    "Microsoft Guy (Natural) - English (United States)",
+                ];
+                for (const name of edgeEnPref) {
+                    const found = enVoices.find(v => v.name === name);
+                    if (found) { _voiceCache.en = found; break; }
+                }
+                if (!_voiceCache.en) {
+                    _voiceCache.en = enVoices.find(v => /Microsoft.*Natural/i.test(v.name))
+                        || enVoices.find(v => /Aria|Jenny|Guy|Christopher|Sonia/i.test(v.name))
+                        || enVoices.find(v => /Microsoft/i.test(v.name));
+                }
+
+                const edgeZhPref = [
+                    "Microsoft Xiaoxiao Online (Natural) - Chinese (Mainland)",
+                    "Microsoft Yunxi Online (Natural) - Chinese (Mainland)",
+                    "Microsoft Yunjian Online (Natural) - Chinese (Mainland)",
+                    "Microsoft Xiaoyi Online (Natural) - Chinese (Mainland)",
+                    "Microsoft Yunyang Online (Natural) - Chinese (Mainland)",
+                    "Microsoft Xiaoxiao (Natural) - Chinese (Mainland)",
+                    "Microsoft Yunxi (Natural) - Chinese (Mainland)",
+                ];
+                for (const name of edgeZhPref) {
+                    const found = zhVoices.find(v => v.name === name);
+                    if (found) { _voiceCache.zh = found; break; }
+                }
+                if (!_voiceCache.zh) {
+                    _voiceCache.zh = zhVoices.find(v => /Microsoft.*Natural/i.test(v.name))
+                        || zhVoices.find(v => /Xiaoxiao|Yunxi|Yunjian|Xiaoyi/i.test(v.name))
+                        || zhVoices.find(v => /Microsoft/i.test(v.name));
+                }
+            }
+
+            // Chrome / non-Edge / fallback: keep existing voice selection untouched
+            if (!_voiceCache.en) {
+                const enPref = [
+                    "Siri (Voice 1)", "Siri (Voice 2)", "Siri (Voice 3)", "Siri (Voice 4)", "Siri (Voice 5)",
+                    "Samantha (Enhanced)", "Samantha (Premium)", "Samantha",
+                    "Alex",
+                    "Daniel (Enhanced)", "Daniel (Premium)", "Daniel",
+                    "Karen (Enhanced)", "Karen (Premium)", "Karen",
+                    "Moira (Enhanced)", "Moira",
+                    "Fred", "Victoria",
+                    "Google US English", "Google UK English Female",
+                ];
+                for (const name of enPref) {
+                    const found = enVoices.find(v => v.name === name);
+                    if (found) { _voiceCache.en = found; break; }
+                }
+                if (!_voiceCache.en) {
+                    _voiceCache.en = enVoices.find(v => /premium|enhanced|natural/i.test(v.name)) || enVoices[0] || null;
+                }
+            }
+
+            if (!_voiceCache.zh) {
+                const zhPref = [
+                    "Tingting (Enhanced)", "Tingting (Premium)", "Tingting",
+                    "Sinji (Enhanced)", "Sinji (Premium)", "Sinji",
+                    "Google 普通话（中国大陆）", "Google 中文（普通话）",
+                ];
+                for (const name of zhPref) {
+                    const found = zhVoices.find(v => v.name === name);
+                    if (found) { _voiceCache.zh = found; break; }
+                }
+                if (!_voiceCache.zh) {
+                    _voiceCache.zh = zhVoices.find(v => /premium|enhanced|natural/i.test(v.name)) || zhVoices[0] || null;
+                }
+            }
+
+            _voiceCache.ready = true;
+        }
+
+        if (window.speechSynthesis) {
+            _initVoices();
+            window.speechSynthesis.onvoiceschanged = () => {
+                _voiceCache.ready = false;
+                _initVoices();
+            };
+        }
+
+        function _applyVoice(utter, lang) {
+            _initVoices();
+            const isZh = lang.startsWith("zh");
+            const cached = isZh ? _voiceCache.zh : _voiceCache.en;
+            if (cached) {
+                utter.voice = cached;
+            }
+            utter.lang = lang;
+            utter.rate = isZh ? 0.95 : 0.92;
+        }
+
+        function speakText(text, lang = "en-US") {
+            if (!window.speechSynthesis || !text) return;
+            try {
+                window.speechSynthesis.cancel();
+                const utter = new SpeechSynthesisUtterance(text);
+                _applyVoice(utter, lang);
+                setTimeout(() => {
+                    window.speechSynthesis.speak(utter);
+                }, 50);
+            } catch (e) { console.warn("[ISA] speakText error:", e); }
         }
 
         function speakWord(word) {
-            if (!window.speechSynthesis || !word) return;
-            window.speechSynthesis.cancel();
-            const utter = new SpeechSynthesisUtterance(word);
-            utter.lang = "en-US";
-            utter.rate = 0.92;
-            window.speechSynthesis.speak(utter);
+            speakText(word, "en-US");
+        }
+
+        function speakBilingualExample(enText, zhText) {
+            if (!window.speechSynthesis || (!enText && !zhText)) return;
+            try {
+                window.speechSynthesis.cancel();
+                if (enText && zhText) {
+                    const utterEn = new SpeechSynthesisUtterance(enText);
+                    _applyVoice(utterEn, "en-US");
+
+                    const utterZh = new SpeechSynthesisUtterance(zhText);
+                    _applyVoice(utterZh, "zh-CN");
+
+                    utterEn.onend = () => {
+                        try {
+                            if (isMemoryModalOpen()) {
+                                window.speechSynthesis.speak(utterZh);
+                            }
+                        } catch (e) {}
+                    };
+                    utterEn.onerror = () => {
+                        try {
+                            if (isMemoryModalOpen()) {
+                                window.speechSynthesis.speak(utterZh);
+                            }
+                        } catch (e) {}
+                    };
+                    setTimeout(() => {
+                        window.speechSynthesis.speak(utterEn);
+                    }, 50);
+                } else if (enText) {
+                    speakText(enText, "en-US");
+                } else if (zhText) {
+                    speakText(zhText, "zh-CN");
+                }
+            } catch (e) { console.warn("[ISA] speakBilingual error:", e); }
+        }
+
+        // ==========================================
+        // Remote & Local Image Helpers
+        // ==========================================
+        const REMOTE_IMAGE_BASE = "https://ielts-vacab-fantasia-images.yangdongxing.workers.dev/";
+        const LOCAL_IMAGE_BASE = "http://127.0.0.1:8777/";
+
+        function getImageUrl(word) {
+            if (!word) return "";
+            const capWord = word.charAt(0).toUpperCase() + word.slice(1);
+            return REMOTE_IMAGE_BASE + encodeURIComponent(capWord) + ".jpg";
+        }
+
+        function setupImageFallback(imgElement, word) {
+            if (!imgElement || !word) return;
+            const capWord = word.charAt(0).toUpperCase() + word.slice(1);
+            const encoded = encodeURIComponent(capWord) + ".jpg";
+
+            imgElement.onerror = function() {
+                if (imgElement.src.startsWith(REMOTE_IMAGE_BASE)) {
+                    imgElement.src = LOCAL_IMAGE_BASE + encoded;
+                    imgElement.onerror = function() {
+                        imgElement.style.opacity = "0.2";
+                    };
+                }
+            };
+        }
+
+        function answerKey(value) {
+            return (value || "").toLowerCase().replace(/[^a-z0-9]/g, "");
+        }
+
+        // ==========================================
+        // Full Memory Modal Implementation
+        // ==========================================
+        let memoryModalRefs = null;
+        let currentMemoryData = null;
+        let autoCloseTimer = null;
+        let practiceCompletedCount = 0;
+        let currentPracticeIndex = 0;
+        let currentTableWords = [];
+        let pendingNextEntry = null;
+
+        const preloadedImageCache = new Map();
+
+        function preloadWordImage(word) {
+            if (!word) return;
+            const key = word.toLowerCase();
+            if (preloadedImageCache.has(key)) return;
+
+            const remoteUrl = getImageUrl(word);
+            const capWord = word.charAt(0).toUpperCase() + word.slice(1);
+            const localUrl = LOCAL_IMAGE_BASE + encodeURIComponent(capWord) + ".jpg";
+
+            const img = new Image();
+            preloadedImageCache.set(key, img);
+
+            img.onerror = () => {
+                const fallback = new Image();
+                preloadedImageCache.set(key, fallback);
+                fallback.src = localUrl;
+            };
+            img.src = remoteUrl;
+        }
+
+        function formatChineseDefinitionForSpeech(def) {
+            if (!def) return "";
+            let text = def.replace(/&amp;/g, "和")
+                          .replace(/&/g, "和")
+                          .replace(/\s+/g, " ")
+                          .trim();
+            const posMap = [
+                [/^n\.\s*/i, "名词 "],
+                [/^v\.\s*/i, "动词 "],
+                [/^vt\.\s*/i, "及物动词 "],
+                [/^vi\.\s*/i, "不及物动词 "],
+                [/^adj\.\s*/i, "形容词 "],
+                [/^a\.\s*/i, "形容词 "],
+                [/^adv\.\s*/i, "副词 "],
+                [/^ad\.\s*/i, "副词 "],
+                [/^prep\.\s*/i, "介词 "],
+                [/^conj\.\s*/i, "连词 "],
+                [/^pron\.\s*/i, "代词 "],
+                [/^num\.\s*/i, "数词 "],
+                [/^art\.\s*/i, "冠词 "],
+                [/^int\.\s*/i, "感叹词 "]
+            ];
+            for (const [re, rep] of posMap) {
+                if (re.test(text)) {
+                    text = text.replace(re, rep);
+                    break;
+                }
+            }
+            return text;
+        }
+
+        function peekNextPracticeEntry(offset = 1) {
+            const list = (currentTableWords && currentTableWords.length > 0)
+                ? currentTableWords
+                : Object.values(DICT);
+            if (!list || list.length === 0) return null;
+            const idx = (currentPracticeIndex + offset) % list.length;
+            const nextWordObj = list[idx];
+            const word = typeof nextWordObj === "string" ? nextWordObj : (nextWordObj.w || nextWordObj);
+            return lookupEntry(word);
+        }
+
+        function getNextPracticeEntry() {
+            const list = (currentTableWords && currentTableWords.length > 0)
+                ? currentTableWords
+                : Object.values(DICT);
+            if (!list || list.length === 0) return null;
+            currentPracticeIndex = (currentPracticeIndex + 1) % list.length;
+            const nextWordObj = list[currentPracticeIndex];
+            const word = typeof nextWordObj === "string" ? nextWordObj : (nextWordObj.w || nextWordObj);
+            return lookupEntry(word);
+        }
+
+        function createMemoryModal() {
+            if (memoryModalRefs) return memoryModalRefs;
+
+            const modal = document.createElement("div");
+            modal.id = "geek-memory-modal";
+            const shadow = modal.attachShadow({ mode: "open" });
+            shadow.innerHTML = `
+                <style>
+                    :host {
+                        display: block;
+                        width: 100%;
+                        height: 100%;
+                        pointer-events: auto;
+                    }
+                    .geek-memory-shell {
+                        width: 100%;
+                        height: 100%;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        position: relative;
+                        box-sizing: border-box;
+                    }
+                    .geek-memory-card {
+                        width: min(500px, calc(100vw - 48px));
+                        height: min(740px, calc(100dvh - 48px));
+                        max-height: calc(100vh - 48px);
+                        display: grid;
+                        grid-template-rows: auto minmax(80px, 1fr) auto auto auto;
+                        overflow: hidden;
+                        background: #111827;
+                        color: #fff;
+                        border: 1px solid rgba(255,255,255,0.16);
+                        border-radius: 10px;
+                        box-shadow: 0 24px 72px rgba(0,0,0,0.48);
+                        padding: 16px;
+                        box-sizing: border-box;
+                        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+                        pointer-events: auto;
+                        user-select: text;
+                        -webkit-user-select: text;
+                        position: relative;
+                    }
+                    .geek-memory-word {
+                        --geek-memory-word-drop: 0px;
+                        margin: 0 0 14px;
+                        color: #7dd3fc;
+                        font-size: clamp(34px, 6vw, 56px);
+                        line-height: 1.2;
+                        font-weight: 800;
+                        text-align: center;
+                        overflow-wrap: anywhere;
+                        position: relative;
+                        z-index: 2;
+                        transform: translate3d(0, 0, 0) scale(1);
+                        backface-visibility: hidden;
+                        transition:
+                            transform 1080ms cubic-bezier(0.16, 1, 0.3, 1),
+                            color 420ms ease-out,
+                            text-shadow 420ms ease-out;
+                        will-change: transform;
+                        cursor: pointer;
+                    }
+                    .geek-memory-word.is-memorized {
+                        color: #34d399;
+                        text-shadow: 0 0 18px rgba(52, 211, 153, 0.38);
+                        transform: translate3d(0, var(--geek-memory-word-drop), 0) scale(1.14);
+                    }
+                    .geek-memory-image {
+                        display: block;
+                        width: 100%;
+                        height: 100%;
+                        min-height: 0;
+                        object-fit: cover;
+                        border-radius: 8px;
+                        background: rgba(255,255,255,0.06);
+                        opacity: 1;
+                        transition: opacity 480ms cubic-bezier(0.4, 0, 0.2, 1);
+                        will-change: opacity;
+                    }
+                    .geek-memory-image.is-missing {
+                        background: #991f2b;
+                    }
+                    .geek-memory-card.is-memorizing .geek-memory-image {
+                        transition: opacity 820ms cubic-bezier(0.16, 1, 0.3, 1);
+                        opacity: 0;
+                    }
+                    .geek-memory-translation {
+                        margin: 12px 0 0;
+                        color: rgba(255,255,255,0.86);
+                        font-size: 18px;
+                        line-height: 1.5;
+                        text-align: center;
+                        overflow-wrap: anywhere;
+                    }
+                    .geek-memory-example {
+                        margin: 12px 0 0;
+                        padding: 12px 0 0;
+                        border-top: 1px solid rgba(255,255,255,0.12);
+                        text-align: center;
+                    }
+                    .geek-memory-example[hidden] {
+                        display: none;
+                    }
+                    .geek-memory-example-en {
+                        margin: 0;
+                        color: #f8fafc;
+                        font-size: 17px;
+                        font-weight: 650;
+                        line-height: 1.45;
+                        cursor: pointer;
+                        overflow-wrap: anywhere;
+                    }
+                    .geek-memory-example-en:hover {
+                        color: #7dd3fc;
+                    }
+                    .geek-memory-example-en strong {
+                        color: #fde68a;
+                        font-weight: 850;
+                    }
+                    .geek-memory-example-zh {
+                        margin: 5px 0 0;
+                        color: rgba(226,232,240,0.7);
+                        font-size: 14px;
+                        line-height: 1.45;
+                        overflow-wrap: anywhere;
+                    }
+                    .geek-memory-answer {
+                        width: 100%;
+                        height: 48px;
+                        min-width: 0;
+                        margin: 16px 0 0;
+                        padding: 0 14px;
+                        border-radius: 8px;
+                        border: 1px solid rgba(255,255,255,0.18);
+                        background: rgba(255,255,255,0.08);
+                        color: #fff;
+                        box-sizing: border-box;
+                        font: 18px/48px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+                        text-align: center;
+                        outline: none;
+                        text-transform: none;
+                        caret-color: #7dd3fc;
+                        pointer-events: auto;
+                        user-select: text;
+                        -webkit-user-select: text;
+                    }
+                    .geek-memory-answer::placeholder {
+                        color: rgba(255,255,255,0.36);
+                    }
+                    .geek-memory-answer:focus {
+                        border-color: #7dd3fc;
+                        box-shadow: 0 0 0 3px rgba(125, 211, 252, 0.16);
+                    }
+                    .geek-memory-answer.is-wrong {
+                        border-color: #fb7185;
+                        box-shadow: 0 0 0 3px rgba(251, 113, 133, 0.16);
+                    }
+                    .geek-memory-answer.is-correct {
+                        border-color: #34d399;
+                        box-shadow: 0 0 0 3px rgba(52, 211, 153, 0.18);
+                    }
+                </style>
+                <div class="geek-memory-shell">
+                  <div class="geek-memory-card" role="dialog" aria-modal="true">
+                    <h2 class="geek-memory-word" id="geek-memory-word" title="点击朗读单词"></h2>
+                    <img class="geek-memory-image" id="geek-memory-image" alt="" draggable="false">
+                    <p class="geek-memory-translation" id="geek-memory-translation"></p>
+                    <div class="geek-memory-example" id="geek-memory-example" hidden>
+                      <p class="geek-memory-example-en" id="geek-memory-example-en" title="点击朗读例句"></p>
+                      <p class="geek-memory-example-zh" id="geek-memory-example-zh"></p>
+                    </div>
+                    <input class="geek-memory-answer" id="geek-memory-answer" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="请输入上方单词进行记忆校验">
+                  </div>
+                </div>
+            `;
+
+            const shell = shadow.querySelector(".geek-memory-shell");
+            const card = shadow.querySelector(".geek-memory-card");
+            const answer = shadow.getElementById("geek-memory-answer");
+
+            memoryModalRefs = {
+                modal,
+                card,
+                word: shadow.getElementById("geek-memory-word"),
+                image: shadow.getElementById("geek-memory-image"),
+                translation: shadow.getElementById("geek-memory-translation"),
+                example: shadow.getElementById("geek-memory-example"),
+                exampleEnglish: shadow.getElementById("geek-memory-example-en"),
+                exampleChinese: shadow.getElementById("geek-memory-example-zh"),
+                answer,
+            };
+
+            shell.addEventListener("click", event => {
+                if (event.target === shell) closeMemoryModal();
+            });
+            card.addEventListener("click", event => {
+                if (event.target === card) requestAnimationFrame(focusMemoryAnswer);
+            });
+
+            memoryModalRefs.word.addEventListener("click", () => {
+                if (currentMemoryData) {
+                    speakText(currentMemoryData.w);
+                }
+                requestAnimationFrame(focusMemoryAnswer);
+            });
+
+            memoryModalRefs.exampleEnglish.addEventListener("click", () => {
+                if (currentMemoryData && currentMemoryData.sp) {
+                    speakBilingualExample(currentMemoryData.sp.en || "", currentMemoryData.sp.zh || "");
+                }
+                requestAnimationFrame(focusMemoryAnswer);
+            });
+
+            answer.addEventListener("input", handleAnswerInput);
+            answer.addEventListener("keydown", event => {
+                if (event.key === "Escape") {
+                    event.preventDefault();
+                    closeMemoryModal();
+                } else if (event.key === "Enter" && answer.classList.contains("is-correct")) {
+                    clearTimeout(autoCloseTimer);
+                    if (practiceCompletedCount >= 10) {
+                        pendingNextEntry = null;
+                        closeMemoryModal();
+                        render();
+                    } else {
+                        const nextEntry = pendingNextEntry || getNextPracticeEntry();
+                        pendingNextEntry = null;
+                        if (nextEntry) {
+                            openMemoryModal(nextEntry);
+                            render();
+                        } else {
+                            closeMemoryModal();
+                            render();
+                        }
+                    }
+                }
+            });
+
+            document.body.appendChild(modal);
+            return memoryModalRefs;
+        }
+
+        function isMemoryModalOpen() {
+            const modal = document.getElementById("geek-memory-modal");
+            return !!modal && modal.classList.contains("open");
+        }
+
+        function focusMemoryAnswer() {
+            const answer = memoryModalRefs && memoryModalRefs.answer;
+            if (!answer || !isMemoryModalOpen()) return;
+            requestAnimationFrame(() => {
+                if (isMemoryModalOpen()) {
+                    answer.focus({ preventScroll: true });
+                    answer.setSelectionRange(answer.value.length, answer.value.length);
+                }
+            });
+        }
+
+        function resetMemoryAnimation() {
+            if (!memoryModalRefs) return;
+            const { card, word } = memoryModalRefs;
+            if (card) card.classList.remove("is-memorizing");
+            if (word) {
+                word.classList.remove("is-memorized");
+                word.style.removeProperty("--geek-memory-word-drop");
+            }
+        }
+
+        function playCorrectMemoryAnimation() {
+            if (!memoryModalRefs) return;
+            const { card, word, image } = memoryModalRefs;
+            if (!card || !word || !image) return;
+
+            resetMemoryAnimation();
+
+            const wordRect = word.getBoundingClientRect();
+            const imageRect = image.getBoundingClientRect();
+            const wordCenter = wordRect.top + wordRect.height / 2;
+            const imageCenter = imageRect.top + imageRect.height / 2;
+            const dropDistance = Math.max(0, imageCenter - wordCenter);
+
+            word.style.setProperty("--geek-memory-word-drop", `${dropDistance}px`);
+            requestAnimationFrame(() => {
+                if (!isMemoryModalOpen()) return;
+                card.classList.add("is-memorizing");
+                word.classList.add("is-memorized");
+            });
+        }
+
+        function handleAnswerInput(event) {
+            if (!currentMemoryData) return;
+            clearTimeout(autoCloseTimer);
+
+            const input = event.target;
+            const typed = answerKey(input.value);
+            const target = answerKey(currentMemoryData.w);
+
+            input.classList.remove("is-correct", "is-wrong");
+            resetMemoryAnimation();
+
+            if (!typed) return;
+
+            if (typed === target) {
+                input.classList.add("is-correct");
+                input.readOnly = true;
+                trackWordEvent(currentMemoryData.w, "input_success");
+                playCorrectMemoryAnimation();
+                speakText(currentMemoryData.w);
+                practiceCompletedCount++;
+
+                if (practiceCompletedCount >= 10) {
+                    pendingNextEntry = null;
+                    autoCloseTimer = setTimeout(() => {
+                        closeMemoryModal();
+                        render();
+                    }, 2200);
+                } else {
+                    pendingNextEntry = getNextPracticeEntry();
+                    if (pendingNextEntry) {
+                        // Immediately preload the next word's image during the 2.2s transition period!
+                        preloadWordImage(pendingNextEntry.w);
+                        const following = peekNextPracticeEntry(1);
+                        if (following && following.w) preloadWordImage(following.w);
+
+                        autoCloseTimer = setTimeout(() => {
+                            if (pendingNextEntry) {
+                                const next = pendingNextEntry;
+                                pendingNextEntry = null;
+                                openMemoryModal(next);
+                                render();
+                            }
+                        }, 2200);
+                    } else {
+                        autoCloseTimer = setTimeout(() => {
+                            closeMemoryModal();
+                            render();
+                        }, 2200);
+                    }
+                }
+            } else if (!target.startsWith(typed)) {
+                input.classList.add("is-wrong");
+            }
+        }
+
+        function renderFocusedExample(element, sentence, focus) {
+            element.textContent = "";
+            if (!sentence || !focus) {
+                element.textContent = sentence;
+                return;
+            }
+
+            const index = sentence.toLowerCase().indexOf(focus.toLowerCase());
+            if (index < 0) {
+                element.textContent = sentence;
+                return;
+            }
+
+            element.append(document.createTextNode(sentence.slice(0, index)));
+            const strong = document.createElement("strong");
+            strong.textContent = sentence.slice(index, index + focus.length);
+            element.append(strong, document.createTextNode(sentence.slice(index + focus.length)));
+        }
+
+        function openMemoryModal(entry) {
+            clearTimeout(autoCloseTimer);
+            hideHoverBubble(true);
+            const refs = createMemoryModal();
+            currentMemoryData = entry;
+
+            resetMemoryAnimation();
+            refs.word.textContent = entry.w;
+            refs.image.style.opacity = "";
+            refs.image.src = getImageUrl(entry.w);
+            refs.image.alt = `${entry.w} image`;
+            setupImageFallback(refs.image, entry.w);
+            refs.translation.textContent = `(${entry.d})`;
+
+            const spoken = entry.sp || {};
+            refs.example.hidden = !(spoken.en && spoken.zh);
+            renderFocusedExample(refs.exampleEnglish, spoken.en || "", spoken.focus || "");
+            refs.exampleChinese.textContent = spoken.zh || "";
+
+            refs.answer.readOnly = false;
+            refs.answer.value = "";
+            refs.answer.classList.remove("is-correct", "is-wrong");
+
+            trackWordEvent(entry.w, "modal_open");
+
+            refs.modal.classList.add("open");
+            focusMemoryAnswer();
+
+            // Auto-play English word + Chinese definition (including part of speech) on modal open
+            const cleanZh = formatChineseDefinitionForSpeech(entry.d);
+            speakBilingualExample(entry.w, cleanZh);
+
+            // Preload next word's image right away in the background
+            const nextPreview = peekNextPracticeEntry(1);
+            if (nextPreview && nextPreview.w) {
+                preloadWordImage(nextPreview.w);
+            }
+        }
+
+        function closeMemoryModal() {
+            clearTimeout(autoCloseTimer);
+            practiceCompletedCount = 0;
+            pendingNextEntry = null;
+            if (window.speechSynthesis) {
+                try { window.speechSynthesis.cancel(); } catch (e) {}
+            }
+            if (memoryModalRefs && memoryModalRefs.modal) {
+                memoryModalRefs.modal.classList.remove("open");
+                if (memoryModalRefs.answer) {
+                    memoryModalRefs.answer.readOnly = false;
+                    memoryModalRefs.answer.blur();
+                }
+            }
+            currentMemoryData = null;
+            resetMemoryAnimation();
+        }
+
+        window.addEventListener("keydown", (e) => {
+            if (e.key === "Escape" && isMemoryModalOpen()) {
+                closeMemoryModal();
+            }
+        });
+
+        // ==========================================
+        // Hover Thumbnail Bubble Tips Implementation
+        // ==========================================
+        let hoverBubbleTimer = null;
+        let activeHoverWord = null;
+
+        function getOrCreateHoverBubble() {
+            let bubble = document.getElementById("stats-hover-bubble");
+            if (!bubble) {
+                bubble = document.createElement("div");
+                bubble.id = "stats-hover-bubble";
+                bubble.className = "stats-hover-bubble";
+                bubble.innerHTML = `
+                    <img class="geek-bubble-image" alt="" draggable="false">
+                    <span class="geek-bubble-text" title="点击打开记忆覆层"></span>
+                `;
+                document.body.appendChild(bubble);
+
+                bubble.addEventListener("mouseenter", () => {
+                    clearTimeout(hoverBubbleTimer);
+                });
+                bubble.addEventListener("mouseleave", () => {
+                    hideHoverBubble();
+                });
+
+                const launchModalFromBubble = (e) => {
+                    e.stopPropagation();
+                    if (activeHoverWord) {
+                        const word = activeHoverWord;
+                        hideHoverBubble(true);
+                        practiceCompletedCount = 0;
+                        const idx = currentTableWords.findIndex(item => (item.w || "").toLowerCase() === word.toLowerCase());
+                        currentPracticeIndex = idx >= 0 ? idx : 0;
+                        const entry = lookupEntry(word);
+                        if (entry) openMemoryModal(entry);
+                    }
+                };
+
+                bubble.querySelector(".geek-bubble-image").addEventListener("click", launchModalFromBubble);
+                bubble.querySelector(".geek-bubble-text").addEventListener("click", launchModalFromBubble);
+            }
+            return bubble;
+        }
+
+        function showHoverBubble(word, targetEl) {
+            if (!word || !targetEl || isMemoryModalOpen()) return;
+            const entry = lookupEntry(word);
+            if (!entry) return;
+
+            activeHoverWord = word;
+            const bubble = getOrCreateHoverBubble();
+            const img = bubble.querySelector(".geek-bubble-image");
+            const textSpan = bubble.querySelector(".geek-bubble-text");
+
+            img.style.opacity = "";
+            img.src = getImageUrl(word);
+            img.alt = `${word} thumbnail`;
+            setupImageFallback(img, word);
+            textSpan.textContent = `(${entry.d})`;
+
+            // Positioning
+            const rect = targetEl.getBoundingClientRect();
+            const bubbleWidth = 240;
+            const bubbleHeight = 285;
+            const gap = 10;
+
+            let left = (rect.left + rect.width / 2) - bubbleWidth / 2;
+            left = Math.max(12, Math.min(window.innerWidth - bubbleWidth - 12, left));
+
+            const arrowLeft = Math.max(16, Math.min(bubbleWidth - 16, (rect.left + rect.width / 2) - left));
+            bubble.style.setProperty("--arrow-left", `${Math.round(arrowLeft)}px`);
+
+            let top;
+            let placement = "placement-above";
+            if (rect.top - bubbleHeight - gap < 10) {
+                top = rect.bottom + gap;
+                placement = "placement-below";
+            } else {
+                top = rect.top - bubbleHeight - gap;
+                placement = "placement-above";
+            }
+
+            bubble.style.left = `${Math.round(left)}px`;
+            bubble.style.top = `${Math.round(top)}px`;
+            bubble.classList.remove("placement-above", "placement-below");
+            bubble.classList.add(placement, "is-visible");
+        }
+
+        function hideHoverBubble(immediate = false) {
+            clearTimeout(hoverBubbleTimer);
+            const bubble = document.getElementById("stats-hover-bubble");
+            if (!bubble) return;
+            if (immediate) {
+                bubble.classList.remove("is-visible");
+                activeHoverWord = null;
+            } else {
+                hoverBubbleTimer = setTimeout(() => {
+                    bubble.classList.remove("is-visible");
+                    activeHoverWord = null;
+                }, 140);
+            }
         }
 
         function formatDate(ts) {
@@ -394,23 +1427,50 @@
 
         function render() {
             const stats = loadStats();
-            const wordsList = Object.values(stats.words || {});
+            const allStatsWords = Object.values(stats.words || {});
             
-            // Calculate KPI
+            // Calculate KPI (always from stats, unaffected by filter)
             let totalMarks = 0;
             let totalModal = 0;
             let totalSuccess = 0;
 
-            wordsList.forEach(w => {
+            allStatsWords.forEach(w => {
                 totalMarks += (w.marks || 0);
                 totalModal += (w.modalOpens || 0);
                 totalSuccess += (w.inputSuccess || 0);
             });
 
-            document.getElementById("kpi-words").textContent = wordsList.length;
+            document.getElementById("kpi-words").textContent = allStatsWords.length;
             document.getElementById("kpi-marks").textContent = totalMarks;
             document.getElementById("kpi-modal").textContent = totalModal;
             document.getElementById("kpi-success").textContent = totalSuccess;
+
+            // Calculate unmarked count and update KPI detail + tab button
+            const totalDict = Object.keys(DICT).length;
+            const markedCount = allStatsWords.filter(w => (w.marks || 0) > 0).length;
+            const unmarkedCount = totalDict - markedCount;
+            document.getElementById("kpi-words-detail").textContent = `+ ${unmarkedCount} = ${totalDict}`;
+            document.querySelector('.filter-btn[data-filter="unmarked"]').textContent = `未标记词(${unmarkedCount})`;
+
+            // Determine data source based on filter
+            let wordsList;
+            if (currentFilter === "unmarked") {
+                const statsWords = stats.words || {};
+                wordsList = Object.keys(DICT)
+                    .filter(k => !statsWords[k] || !(statsWords[k].marks > 0))
+                    .map(k => {
+                        const sw = statsWords[k];
+                        return {
+                            w: DICT[k].w,
+                            marks: sw ? (sw.marks || 0) : 0,
+                            modalOpens: sw ? (sw.modalOpens || 0) : 0,
+                            inputSuccess: sw ? (sw.inputSuccess || 0) : 0,
+                            lastUpdated: sw ? (sw.lastUpdated || null) : null
+                        };
+                    });
+            } else {
+                wordsList = allStatsWords;
+            }
 
             // Filter
             let filtered = wordsList.filter(item => {
@@ -431,6 +1491,15 @@
 
             // Sort
             filtered.sort((a, b) => {
+                if (currentSort.field === "length") {
+                    const lenA = (a.w || "").length;
+                    const lenB = (b.w || "").length;
+                    if (lenA !== lenB) {
+                        return currentSort.order === "asc" ? lenA - lenB : lenB - lenA;
+                    }
+                    return (a.w || "").localeCompare(b.w || "");
+                }
+
                 let valA = a[currentSort.field];
                 let valB = b[currentSort.field];
 
@@ -444,6 +1513,8 @@
                 valB = valB || 0;
                 return currentSort.order === "asc" ? valA - valB : valB - valA;
             });
+
+            currentTableWords = filtered;
 
             // Render Table
             const tbody = document.getElementById("table-body");
@@ -467,8 +1538,8 @@
                         <td style="color: #94a3b8; font-size: 13px;">${idx + 1}</td>
                         <td>
                             <div class="word-cell">
-                                <span>${item.w}</span>
-                                <button class="btn-speak" title="朗读" onclick="speakWord('${item.w}')">🔊</button>
+                                <span class="word-text" data-word="${item.w}">${item.w}</span>
+                                <button class="btn-speak" data-word="${item.w}" title="朗读">🔊</button>
                             </div>
                         </td>
                         <td style="color: #475569; font-weight: 500;">${def}</td>
@@ -512,6 +1583,49 @@
         }
 
         // Event Listeners
+        document.getElementById("table-body").addEventListener("click", (e) => {
+            hideHoverBubble(true);
+            const speakBtn = e.target.closest(".btn-speak");
+            if (speakBtn) {
+                e.stopPropagation();
+                const word = speakBtn.dataset.word;
+                if (word) speakWord(word);
+                return;
+            }
+            const wordEl = e.target.closest(".word-text") || e.target.closest(".word-cell");
+            if (wordEl) {
+                const word = wordEl.dataset.word || wordEl.querySelector(".word-text")?.dataset.word;
+                if (word) {
+                    practiceCompletedCount = 0;
+                    const idx = currentTableWords.findIndex(item => (item.w || "").toLowerCase() === word.toLowerCase());
+                    currentPracticeIndex = idx >= 0 ? idx : 0;
+                    const entry = lookupEntry(word);
+                    if (entry) openMemoryModal(entry);
+                }
+            }
+        });
+
+        document.getElementById("table-body").addEventListener("mouseover", (e) => {
+            const wordEl = e.target.closest(".word-text");
+            if (wordEl) {
+                const word = wordEl.dataset.word;
+                if (word) {
+                    clearTimeout(hoverBubbleTimer);
+                    preloadWordImage(word);
+                    showHoverBubble(word, wordEl);
+                }
+            }
+        });
+
+        document.getElementById("table-body").addEventListener("mouseout", (e) => {
+            const wordEl = e.target.closest(".word-text");
+            if (wordEl) {
+                hideHoverBubble();
+            }
+        });
+
+        window.addEventListener("scroll", () => hideHoverBubble(true), { passive: true });
+
         document.getElementById("search-input").addEventListener("input", (e) => {
             searchQuery = e.target.value.trim();
             render();
@@ -533,31 +1647,132 @@
                     currentSort.order = currentSort.order === "asc" ? "desc" : "asc";
                 } else {
                     currentSort.field = field;
-                    currentSort.order = "desc";
+                    currentSort.order = (field === "length" || field === "w") ? "asc" : "desc";
                 }
                 render();
             });
         });
 
-        // Export CSV
-        document.getElementById("btn-export-csv").addEventListener("click", () => {
-            const stats = loadStats();
-            const list = Object.values(stats.words || {});
-            if (list.length === 0) return alert("暂无数据可导出");
+        // Import JSON
+        function normalizeImportData(imported) {
+            if (!imported) return {};
+            const normalized = {};
 
-            let csv = "\uFEFF序号,单词,释义,标记次数,覆层查看次数,拼写成功次数,最近更新时间\n";
-            list.forEach((item, i) => {
-                const def = lookupDef(item.w);
-                csv += `${i + 1},"${item.w}","${def.replace(/"/g, '""')}",${item.marks||0},${item.modalOpens||0},${item.inputSuccess||0},"${formatDate(item.lastUpdated)}"\n`;
+            let list = [];
+            if (Array.isArray(imported)) {
+                list = imported;
+            } else if (typeof imported === "object") {
+                if (imported.words && typeof imported.words === "object") {
+                    if (Array.isArray(imported.words)) {
+                        list = imported.words;
+                    } else {
+                        Object.entries(imported.words).forEach(([key, val]) => {
+                            const word = (val && val.w) ? val.w : key;
+                            if (word && typeof word === "string" && word.trim()) {
+                                list.push(typeof val === "object" ? { ...val, w: word } : { w: word });
+                            }
+                        });
+                    }
+                } else {
+                    Object.entries(imported).forEach(([key, val]) => {
+                        if (key === "summary") return;
+                        const word = (val && val.w) ? val.w : key;
+                        if (word && typeof word === "string" && word.trim()) {
+                            list.push(typeof val === "object" ? { ...val, w: word } : { w: word });
+                        }
+                    });
+                }
+            }
+
+            list.forEach(item => {
+                if (!item) return;
+                const word = typeof item === "string" ? item.trim() : (item.w || "").trim();
+                if (!word) return;
+                const key = word.toLowerCase();
+                normalized[key] = {
+                    w: word,
+                    marks: typeof item === "object" ? (Number(item.marks) || 0) : 1,
+                    modalOpens: typeof item === "object" ? (Number(item.modalOpens) || 0) : 0,
+                    inputSuccess: typeof item === "object" ? (Number(item.inputSuccess) || 0) : 0,
+                    lastUpdated: typeof item === "object" && item.lastUpdated ? Number(item.lastUpdated) : Date.now()
+                };
             });
 
-            const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement("a");
-            a.href = url;
-            a.download = `ielts_vocab_stats_${new Date().toISOString().slice(0,10)}.csv`;
-            a.click();
-            URL.revokeObjectURL(url);
+            return normalized;
+        }
+
+        const importInput = document.getElementById("input-import-json");
+        document.getElementById("btn-import-json").addEventListener("click", () => {
+            importInput.value = "";
+            importInput.click();
+        });
+
+        importInput.addEventListener("change", (e) => {
+            const file = e.target.files && e.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                try {
+                    const imported = JSON.parse(event.target.result);
+                    if (!imported || typeof imported !== "object") {
+                        throw new Error("格式无效");
+                    }
+
+                    const importedWords = normalizeImportData(imported);
+                    const wordKeys = Object.keys(importedWords);
+
+                    if (wordKeys.length === 0) {
+                        alert("⚠️ 文件中未找到有效的打点单词数据。");
+                        return;
+                    }
+
+                    const local = loadStats();
+                    if (!local.words) local.words = {};
+
+                    let mergedCount = 0;
+                    wordKeys.forEach(k => {
+                        const incoming = importedWords[k];
+                        const existing = local.words[k];
+                        if (!existing) {
+                            local.words[k] = incoming;
+                            mergedCount++;
+                        } else {
+                            existing.marks = Math.max(existing.marks || 0, incoming.marks || 0);
+                            existing.modalOpens = Math.max(existing.modalOpens || 0, incoming.modalOpens || 0);
+                            existing.inputSuccess = Math.max(existing.inputSuccess || 0, incoming.inputSuccess || 0);
+                            existing.lastUpdated = Math.max(existing.lastUpdated || 0, incoming.lastUpdated || 0);
+                            mergedCount++;
+                        }
+                    });
+
+                    // Recalculate summary counters
+                    let totalMarks = 0, totalModal = 0, totalSuccess = 0;
+                    Object.values(local.words).forEach(w => {
+                        totalMarks += (w.marks || 0);
+                        totalModal += (w.modalOpens || 0);
+                        totalSuccess += (w.inputSuccess || 0);
+                    });
+                    local.summary = { marks: totalMarks, modalOpens: totalModal, inputSuccess: totalSuccess };
+
+                    saveStats(local);
+                    if (typeof GM_setValue === "function") {
+                        try { GM_setValue(STATS_STORAGE_KEY, local); } catch (err) {}
+                    }
+                    fetch("http://127.0.0.1:8777/api/stats", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify(local)
+                    }).catch(() => {});
+
+                    render();
+                    alert(`✅ 成功导入并生效 ${mergedCount} 个单词的打点数据！`);
+                } catch (err) {
+                    console.error("Import error:", err);
+                    alert("❌ 导入失败：JSON 文件格式不正确或解析出错。");
+                }
+            };
+            reader.readAsText(file, "UTF-8");
         });
 
         // Export JSON
@@ -587,7 +1802,11 @@
         });
 
         // Auto live render on load, focus, visibility change, and Tampermonkey sync events
-        window.addEventListener("DOMContentLoaded", syncAndRender);
+        if (document.readyState === "loading") {
+            window.addEventListener("DOMContentLoaded", syncAndRender);
+        } else {
+            syncAndRender();
+        }
         window.addEventListener("focus", syncAndRender);
         window.addEventListener("ielts_stats_loaded_from_tampermonkey", render);
         window.addEventListener("ielts_stats_updated", render);
@@ -596,6 +1815,14 @@
                 syncAndRender();
             }
         });
+
+        // Defensive cleanup: remove any external plugin floating buttons or styles if injected
+        setInterval(() => {
+            const floatBtn = document.getElementById("geek-vocab-float-btn");
+            if (floatBtn) floatBtn.remove();
+            const pluginStyles = document.getElementById("isa-exact-project-styles");
+            if (pluginStyles) pluginStyles.remove();
+        }, 500);
     </script>
 </body>
 </html>
